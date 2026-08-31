@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sri Chaitanya School - Timetable & Substitution Allotment</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; }
+        .header-container { text-align: center; margin-bottom: 20px; border-bottom: 3px solid #0056b3; padding-bottom: 10px; background: #fff; border-radius: 8px; }
+        .main-header { color: red; font-size: 26px; font-weight: bold; margin: 5px 0; }
+        .sub-header { color: blue; font-size: 20px; font-weight: bold; margin: 5px 0; }
+        .sec-sub-header { color: black; font-size: 16px; font-weight: bold; margin: 5px 0; }
+        
+        .module-container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); display: none; }
+        .active-module { display: block; }
+        
+        .login-box { max-width: 420px; margin: 40px auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        
+        button { padding: 8px 14px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        button:hover { background: #004494; }
+        .logout-btn { background: #dc3545; float: right; }
+        .logout-btn:hover { background: #bd2130; }
+        .print-btn { background: #28a745; margin-left: 10px; }
+        .print-btn:hover { background: #218838; }
+        .excel-btn { background: #17a2b8; color: white; margin-left: 8px; font-weight: bold; }
+        .excel-btn:hover { background: #138496; }
+        .edit-btn { background: #ffc107; color: #000; margin-left: 10px; font-weight: bold; }
+        .edit-btn:hover { background: #e0a800; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        table, th, td { border: 1px solid #c2c2c2; }
+        th, td { padding: 7px 5px; text-align: center; }
+        th { background-color: #e9ecef; }
+        
+        .nav-tabs { margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        .nav-tabs button { background: #e9ecef; color: #333; margin-right: 5px; margin-bottom: 4px; }
+        .nav-tabs button.active { background: #0056b3; color: white; }
+        
+        .multi-select-box { max-height: 140px; overflow-y: auto; border: 1px solid #ccc; padding: 6px; background: #fafafa; border-radius: 4px; }
+        .multi-select-box label { font-weight: normal; display: block; margin: 3px 0; cursor: pointer; }
+
+        .signature-section { display: none; margin-top: 60px; justify-content: space-between; padding: 0 40px; font-size: 14px; font-weight: bold; }
+
+        .print-header { display: none; text-align: center; margin-bottom: 15px; border-bottom: 2px solid #0056b3; padding-bottom: 8px; }
+        .print-header h2 { color: red; margin: 0; font-size: 22px; }
+        .print-header h3 { color: blue; margin: 4px 0; font-size: 16px; }
+        .print-header h4 { color: black; margin: 3px 0; font-size: 14px; }
+
+        .print-only-text { display: none; }
+
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 8mm 6mm 8mm 6mm;
+            }
+            body { 
+                background-color: #fff; 
+                margin: 0; 
+                padding: 0; 
+                font-size: 10px;
+            }
+            body * { visibility: hidden; }
+            .printable-area, .printable-area * { visibility: visible; }
+            .printable-area { 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100% !important; 
+                display: block !important;
+            }
+            .printable-area .print-header {
+                display: block !important;
+                text-align: center !important;
+                margin-bottom: 8px !important;
+                padding-bottom: 4px !important;
+            }
+            .printable-area .print-header h2 { font-size: 16px !important; }
+            .printable-area .print-header h3 { font-size: 13px !important; }
+            .printable-area .print-header h4 { font-size: 11px !important; }
+            
+            .no-print { display: none !important; }
+            .sub-select-dropdown { display: none !important; }
+            .print-only-text { display: inline-block !important; font-weight: bold; }
+
+            .signature-section { 
+                display: flex !important; 
+                margin-top: 30px !important;
+                padding: 0 20px !important;
+                font-size: 11px !important;
+                page-break-inside: avoid;
+            }
+            table {
+                width: 100% !important;
+                margin-top: 6px !important;
+                font-size: 9px !important;
+                page-break-inside: auto;
+            }
+            th, td {
+                padding: 3px 2px !important;
+                line-height: 1.15;
+            }
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            thead {
+                display: table-header-group;
+            }
+            tfoot {
+                display: table-footer-group;
+            }
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<style id="mobile-responsive-overrides">
+* { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: hidden; }
+img, canvas, video { max-width: 100%; height: auto; }
+button, input, select, textarea { max-width: 100%; font-size: 16px; }
+.login-box { width: min(94vw, 520px); margin-left:auto; margin-right:auto; }
+.module-container { width:100%; max-width:1400px; margin-left:auto; margin-right:auto; }
+table { max-width:100%; }
+
+@media (max-width:768px) {
+  body { padding:8px !important; font-size:14px; }
+  .header-container { padding:10px 8px !important; margin-bottom:10px !important; }
+  .main-header { font-size:clamp(20px,6vw,30px) !important; line-height:1.15; }
+  .sub-header,.sec-sub-header { font-size:clamp(12px,3.5vw,17px) !important; line-height:1.3; }
+  .login-box { width:100% !important; max-width:520px !important; margin:12px auto !important; padding:16px !important; }
+  .form-group { width:100% !important; min-width:0 !important; }
+  .form-group input,.form-group select,.form-group textarea { width:100% !important; min-height:44px; }
+  button { min-height:44px; padding:10px 14px !important; }
+
+  .nav-tabs {
+    display:flex !important; flex-wrap:nowrap !important; overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch; gap:6px !important; padding-bottom:6px;
+  }
+  .nav-tabs button { flex:0 0 auto !important; white-space:nowrap; min-height:44px; }
+
+  .form-row,.form-grid,.input-row,.controls-row {
+    display:flex !important; flex-direction:column !important; width:100% !important; gap:10px !important;
+  }
+
+  .table-container,.table-responsive,.responsive-table,.printable-area,
+  #timetableContainer,#timetableDisplay,#d-timetable,#timetableOutput,
+  #scheduleDisplay,#tScheduleDisplay,#substitutionMatrixContainer {
+    width:100% !important; max-width:100% !important; overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  table { min-width:650px; }
+  td,th,label { overflow-wrap:anywhere; }
+  .multi-select-box { max-height:280px !important; overflow-y:auto; overflow-x:hidden; }
+  .action-buttons,.button-group { display:flex !important; flex-wrap:wrap !important; gap:8px !important; }
+  .action-buttons button,.button-group button { flex:1 1 140px; }
+  input[type="checkbox"],input[type="radio"] { width:20px !important; height:20px; min-width:20px; }
+  pre { max-width:100%; overflow-x:auto; }
+}
+
+@media (max-width:480px) {
+  body { padding:5px !important; }
+  .header-container { padding:8px 5px !important; }
+  .login-box { padding:12px !important; }
+  .module-container { padding:8px !important; }
+  table { min-width:600px; font-size:12px !important; }
+  th,td { padding:6px 5px !important; }
+  .action-buttons button,.button-group button { flex:1 1 100%; width:100%; }
+}
+</style>
+
+</head>
+<body>
+
+    <div class="header-container">
+        <div class="main-header">SRI CHAITANYA SCHOOL</div>
+        <div class="sub-header">Branch : Adibatla</div>
+        <div class="sec-sub-header">Teacher’s Timetable and Substitution Allotment</div>
+    </div>
+
+    <!-- Login Module -->
+    <div id="loginModule" class="login-box active-module">
+        <h3 style="text-align: center;">Authentication Portal</h3>
+        <div class="form-group">
+            <label>Login As:</label>
+            <select id="roleSelect" onchange="updateLoginFields()">
+                <option value="principal">Principal</option>
+                <option value="dean">Deans & Incharges</option>
+                <option value="teacher">Teacher</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label id="usernameLabel">Username / Email:</label>
+            <input type="text" id="username" placeholder="Principal: enter Firebase email | Others: enter full name">
+        </div>
+        <div class="form-group">
+            <label>Password (Employee ID / Principal Code):</label>
+            <input type="password" id="password" placeholder="Enter Employee ID">
+        </div>
+        <button onclick="handleLogin()" style="width: 100%;">Sign In</button>
+        <script>
+            document.getElementById('roleSelect').addEventListener('change', function() {
+                const label = document.getElementById('usernameLabel');
+                const input = document.getElementById('username');
+                if (this.value === 'principal') {
+                    label.innerText = 'Principal Email:';
+                    input.placeholder = 'Enter Principal email';
+                    input.type = 'email';
+                } else {
+                    label.innerText = 'Username (Name):';
+                    input.placeholder = 'Enter full name';
+                    input.type = 'text';
+                }
+            });
+        </script>
+        <p id="loginError" style="color: red; display: none; text-align: center; margin-top: 10px;">Invalid credentials!</p>
+    </div>
+
+    <!-- Principal Module -->
+    <div id="principalModule" class="module-container">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <h2>Principal Master Portal</h2>
+        <div class="nav-tabs">
+            <button class="active" onclick="showTab('p-staff')">Staff Directory</button>
+            <button onclick="showTab('p-class-tt')">Class Timetables</button>
+            <button onclick="showTab('p-teacher-tt')">Teacher Timetables</button>
+            <button onclick="showTab('p-sub-tt')">Substitution Logs</button>
+        </div>
+
+        <div id="p-staff" class="tab-content active-module">
+            <h3>Staff Details Registration <small style="color:#666;">(Principal Only)</small></h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1;"><label>Employee ID:</label><input type="text" id="staffEmpId" placeholder="e.g. SC1001"></div>
+                <div class="form-group" style="flex: 1;"><label>Name:</label><input type="text" id="staffName" placeholder="Full name"></div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Designation:</label>
+                    <select id="staffDesig">
+                        <option value="">Select</option><option>Dean</option><option>IPL Incharge</option>
+                        <option>C Batch Incharge</option><option>S Batch Incharge</option><option>HOD</option>
+                        <option>10th Incharge</option><option>Teacher</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Subject:</label>
+                    <select id="staffSubj">
+                        <option value="">Select</option><option>Telugu</option><option>Hindi</option>
+                        <option>English</option><option>Math</option><option>Physics</option>
+                        <option>Chemistry</option><option>Biology</option><option>Social</option>
+                        <option>IT</option><option>Computer</option><option>Wizclub</option>
+                        <option>Art & Crafts</option><option>PET</option><option>Reasoning</option><option>Arithmetic</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;"><label>Mobile No:</label><input type="text" id="staffMob"></div>
+            </div>
+            <button onclick="saveStaff()">Save Staff</button>
+            <button onclick="clearStaffForm()">Next Entry</button>
+            
+            <h3 style="margin-top: 20px;">Saved Global Staff Database</h3>
+            <table id="staffTable">
+                <thead><tr><th>S.No</th><th>Emp ID</th><th>Name</th><th>Designation</th><th>Subject</th><th>Mobile No</th><th>Action</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        <!-- Principal Class Timetable View -->
+        <div id="p-class-tt" class="tab-content" style="display:none;">
+            <h3>Class Master Timetable Viewer</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Orientation:</label>
+                    <select id="pTtOrientation" onchange="updatePrincipalClassOptions()">
+                        <option value="">Select</option><option>IPL</option><option>MPL</option>
+                        <option>C Batch</option><option>Techno</option><option>Lead</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Class:</label>
+                    <select id="pTtClass" onchange="renderPrincipalClassDashboard()"></select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Section:</label>
+                    <select id="pTtSection" onchange="renderPrincipalClassDashboard()">
+                        <option value="">Select</option>
+                        <option value="A">A</option><option value="B">B</option>
+                        <option value="C">C</option><option value="D">D</option>
+                    </select>
+                </div>
+            </div>
+            <div id="pClassDashboardContainer"></div>
+        </div>
+
+        <!-- Principal Teacher Timetable View -->
+        <div id="p-teacher-tt" class="tab-content" style="display:none;">
+            <h3>Individual Teacher Timetable</h3>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+                <div class="form-group" style="flex:1; min-width:260px; max-width:420px;">
+                    <label><b>Select Teacher:</b></label>
+                    <select id="pWeeklyTeacherSelect" onchange="renderPrincipalTeacherWeeklyTimetable()">
+                        <option value="">Select Teacher</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="pPrincipalTeacherWeeklyView"></div>
+
+            <hr style="margin:25px 0;">
+
+            <h3>Consolidated Staff Timetable by Date</h3>
+            <div class="form-group" style="max-width:300px;">
+                <label>Select Date:</label>
+                <input type="date" id="pDtSelectDate" onchange="renderPrincipalTeachersByDate()">
+            </div>
+            <div id="pTeachersByDateView"></div>
+        </div>
+
+        <!-- Principal Substitution Logs View -->
+        <div id="p-sub-tt" class="tab-content" style="display:none;">
+            <h3>Finalized Substitution Logs</h3>
+            <div class="form-group" style="max-width: 300px;">
+                <label>Select Date:</label>
+                <input type="date" id="pSubLogDate" onchange="renderPrincipalSubstitutionLogs()">
+            </div>
+            <div id="pSubLogsView"></div>
+        </div>
+    </div>
+
+    <!-- Dean & Incharges Module -->
+    <div id="deanModule" class="module-container">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <h2>Welcome Deans & Incharges</h2>
+        <div class="nav-tabs">
+            <button class="active" onclick="showTabDean('d-class')">Create Class-Wise Timetable</button>
+            <button onclick="showTabDean('d-teacher-weekly')">Teacher-Wise Weekly Timetable</button>
+            <button onclick="showTabDean('d-teacher')">Teacher-Wise Day Timetable</button>
+            <button onclick="showTabDean('d-sub')">Create Substitutions</button>
+        </div>
+
+        <!-- 1. Create Class Wise Timetable -->
+        <div id="d-class" class="tab-content active-module">
+            <h3>Timetable Allotment Engine</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Orientation:</label>
+                    <select id="ttOrientation" onchange="updateClassSubOptions()">
+                        <option value="">Select</option><option>IPL</option><option>MPL</option>
+                        <option>C Batch</option><option>Techno</option><option>Lead</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Class:</label>
+                    <select id="ttClass" onchange="renderSingleClassFullDashboard()"></select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Section:</label>
+                    <select id="ttSection" onchange="renderSingleClassFullDashboard()">
+                        <option value="">Select</option>
+                        <option value="A">A</option><option value="B">B</option>
+                        <option value="C">C</option><option value="D">D</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Day to Edit/Assign:</label>
+                    <select id="ttDay">
+                        <option>Monday</option><option>Tuesday</option><option>Wednesday</option>
+                        <option>Thursday</option><option>Friday</option><option>Saturday</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="generatePeriodAssignmentGrid()">Configure Periods</button>
+            
+            <div id="periodGridContainer" style="margin-top: 15px;"></div>
+            
+            <hr style="margin: 25px 0;">
+            <div id="singleClassDashboardContainer"></div>
+        </div>
+
+        <!-- 2. Teacher-Wise Weekly Timetable -->
+        <div id="d-teacher-weekly" class="tab-content" style="display:none;">
+            <h3>Teacher-Wise Weekly Master Schedule</h3>
+            <div class="form-group" style="max-width: 350px;">
+                <label>Select Teacher:</label>
+                <select id="twSelectTeacher" onchange="renderTeacherWeeklyTimetable()"></select>
+            </div>
+            <div id="teacherWeeklyTimetableContainer"></div>
+        </div>
+
+        <!-- 3. Teacher Wise Day Timetable -->
+        <div id="d-teacher" class="tab-content" style="display:none;">
+            <h3>Teacher-Wise Timetable by Date</h3>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1; max-width: 250px;">
+                    <label>Select Date:</label>
+                    <input type="date" id="dtSelectDate" onchange="onDayTimetableDateChange()">
+                </div>
+                <div class="form-group" style="flex: 1; max-width: 250px;">
+                    <label>Day Schedule Mode:</label>
+                    <select id="dtDayMode" onchange="onDayModeChange()">
+                        <option value="normal">Select (Normal Working Day)</option>
+                        <option value="holiday">Holiday (Special / Exam Duty)</option>
+                    </select>
+                </div>
+            </div>
+            <div id="allTeachersByDateView"></div>
+        </div>
+
+        <!-- 4. Substitutions Matrix -->
+        <div id="d-sub" class="tab-content" style="display:none;">
+            <h3>Substitution Allotment Matrix</h3>
+            <div id="subSelectionPanel">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1; min-width: 200px;">
+                        <label>Select Date:</label>
+                        <input type="date" id="subDate" onchange="populateAbsentCheckboxes()">
+                    </div>
+                    <div class="form-group" style="flex: 2; min-width: 250px;">
+                        <label>Mark Absent Teachers (Multiple Selection):</label>
+                        <div class="multi-select-box" id="absentStaffCheckboxes"></div>
+                    </div>
+                </div>
+                <button onclick="generateSubstitutionMatrix()">Assign Timetable</button>
+            </div>
+            <div id="substitutionMatrixContainer" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <!-- Teacher Module -->
+    <div id="teacherModule" class="module-container">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <h3 id="teacherWelcome"></h3>
+        <div class="form-group" style="max-width: 300px;">
+            <label>Select Date:</label>
+            <input type="date" id="tDate">
+            <button onclick="viewTeacherSchedule()" style="margin-top: 5px;">Proceed</button>
+        </div>
+        <div id="tScheduleDisplay" style="margin-top:20px;"></div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyARCvUxPzDxIRLP4nLJqGwqkHfsgflDYfc",
+            authDomain: "sctstimetable.firebaseapp.com",
+            projectId: "sctstimetable",
+            storageBucket: "sctstimetable.firebasestorage.app",
+            messagingSenderId: "200826301510",
+            appId: "1:200826301510:web:f26a8d7328a2e13c8bae47",
+            measurementId: "G-Q816E75LRG"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        const secondaryApp = firebase.initializeApp(firebaseConfig, 'staffCreatorApp');
+        const secondaryAuth = secondaryApp.auth();
+
+        let staffList = [];
+        let masterTimetable = {};
+        let teacherWeeklyStatus = {};
+        let teacherStatusRecords = {};
+        let dayTypeRecords = {};
+        let holidayRoomRecords = {};
+        let substitutionRecords = {};
+        let currentUser = null;
+        let editingStaffEmpId = null;
+
+        const PRINCIPAL_EMAIL = ''; // Principal enters the actual Firebase Authentication email
+        const PRINCIPAL_ROLE = 'principal';
+        const MANAGER_DESIGNATIONS = ['Dean', 'IPL Incharge', 'C Batch Incharge', 'S Batch Incharge', 'HOD', '10th Incharge'];
+
+        function staffEmail(empId) { return `${String(empId).trim().toLowerCase()}@scadibatla.local`; }
+
+        async function loadDataForRole(role) {
+            staffList = []; masterTimetable = {}; teacherWeeklyStatus = {}; teacherStatusRecords = {};
+            dayTypeRecords = {}; holidayRoomRecords = {}; substitutionRecords = {};
+
+            if(role === 'principal' || role === 'dean') {
+                const staffSnap = await db.collection('staff').get();
+                staffSnap.forEach(doc => staffList.push(doc.data()));
+                const weeklySnap = await db.collection('teacherWeeklyStatus').get();
+                weeklySnap.forEach(doc => teacherWeeklyStatus[doc.id] = doc.data().value || {});
+            }
+
+            const ttSnap = await db.collection('timetables').get();
+            ttSnap.forEach(doc => masterTimetable[doc.id] = doc.data().value || {});
+
+            const statusSnap = await db.collection('teacherStatusRecords').get();
+            statusSnap.forEach(doc => teacherStatusRecords[doc.id] = doc.data().value || {});
+
+            const daySnap = await db.collection('dayTypeRecords').get();
+            daySnap.forEach(doc => dayTypeRecords[doc.id] = doc.data().value || 'normal');
+
+            const roomSnap = await db.collection('holidayRoomRecords').get();
+            roomSnap.forEach(doc => holidayRoomRecords[doc.id] = doc.data().value || {});
+
+            const subSnap = await db.collection('substitutionRecords').get();
+            subSnap.forEach(doc => substitutionRecords[doc.id] = doc.data().value || []);
+        }
+
+        async function saveStaffToFirestore(staff) {
+            await db.collection('staff').doc(staff.empId).set(staff);
+        }
+
+        async function saveMapDoc(collectionName, docId, value) {
+            await db.collection(collectionName).doc(docId).set({ value });
+        }
+
+        const periods = [
+            { id: "0", time: "8:10am - 8:50am" }, { id: "I", time: "8:50am - 9:30am" },
+            { id: "II", time: "9:30am - 10:10am" }, { id: "III", time: "10:10am - 10:50am" },
+            { id: "IV", time: "11:00am - 11:40am" }, { id: "V", time: "11:40am - 12:20pm" },
+            { id: "VI", time: "12:20pm - 1:00pm" }, { id: "VII", time: "1:00pm - 1:40pm" },
+            { id: "VIII", time: "1:40pm - 2:20pm" }, { id: "IX", time: "2:20pm - 3:00pm" },
+            { id: "X", time: "3:10pm - 3:50pm" }, { id: "XI", time: "3:50pm - 4:30pm" },
+            { id: "XII", time: "4:30pm - 5:10pm" }, { id: "XIII", time: "5:10pm - 5:50pm" }
+        ];
+
+        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const classOpts = {
+            "IPL": ["C1 IPL", "C2 IPL", "C3 IPL", "C4 IPL", "C5 IPL"],
+            "MPL": ["M1 MPL", "M2 MPL", "M3 MPL"],
+            "C Batch": ["C1", "C2", "C3", "C4", "C5"],
+            "Lead": ["L1", "L2", "L3", "L4", "L5"],
+            "Techno": ["X", "IX", "VIII", "VII", "VI"]
+        };
+
+        const roomOptionsList = [
+            "Room 301", "Room 302", "Room 303", "Room 304", "Room 305", "Room 306",
+            "Room 307", "Room 308", "Room 309", "Room 310", "Room 311",
+            "Room 401", "Room 402", "Room 403", "Room 404", "Room 405", "Room 406",
+            "Room 407", "Room 408", "Room 409", "Room 410", "Room 411"
+        ];
+
+        function printTargetElement(elemId) {
+            document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area'));
+            const elem = document.getElementById(elemId);
+            if(elem) {
+                elem.classList.add('printable-area');
+                window.print();
+            }
+        }
+
+        function exportTableToExcel(tableContainerId, filename = 'Timetable_Report') {
+            const container = document.getElementById(tableContainerId);
+            if(!container) return;
+            const table = container.querySelector('table');
+            if(!table) return alert('No table data found to export.');
+
+            const cloneTable = table.cloneNode(true);
+            
+            // Clean up action buttons or interactive elements in exported excel
+            cloneTable.querySelectorAll('button, .no-print').forEach(el => el.remove());
+            cloneTable.querySelectorAll('select').forEach(sel => {
+                const text = sel.value || '';
+                const span = document.createElement('span');
+                span.innerText = text;
+                sel.parentNode.replaceChild(span, sel);
+            });
+
+            const html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <!--[if gte mso 9]>
+                    <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>Sheet1</x:Name>
+                                <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <meta charset="utf-8">
+                    <style>
+                        table, th, td { border: 0.5pt solid #000; text-align: center; }
+                        th { background-color: #d9edf7; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <h3 style="text-align:center;">SRI CHAITANYA SCHOOL - ADIBATLA</h3>
+                    ${cloneTable.outerHTML}
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob(['\ufeff', html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename.replace(/[^a-zA-Z0-9_-]/g, '_')}.xls`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function updateLoginFields() {
+            const role = document.getElementById('roleSelect').value;
+            const label = document.getElementById('usernameLabel');
+            const input = document.getElementById('username');
+            if (role === 'principal') {
+                label.innerText = 'Principal Email:';
+                input.placeholder = 'Enter the exact Firebase Authentication email';
+                input.type = 'email';
+            } else {
+                label.innerText = 'Username (Name):';
+                input.placeholder = 'Enter full name';
+                input.type = 'text';
+            }
+        }
+
+        async function handleLogin() {
+            const role = document.getElementById('roleSelect').value;
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            const err = document.getElementById('loginError');
+            err.style.display = 'none';
+
+            if(!user || !pass) { err.innerText = 'Enter username and password.'; err.style.display = 'block'; return; }
+
+            try {
+                const email = role === 'principal' ? user : staffEmail(pass);
+                if (role === 'principal' && !email.includes('@')) {
+                    throw new Error('For Principal login, enter the Firebase Authentication email address.');
+                }
+                const credential = await auth.signInWithEmailAndPassword(email, pass);
+                const uid = credential.user.uid;
+                const userSnap = await db.collection('users').doc(uid).get();
+
+                if(!userSnap.exists) throw new Error('User account is not assigned a role by the Principal.');
+                const account = userSnap.data();
+
+                if(role === 'principal' && account.role !== PRINCIPAL_ROLE) throw new Error('This account is not a Principal account.');
+                if(role === 'dean' && account.role !== 'dean') throw new Error('This account is not authorized for Dean/Incharge access.');
+                if(role === 'teacher' && account.role !== 'teacher') throw new Error('This account is not a Teacher account.');
+                if(role !== 'principal' && account.name && account.name.toLowerCase() !== user.toLowerCase()) throw new Error('Name does not match this employee account.');
+
+                currentUser = { uid, ...account };
+                await loadDataForRole(account.role);
+
+                if(account.role === 'principal') {
+                    switchView('principalModule');
+                    renderStaffTable();
+                } else if(account.role === 'dean') {
+                    switchView('deanModule');
+                    populateTeacherWeeklyDropdown();
+                } else {
+                    document.getElementById('teacherWelcome').innerText = `Welcome, ${account.name} (Emp ID: ${account.empId || 'N/A'} | ${account.designation} - ${account.subject})`;
+                    switchView('teacherModule');
+                }
+            } catch(e) {
+                console.error(e);
+                err.innerText = e.message || 'Invalid credentials.';
+                err.style.display = 'block';
+                currentUser = null;
+            }
+        }
+
+        updateLoginFields();
+
+        function switchView(viewId) {
+            document.querySelectorAll('.module-container, .login-box').forEach(el => el.classList.remove('active-module'));
+            document.getElementById(viewId).classList.add('active-module');
+        }
+
+        async function logout() {
+            try { await auth.signOut(); } catch(e) { console.error(e); }
+            currentUser = null;
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            switchView('loginModule');
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('#principalModule .tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#principalModule .nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            event.target.classList.add('active');
+
+            if(tabId === 'p-teacher-tt') {
+                populatePrincipalWeeklyTeacherDropdown();
+            }
+        }
+        
+        function showTabDean(tabId) {
+            document.querySelectorAll('#deanModule .tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#deanModule .nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            event.target.classList.add('active');
+            if(tabId === 'd-teacher-weekly') populateTeacherWeeklyDropdown();
+            if(tabId === 'd-sub') populateAbsentCheckboxes();
+        }
+
+        async function saveStaff() {
+            if(!currentUser || currentUser.role !== 'principal') return alert('Only the Principal can add or edit employees.');
+            const empId = document.getElementById('staffEmpId').value.trim();
+            const name = document.getElementById('staffName').value.trim();
+            const desig = document.getElementById('staffDesig').value;
+            const subj = document.getElementById('staffSubj').value;
+            const mob = document.getElementById('staffMob').value.trim();
+            if(!empId || !name || !desig || !subj || !mob) return alert('All fields including Employee ID are mandatory');
+            if(!editingStaffEmpId && staffList.some(s => s.empId.toLowerCase() === empId.toLowerCase())) return alert('Employee ID already exists.');
+
+            const staff = { empId, name, designation: desig, subject: subj, mobile: mob };
+            try {
+                const email = staffEmail(empId);
+                if(editingStaffEmpId && editingStaffEmpId !== empId) {
+                    await db.collection('staff').doc(editingStaffEmpId).delete();
+                }
+                await saveStaffToFirestore(staff);
+
+                if(!editingStaffEmpId) {
+                    const account = await secondaryAuth.createUserWithEmailAndPassword(email, empId);
+                    const role = desig === 'Teacher' ? 'teacher' : (MANAGER_DESIGNATIONS.includes(desig) ? 'dean' : 'teacher');
+                    await db.collection('users').doc(account.user.uid).set({ uid: account.user.uid, role, empId, name, designation: desig, subject: subj });
+                    await secondaryAuth.signOut();
+                } else {
+                    const old = staffList.find(s => s.empId === editingStaffEmpId);
+                    const oldSnap = old ? await db.collection('users').where('empId','==',editingStaffEmpId).limit(1).get() : null;
+                    if(oldSnap && !oldSnap.empty) await db.collection('users').doc(oldSnap.docs[0].id).update({ empId, name, designation: desig, subject: subj });
+                }
+
+                const snap = await db.collection('staff').get();
+                staffList = []; snap.forEach(d => staffList.push(d.data()));
+                editingStaffEmpId = null;
+                renderStaffTable(); clearStaffForm();
+                alert('Employee saved successfully. Login email: ' + email + ' | Password: Employee ID');
+            } catch(e) {
+                console.error(e);
+                alert('Could not save employee: ' + e.message);
+            }
+        }
+
+        function clearStaffForm() {
+            editingStaffEmpId = null;
+            document.getElementById('staffEmpId').value = '';
+            document.getElementById('staffName').value = '';
+            document.getElementById('staffDesig').value = '';
+            document.getElementById('staffSubj').value = '';
+            document.getElementById('staffMob').value = '';
+        }
+
+        function renderStaffTable() {
+            const tbody = document.querySelector('#staffTable tbody');
+            tbody.innerHTML = '';
+            staffList.forEach((staff, index) => {
+                tbody.innerHTML += `<tr>
+                    <td>${index + 1}</td>
+                    <td><b>${staff.empId || '---'}</b></td>
+                    <td>${staff.name}</td>
+                    <td>${staff.designation}</td>
+                    <td>${staff.subject}</td>
+                    <td>${staff.mobile}</td>
+                    <td><button onclick="editStaff(${index})">Edit</button></td>
+                </tr>`;
+            });
+        }
+
+        function editStaff(index) {
+            if(!currentUser || currentUser.role !== 'principal') return;
+            const s = staffList[index];
+            editingStaffEmpId = s.empId;
+            document.getElementById('staffEmpId').value = s.empId || '';
+            document.getElementById('staffName').value = s.name;
+            document.getElementById('staffDesig').value = s.designation;
+            document.getElementById('staffSubj').value = s.subject;
+            document.getElementById('staffMob').value = s.mobile;
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+
+        function updateClassSubOptions() {
+            const sel = document.getElementById('ttOrientation').value;
+            const cSelect = document.getElementById('ttClass');
+            cSelect.innerHTML = '';
+            if(classOpts[sel]) {
+                classOpts[sel].forEach(c => {
+                    cSelect.innerHTML += `<option value="${c}">${c}</option>`;
+                });
+            }
+            renderSingleClassFullDashboard();
+        }
+
+        function getSelectedClassKey() {
+            const cls = document.getElementById('ttClass').value;
+            const sec = document.getElementById('ttSection').value;
+            if(!cls) return '';
+            return sec ? `${cls} - Sec ${sec}` : cls;
+        }
+
+        function generatePeriodAssignmentGrid() {
+            const fullClassKey = getSelectedClassKey();
+            const day = document.getElementById('ttDay').value;
+            if(!fullClassKey || !day) return alert("Select Class and Day first.");
+
+            const subjects = ["Telugu", "Hindi", "English", "Math", "Physics", "Chemistry", "Biology", "Social", "IT", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP"];
+            let html = `<h4>Assigning Timetable for ${fullClassKey} (${day})</h4>`;
+            html += `<table><tr><th>Period</th><th>Time</th><th>Subject</th><th>Teacher (Filtered for Availability)</th></tr>`;
+
+            periods.forEach((p) => {
+                let currentAssignment = masterTimetable[fullClassKey]?.[day]?.[p.id] || { subject: '', teacher: '' };
+                
+                let subjSelect = `<select id="sub_${p.id}"><option value="">Select</option>` + 
+                    subjects.map(s => `<option value="${s}" ${currentAssignment.subject === s ? 'selected' : ''}>${s}</option>`).join('') + `</select>`;
+
+                let busyTeachers = [];
+                for(let otherClass in masterTimetable) {
+                    if(otherClass !== fullClassKey && masterTimetable[otherClass]?.[day]?.[p.id]?.teacher) {
+                        busyTeachers.push(masterTimetable[otherClass][day][p.id].teacher);
+                    }
+                }
+
+                let teacherOptions = `<option value="">Select Teacher</option>`;
+                staffList.forEach(st => {
+                    const isBusy = busyTeachers.includes(st.name);
+                    const isSelected = currentAssignment.teacher === st.name;
+                    if(isBusy && !isSelected) {
+                        teacherOptions += `<option value="${st.name}" disabled style="color:red;">${st.name} [Engaged in Other Class]</option>`;
+                    } else {
+                        teacherOptions += `<option value="${st.name}" ${isSelected ? 'selected' : ''}>${st.name} (${st.subject})</option>`;
+                    }
+                });
+
+                html += `<tr>
+                    <td><b>${p.id}</b></td>
+                    <td>${p.time}</td>
+                    <td>${subjSelect}</td>
+                    <td><select id="teach_${p.id}">${teacherOptions}</select></td>
+                </tr>`;
+            });
+
+            html += `</table><button style="margin-top:12px;" onclick="saveClassDaySchedule('${fullClassKey}', '${day}')">Save Day Schedule</button>`;
+            document.getElementById('periodGridContainer').innerHTML = html;
+        }
+
+        async function saveClassDaySchedule(fullClassKey, day) {
+            if(!masterTimetable[fullClassKey]) masterTimetable[fullClassKey] = {};
+            if(!masterTimetable[fullClassKey][day]) masterTimetable[fullClassKey][day] = {};
+
+            periods.forEach(p => {
+                const sub = document.getElementById(`sub_${p.id}`).value;
+                const teach = document.getElementById(`teach_${p.id}`).value;
+                masterTimetable[fullClassKey][day][p.id] = { subject: sub, teacher: teach };
+            });
+
+            await saveMapDoc('timetables', fullClassKey, masterTimetable[fullClassKey]);
+            alert(`Schedule for ${fullClassKey} (${day}) updated!`);
+            document.getElementById('periodGridContainer').innerHTML = '';
+            renderSingleClassFullDashboard();
+        }
+
+        function renderSingleClassFullDashboard() {
+            const fullClassKey = getSelectedClassKey();
+            const container = document.getElementById('singleClassDashboardContainer');
+            if(!fullClassKey) { container.innerHTML = ''; return; }
+
+            let html = `<div id="classMasterPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Class Master Timetable (Week View): ${fullClassKey}</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Master View: ${fullClassKey} (Complete Week)</h3>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('classMasterPrintContainer')">Print Master Timetable</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('classMasterPrintContainer', 'Class_Timetable_${fullClassKey}')">Download Excel</button>
+                    </div>
+                </div>`;
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            html += `</tr></thead><tbody>`;
+
+            days.forEach(d => {
+                html += `<tr><td><b>${d}</b></td>`;
+                periods.forEach(p => {
+                    const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
+                    if(cell && cell.subject) {
+                        html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${cell.teacher || '---'}</span></td>`;
+                    } else {
+                        html += `<td style="color:#aaa;">---</td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div></div>`;
+            container.innerHTML = html;
+        }
+
+        // ================= TEACHER-WISE WEEKLY TIMETABLE =================
+
+        function populateTeacherWeeklyDropdown() {
+            const sel = document.getElementById('twSelectTeacher');
+            if(!sel) return;
+            sel.innerHTML = '<option value="">Select Teacher</option>';
+            staffList.forEach(st => {
+                sel.innerHTML += `<option value="${st.name}">${st.name} (${st.designation} - ${st.subject})</option>`;
+            });
+        }
+
+        function renderTeacherWeeklyTimetable() {
+            const teacherName = document.getElementById('twSelectTeacher').value;
+            const container = document.getElementById('teacherWeeklyTimetableContainer');
+            if(!teacherName) { container.innerHTML = ''; return; }
+
+            let html = `<div id="teacherWeeklyPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Teacher Weekly Timetable: ${teacherName}</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>Weekly Master Timetable for: ${teacherName}</h4>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('teacherWeeklyPrintContainer')">Print Teacher Weekly Timetable</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('teacherWeeklyPrintContainer', 'Weekly_Schedule_${teacherName}')">Download Excel</button>
+                    </div>
+                </div>`;
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            html += `<th class="no-print">Action</th></tr></thead><tbody>`;
+
+            days.forEach((day, dIdx) => {
+                html += `<tr id="tw_row_${dIdx}"><td><b>${day}</b></td>`;
+                periods.forEach(p => {
+                    let assignedClass = "";
+                    for(let cls in masterTimetable) {
+                        if(masterTimetable[cls]?.[day]?.[p.id]?.teacher === teacherName) {
+                            assignedClass = `<b>${cls}</b><br>(${masterTimetable[cls][day][p.id].subject})`;
+                            break;
+                        }
+                    }
+
+                    if(assignedClass) {
+                        html += `<td style="background-color: #e8f4fd;">${assignedClass}</td>`;
+                    } else {
+                        let statusVal = teacherWeeklyStatus[teacherName]?.[day]?.[p.id] || "---";
+                        html += `<td>
+                            <span class="tw-view-mode">${statusVal}</span>
+                            <select class="tw-edit-mode" style="display:none;" id="tw_sel_${dIdx}_${p.id}">
+                                <option value="---" ${statusVal === '---' ? 'selected' : ''}>---</option>
+                                <option value="Rest" ${statusVal === 'Rest' ? 'selected' : ''}>Rest</option>
+                                <option value="Lunch" ${statusVal === 'Lunch' ? 'selected' : ''}>Lunch</option>
+                            </select>
+                        </td>`;
+                    }
+                });
+                html += `<td class="no-print">
+                    <button id="tw_edit_btn_${dIdx}" onclick="toggleTeacherWeeklyRowEdit(${dIdx}, true)">Edit Day</button>
+                    <button id="tw_save_btn_${dIdx}" style="display:none;" onclick="saveTeacherWeeklyRow(${dIdx}, '${teacherName}', '${day}')">Save</button>
+                </td></tr>`;
+            });
+
+            html += `</tbody></table></div></div>`;
+            container.innerHTML = html;
+        }
+
+        function toggleTeacherWeeklyRowEdit(dIdx, isEditing) {
+            const row = document.getElementById(`tw_row_${dIdx}`);
+            row.querySelectorAll('.tw-view-mode').forEach(el => el.style.display = isEditing ? 'none' : 'inline');
+            row.querySelectorAll('.tw-edit-mode').forEach(el => el.style.display = isEditing ? 'inline-block' : 'none');
+            document.getElementById(`tw_edit_btn_${dIdx}`).style.display = isEditing ? 'none' : 'inline-block';
+            document.getElementById(`tw_save_btn_${dIdx}`).style.display = isEditing ? 'inline-block' : 'none';
+        }
+
+        async function saveTeacherWeeklyRow(dIdx, teacherName, day) {
+            if(!teacherWeeklyStatus[teacherName]) teacherWeeklyStatus[teacherName] = {};
+            if(!teacherWeeklyStatus[teacherName][day]) teacherWeeklyStatus[teacherName][day] = {};
+
+            periods.forEach(p => {
+                const el = document.getElementById(`tw_sel_${dIdx}_${p.id}`);
+                if(el) {
+                    teacherWeeklyStatus[teacherName][day][p.id] = el.value;
+                }
+            });
+
+            await saveMapDoc('teacherWeeklyStatus', teacherName, teacherWeeklyStatus[teacherName]);
+            toggleTeacherWeeklyRowEdit(dIdx, false);
+            renderTeacherWeeklyTimetable();
+        }
+
+        // ================= TEACHER-WISE DAY TIMETABLE =================
+
+        function onDayTimetableDateChange() {
+            const dateVal = document.getElementById('dtSelectDate').value;
+            if(!dateVal) return;
+            const mode = dayTypeRecords[dateVal] || 'normal';
+            document.getElementById('dtDayMode').value = mode;
+            renderAllTeachersByDate();
+        }
+
+        async function onDayModeChange() {
+            const dateVal = document.getElementById('dtSelectDate').value;
+            if(!dateVal) return alert("Select Date first.");
+            const mode = document.getElementById('dtDayMode').value;
+            dayTypeRecords[dateVal] = mode;
+            await saveMapDoc('dayTypeRecords', dateVal, mode);
+            renderAllTeachersByDate();
+        }
+
+        function renderAllTeachersByDate() {
+            const dateVal = document.getElementById('dtSelectDate').value;
+            const container = document.getElementById('allTeachersByDateView');
+            if(!dateVal) { container.innerHTML = ''; return; }
+
+            const dayName = getDayNameFromDate(dateVal);
+            const isHoliday = (document.getElementById('dtDayMode').value === 'holiday');
+
+            let html = `<div id="allTeachersDayPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Consolidated Staff Timetable: ${dateVal} (${dayName}) - ${isHoliday ? 'HOLIDAY / EXAM DUTY' : 'NORMAL SCHEDULE'}</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>Consolidated Staff Timetable for ${dateVal} (${dayName}) - <span style="color:${isHoliday ? 'red' : 'green'};">${isHoliday ? 'HOLIDAY / SPECIAL DUTY MODE' : 'NORMAL WORKING DAY'}</span></h4>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('allTeachersDayPrintContainer')">Print Consolidated Timetable</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('allTeachersDayPrintContainer', 'Staff_Day_Timetable_${dateVal}')">Download Excel</button>
+                    </div>
+                </div>`;
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Teacher Name</th><th>Designation</th>`;
+            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            html += `<th class="no-print">Action</th></tr></thead><tbody>`;
+
+            staffList.forEach((st, sIndex) => {
+                html += `<tr id="row_st_${sIndex}"><td><b>${st.name}</b></td><td>${st.designation}</td>`;
+                periods.forEach(p => {
+                    if(isHoliday) {
+                        let roomVal = holidayRoomRecords[dateVal]?.[st.name]?.[p.id] || "---";
+                        let roomOpts = `<option value="---" ${roomVal === '---' ? 'selected' : ''}>---</option>`;
+                        roomOptionsList.forEach(rm => {
+                            roomOpts += `<option value="${rm}" ${roomVal === rm ? 'selected' : ''}>${rm}</option>`;
+                        });
+                        html += `<td style="background-color: #fff9e6;">
+                            <span class="view-mode-status"><b>${roomVal}</b></span>
+                            <select class="edit-mode-select holiday-room-select" style="display:none;" id="status_${sIndex}_${p.id}" data-period="${p.id}" data-teacher="${st.name}" data-sindex="${sIndex}" onchange="validateRoomAssignment(this, '${dateVal}')">
+                                ${roomOpts}
+                            </select>
+                        </td>`;
+                    } else {
+                        let assignedClass = "";
+                        for(let cls in masterTimetable) {
+                            if(masterTimetable[cls]?.[dayName]?.[p.id]?.teacher === st.name) {
+                                assignedClass = `<b>${cls}</b><br>(${masterTimetable[cls][dayName][p.id].subject})`;
+                                break;
+                            }
+                        }
+
+                        if(assignedClass) {
+                            html += `<td style="background-color: #f0f8ff;">${assignedClass}</td>`;
+                        } else {
+                            let customVal = teacherStatusRecords[dateVal]?.[st.name]?.[p.id] || teacherWeeklyStatus[st.name]?.[dayName]?.[p.id] || "---";
+                            html += `<td>
+                                <span class="view-mode-status">${customVal}</span>
+                                <select class="edit-mode-select" style="display:none;" id="status_${sIndex}_${p.id}">
+                                    <option value="---" ${customVal === '---' ? 'selected' : ''}>---</option>
+                                    <option value="Lunch" ${customVal === 'Lunch' ? 'selected' : ''}>Lunch</option>
+                                    <option value="Rest" ${customVal === 'Rest' ? 'selected' : ''}>Rest</option>
+                                </select>
+                            </td>`;
+                        }
+                    }
+                });
+                html += `<td class="no-print">
+                    <button id="edit_btn_${sIndex}" onclick="toggleRowEdit(${sIndex}, true, ${isHoliday}, '${dateVal}')">Edit</button>
+                    <button id="save_btn_${sIndex}" style="display:none;" onclick="saveRowStatus(${sIndex}, '${st.name}', '${dateVal}', ${isHoliday})">Save</button>
+                </td></tr>`;
+            });
+
+            html += `</tbody></table></div></div>`;
+            container.innerHTML = html;
+        }
+
+        function validateRoomAssignment(selectEl, dateVal) {
+            const chosenRoom = selectEl.value;
+            const periodId = selectEl.dataset.period;
+            const teacherName = selectEl.dataset.teacher;
+
+            if(!chosenRoom || chosenRoom === "---") return;
+
+            let isClashing = false;
+            let clashingTeacher = "";
+
+            if(holidayRoomRecords[dateVal]) {
+                for(let tName in holidayRoomRecords[dateVal]) {
+                    if(tName !== teacherName && holidayRoomRecords[dateVal][tName]?.[periodId] === chosenRoom) {
+                        isClashing = true;
+                        clashingTeacher = tName;
+                        break;
+                    }
+                }
+            }
+
+            document.querySelectorAll(`.holiday-room-select[data-period="${periodId}"]`).forEach(el => {
+                if(el !== selectEl && el.value === chosenRoom) {
+                    isClashing = true;
+                    clashingTeacher = el.dataset.teacher;
+                }
+            });
+
+            if(isClashing) {
+                alert(`Conflict Warning: ${chosenRoom} is already assigned to ${clashingTeacher} in Period ${periodId}! Please select another room.`);
+                selectEl.value = "---";
+            }
+        }
+
+        function updateHolidayRoomOptionsAvailability(dateVal) {
+            periods.forEach(p => {
+                const occupiedRooms = [];
+                if(holidayRoomRecords[dateVal]) {
+                    for(let t in holidayRoomRecords[dateVal]) {
+                        const r = holidayRoomRecords[dateVal][t]?.[p.id];
+                        if(r && r !== "---") occupiedRooms.push({ room: r, teacher: t });
+                    }
+                }
+
+                document.querySelectorAll(`.holiday-room-select[data-period="${p.id}"]`).forEach(sel => {
+                    const currentTeacher = sel.dataset.teacher;
+                    Array.from(sel.options).forEach(opt => {
+                        if(opt.value && opt.value !== "---") {
+                            const match = occupiedRooms.find(occ => occ.room === opt.value && occ.teacher !== currentTeacher);
+                            if(match) {
+                                opt.disabled = true;
+                                if(!opt.text.includes("[Occupied]")) {
+                                    opt.text += " [Occupied]";
+                                }
+                            } else {
+                                opt.disabled = false;
+                                opt.text = opt.text.replace(" [Occupied]", "");
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        function toggleRowEdit(sIndex, isEditing, isHoliday, dateVal) {
+            const row = document.getElementById(`row_st_${sIndex}`);
+            row.querySelectorAll('.view-mode-status').forEach(el => el.style.display = isEditing ? 'none' : 'inline');
+            row.querySelectorAll('.edit-mode-select').forEach(el => el.style.display = isEditing ? 'inline-block' : 'none');
+            document.getElementById(`edit_btn_${sIndex}`).style.display = isEditing ? 'none' : 'inline-block';
+            document.getElementById(`save_btn_${sIndex}`).style.display = isEditing ? 'inline-block' : 'none';
+            if(isHoliday && isEditing) {
+                updateHolidayRoomOptionsAvailability(dateVal);
+            }
+        }
+
+        async function saveRowStatus(sIndex, teacherName, dateVal, isHoliday) {
+            if(isHoliday) {
+                if(!holidayRoomRecords[dateVal]) holidayRoomRecords[dateVal] = {};
+                if(!holidayRoomRecords[dateVal][teacherName]) holidayRoomRecords[dateVal][teacherName] = {};
+
+                periods.forEach(p => {
+                    const el = document.getElementById(`status_${sIndex}_${p.id}`);
+                    if(el) {
+                        holidayRoomRecords[dateVal][teacherName][p.id] = el.value;
+                    }
+                });
+                await saveMapDoc('holidayRoomRecords', dateVal, holidayRoomRecords[dateVal]);
+            } else {
+                if(!teacherStatusRecords[dateVal]) teacherStatusRecords[dateVal] = {};
+                if(!teacherStatusRecords[dateVal][teacherName]) teacherStatusRecords[dateVal][teacherName] = {};
+
+                periods.forEach(p => {
+                    const el = document.getElementById(`status_${sIndex}_${p.id}`);
+                    if(el) {
+                        teacherStatusRecords[dateVal][teacherName][p.id] = el.value;
+                    }
+                });
+                await saveMapDoc('teacherStatusRecords', dateVal, teacherStatusRecords[dateVal]);
+            }
+            toggleRowEdit(sIndex, false, isHoliday, dateVal);
+            renderAllTeachersByDate();
+        }
+
+        function getDayNameFromDate(dateStr) {
+            const d = new Date(dateStr);
+            const map = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            return map[d.getDay()] || "Monday";
+        }
+
+        function populateAbsentCheckboxes() {
+            const container = document.getElementById('absentStaffCheckboxes');
+            const currentlyChecked = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
+            container.innerHTML = '';
+            staffList.forEach(st => {
+                const isChecked = currentlyChecked.includes(st.name) ? 'checked' : '';
+                container.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check" ${isChecked}> ${st.name} (${st.subject})</label>`;
+            });
+        }
+
+        function generateSubstitutionMatrix() {
+            const dateVal = document.getElementById('subDate').value;
+            if(!dateVal) return alert("Select a date first.");
+
+            const selectedAbsent = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
+            if(selectedAbsent.length === 0) return alert("Select at least one absent teacher.");
+
+            const existingChoices = {};
+            document.querySelectorAll('[id^="sub_assign_"]').forEach(sel => {
+                const p = sel.dataset.period;
+                const c = sel.dataset.class;
+                if(sel.value) {
+                    existingChoices[`${p}_${c}`] = sel.value;
+                }
+            });
+
+            if(substitutionRecords[dateVal]) {
+                substitutionRecords[dateVal].forEach(rec => {
+                    const key = `${rec.period}_${rec.class}`;
+                    if(!existingChoices[key]) existingChoices[key] = rec.subTeacher;
+                });
+            }
+
+            const dayName = getDayNameFromDate(dateVal);
+            const container = document.getElementById('substitutionMatrixContainer');
+
+            let periodsToSub = [];
+            periods.forEach((p, pIndex) => {
+                for(let cls in masterTimetable) {
+                    const cell = masterTimetable[cls]?.[dayName]?.[p.id];
+                    if(cell && cell.teacher && selectedAbsent.includes(cell.teacher)) {
+                        periodsToSub.push({
+                            absentTeacher: cell.teacher,
+                            period: p.id,
+                            periodIndex: pIndex,
+                            time: p.time,
+                            class: cls,
+                            subject: cell.subject
+                        });
+                    }
+                }
+            });
+
+            periodsToSub.sort((a, b) => a.periodIndex - b.periodIndex);
+
+            if(periodsToSub.length === 0) {
+                container.innerHTML = `<p style="color: green; font-weight:bold;">No classes are assigned to the selected absent teachers on ${dayName}.</p>`;
+                return;
+            }
+
+            let html = `<div id="subMatrixPrintContainer">`;
+            html += `<div class="print-header">
+                <h2>SRI CHAITANYA SCHOOL</h2>
+                <h3>Branch : Adibatla</h3>
+                <h4>Final Substitution Allotment: ${dateVal} (${dayName})</h4>
+            </div>`;
+            html += `<div class="no-print" style="text-align:center;">
+                <h3 style="margin-bottom:5px; color:#0056b3;">SRI CHAITANYA SCHOOL - ADIBATLA</h3>
+                <h4 style="margin-top:0;">Final Substitution Allotment - ${dateVal} (${dayName})</h4>
+            </div>`;
+            html += `<table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Absent Teacher</th><th>Class & Subject</th><th>Substitute Teacher Assigned</th><th style="width:75px;">Sign</th></tr></thead><tbody>`;
+
+            periodsToSub.forEach((item, index) => {
+                let freeStaff = staffList.filter(st => {
+                    if(selectedAbsent.includes(st.name)) return false;
+                    for(let cls in masterTimetable) {
+                        if(masterTimetable[cls]?.[dayName]?.[item.period]?.teacher === st.name) return false;
+                    }
+                    const status = teacherStatusRecords[dateVal]?.[st.name]?.[item.period] || teacherWeeklyStatus[st.name]?.[dayName]?.[item.period];
+                    if(status === 'Lunch' || status === 'Rest') return false;
+
+                    return true;
+                });
+
+                let options = `<option value="">Select Substitute</option>`;
+                let evaluatedStaff = freeStaff.map(fs => {
+                    let totalPeriodsToday = 0;
+                    let handlesThisClass = false;
+                    periods.forEach(p => {
+                        for(let cls in masterTimetable) {
+                            if(masterTimetable[cls]?.[dayName]?.[p.id]?.teacher === fs.name) {
+                                totalPeriodsToday++;
+                                if(cls === item.class) handlesThisClass = true;
+                            }
+                        }
+                    });
+
+                    let priorityVal = 3;
+                    let priorityLabel = "P3 (Free)";
+                    if(handlesThisClass) {
+                        priorityVal = 1;
+                        priorityLabel = "P1 (Handles Same Class)";
+                    } else if(fs.subject === item.subject) {
+                        priorityVal = 2;
+                        priorityLabel = "P2 (Same Subject)";
+                    }
+
+                    return {
+                        staff: fs,
+                        priorityVal,
+                        priorityLabel,
+                        totalPeriodsToday
+                    };
+                });
+
+                evaluatedStaff.sort((a, b) => a.priorityVal - b.priorityVal);
+
+                const existingVal = existingChoices[`${item.period}_${item.class}`] || '';
+
+                evaluatedStaff.forEach(entry => {
+                    const isSel = entry.staff.name === existingVal ? 'selected' : '';
+                    options += `<option value="${entry.staff.name}" ${isSel}>${entry.staff.name} - [${entry.priorityLabel} | Work: ${entry.totalPeriodsToday} P]</option>`;
+                });
+
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td><b>${item.period}</b></td>
+                    <td>${item.time}</td>
+                    <td style="color:red;">${item.absentTeacher}</td>
+                    <td><b>${item.class}</b> (${item.subject})</td>
+                    <td>
+                        <span class="print-only-text" id="print_sub_${index}">${existingVal || '---'}</span>
+                        <select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-date="${dateVal}" data-absent="${item.absentTeacher}" onchange="updateSubPrintDisplay(${index}); validatePeriodClash(this);">${options}</select>
+                    </td>
+                    <td style="width:75px;"></td>
+                </tr>`;
+            });
+
+            html += `</tbody></table>
+                <div class="signature-section">
+                    <div>___________________<br>Incharge Signature</div>
+                    <div>___________________<br>Principal Signature</div>
+                </div>
+            </div>
+            <div style="margin-top:12px;" class="no-print">
+                <button onclick="saveSubstitutionAllotments(${periodsToSub.length})">Finalize & Save Substitutions</button>
+                <button class="edit-btn" onclick="editAbsentSelection()">Edit Absent Selection</button>
+                <button class="print-btn" onclick="printTargetElement('subMatrixPrintContainer')">Print Timetable</button>
+                <button class="excel-btn" onclick="exportTableToExcel('subMatrixPrintContainer', 'Substitution_Allotment_${dateVal}')">Download Excel</button>
+            </div>`;
+            container.innerHTML = html;
+            reapplyPeriodClashes();
+        }
+
+        function updateSubPrintDisplay(index) {
+            const selectEl = document.getElementById(`sub_assign_${index}`);
+            const printSpan = document.getElementById(`print_sub_${index}`);
+            if(selectEl && printSpan) {
+                printSpan.innerText = selectEl.value || '---';
+            }
+        }
+
+        function validatePeriodClash(currentSelect) {
+            const selectedTeacher = currentSelect.value;
+            const currentPeriod = currentSelect.dataset.period;
+            const currentIndex = currentSelect.dataset.index;
+
+            if(!selectedTeacher) {
+                reapplyPeriodClashes();
+                return;
+            }
+
+            const allSelects = document.querySelectorAll('.sub-select-dropdown');
+            let hasClash = false;
+
+            allSelects.forEach(sel => {
+                if(sel.dataset.index !== currentIndex && sel.dataset.period === currentPeriod && sel.value === selectedTeacher) {
+                    hasClash = true;
+                }
+            });
+
+            if(hasClash) {
+                alert(`Conflict Warning: ${selectedTeacher} is already assigned to Period ${currentPeriod} in another class! Please choose another teacher.`);
+                currentSelect.value = "";
+                updateSubPrintDisplay(currentIndex);
+            }
+
+            reapplyPeriodClashes();
+        }
+
+        function reapplyPeriodClashes() {
+            const allSelects = Array.from(document.querySelectorAll('.sub-select-dropdown'));
+            const busyInSub = {};
+            allSelects.forEach(sel => {
+                if(sel.value) {
+                    if(!busyInSub[sel.dataset.period]) busyInSub[sel.dataset.period] = [];
+                    busyInSub[sel.dataset.period].push({ teacher: sel.value, index: sel.dataset.index });
+                }
+            });
+
+            allSelects.forEach(sel => {
+                const p = sel.dataset.period;
+                const myIndex = sel.dataset.index;
+                const assignedOthers = (busyInSub[p] || []).filter(item => item.index !== myIndex).map(item => item.teacher);
+
+                Array.from(sel.options).forEach(opt => {
+                    if(opt.value && assignedOthers.includes(opt.value)) {
+                        opt.disabled = true;
+                        if(!opt.text.includes("[Allotted in Same Period]")) {
+                            opt.text += " [Allotted in Same Period]";
+                        }
+                    } else if(opt.value) {
+                        opt.disabled = false;
+                        opt.text = opt.text.replace(" [Allotted in Same Period]", "");
+                    }
+                });
+            });
+        }
+
+        function editAbsentSelection() {
+            document.getElementById('subSelectionPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function saveSubstitutionAllotments(count) {
+            const dateVal = document.getElementById('subDate').value;
+            if(!dateVal) return;
+
+            let savedRecords = [];
+            for(let i = 0; i < count; i++) {
+                const el = document.getElementById(`sub_assign_${i}`);
+                if(!el) continue;
+                const period = el.dataset.period;
+                const cls = el.dataset.class;
+                const absent = el.dataset.absent;
+                const subTeacher = el.value;
+
+                if(subTeacher) {
+                    savedRecords.push({ period, class: cls, absent, subTeacher });
+                }
+            }
+
+            substitutionRecords[dateVal] = savedRecords;
+            await saveMapDoc('substitutionRecords', dateVal, savedRecords);
+            alert(`Substitutions successfully allotted and saved (${savedRecords.length} allotted)!`);
+        }
+
+        // ================= PRINCIPAL MODULE VIEWS =================
+
+        function updatePrincipalClassOptions() {
+            const sel = document.getElementById('pTtOrientation').value;
+            const cSelect = document.getElementById('pTtClass');
+            cSelect.innerHTML = '';
+            if(classOpts[sel]) {
+                classOpts[sel].forEach(c => {
+                    cSelect.innerHTML += `<option value="${c}">${c}</option>`;
+                });
+            }
+            renderPrincipalClassDashboard();
+        }
+
+        function renderPrincipalClassDashboard() {
+            const cls = document.getElementById('pTtClass').value;
+            const sec = document.getElementById('pTtSection').value;
+            const container = document.getElementById('pClassDashboardContainer');
+            if(!cls) { container.innerHTML = ''; return; }
+            const fullClassKey = sec ? `${cls} - Sec ${sec}` : cls;
+
+            let html = `<div id="pClassPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Class Master Timetable (Week View): ${fullClassKey}</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Master Timetable: ${fullClassKey} (Week View)</h3>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('pClassPrintContainer')">Print Master Timetable</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('pClassPrintContainer', 'Class_Master_${fullClassKey}')">Download Excel</button>
+                    </div>
+                </div>`;
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            html += `</tr></thead><tbody>`;
+
+            days.forEach(d => {
+                html += `<tr><td><b>${d}</b></td>`;
+                periods.forEach(p => {
+                    const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
+                    if(cell && cell.subject) {
+                        html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${cell.teacher || '---'}</span></td>`;
+                    } else {
+                        html += `<td style="color:#aaa;">---</td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div></div>`;
+            container.innerHTML = html;
+        }
+
+        // ================= PRINCIPAL: INDIVIDUAL TEACHER WEEKLY TIMETABLE =================
+
+        function populatePrincipalWeeklyTeacherDropdown() {
+            const sel = document.getElementById('pWeeklyTeacherSelect');
+            if(!sel) return;
+
+            const previous = sel.value;
+            sel.innerHTML = '<option value="">Select Teacher</option>';
+
+            const teachers = [...staffList]
+                .filter(st => st && st.name)
+                .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+
+            teachers.forEach(st => {
+                const opt = document.createElement('option');
+                opt.value = st.name;
+                opt.textContent = `${st.name} (${st.designation || 'Staff'}${st.subject ? ' - ' + st.subject : ''})`;
+                sel.appendChild(opt);
+            });
+
+            if(previous && teachers.some(st => st.name === previous)) {
+                sel.value = previous;
+            }
+        }
+
+        function renderPrincipalTeacherWeeklyTimetable() {
+            const sel = document.getElementById('pWeeklyTeacherSelect');
+            const container = document.getElementById('pPrincipalTeacherWeeklyView');
+            if(!sel || !container) return;
+
+            const teacherName = sel.value;
+            if(!teacherName) {
+                container.innerHTML = '<p style="color:#666;">Select a teacher to view the complete weekly timetable.</p>';
+                return;
+            }
+
+            const teacher = staffList.find(st => st.name === teacherName) || {};
+            const safeName = String(teacherName).replace(/'/g, "\\'");
+
+            let html = `<div id="principalTeacherWeeklyPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Individual Teacher Weekly Timetable: ${teacherName}</h4>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <div>
+                        <h3 style="margin-bottom:4px;">${teacherName}</h3>
+                        <div>${teacher.designation || ''}${teacher.subject ? ' - ' + teacher.subject : ''}</div>
+                    </div>
+                    <div class="no-print">
+                        <button class="print-btn" onclick="printTargetElement('principalTeacherWeeklyPrintContainer')">
+                            Print Weekly Timetable
+                        </button>
+                        <button class="excel-btn" onclick="exportTableToExcel('principalTeacherWeeklyPrintContainer', 'Teacher_Weekly_${teacherName}')">
+                            Download Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div style="overflow-x:auto; margin-top:15px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Day</th>`;
+
+            periods.forEach(p => {
+                html += `<th>P-${p.id}<br><small>${p.time}</small></th>`;
+            });
+
+            html += `</tr></thead><tbody>`;
+
+            days.forEach(day => {
+                html += `<tr><td><b>${day}</b></td>`;
+
+                periods.forEach(p => {
+                    let assigned = null;
+
+                    for(const cls in masterTimetable) {
+                        const cell = masterTimetable[cls]?.[day]?.[p.id];
+                        if(cell && cell.teacher === teacherName) {
+                            assigned = {
+                                cls,
+                                subject: cell.subject || ''
+                            };
+                            break;
+                        }
+                    }
+
+                    if(assigned) {
+                        html += `<td style="background-color:#e8f4fd;">
+                            <b>${assigned.cls}</b><br>
+                            <span>${assigned.subject}</span>
+                        </td>`;
+                    } else {
+                        const status =
+                            teacherStatusRecords[window.__principalWeeklyDate || '']?.[teacherName]?.[p.id] ||
+                            teacherWeeklyStatus[teacherName]?.[day]?.[p.id] ||
+                            '---';
+
+                        html += `<td>${status}</td>`;
+                    }
+                });
+
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div></div>`;
+
+            container.innerHTML = html;
+        }
+
+        function renderPrincipalTeachersByDate() {
+            const dateVal = document.getElementById('pDtSelectDate').value;
+            const container = document.getElementById('pTeachersByDateView');
+            if(!dateVal) { container.innerHTML = ''; return; }
+
+            const dayName = getDayNameFromDate(dateVal);
+            const isHoliday = (dayTypeRecords[dateVal] === 'holiday');
+
+            let html = `<div id="pStaffPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Consolidated Staff Timetable: ${dateVal} (${dayName}) - ${isHoliday ? 'HOLIDAY DUTY' : 'NORMAL WORKING'}</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>Consolidated Staff Timetable for ${dateVal} (${dayName}) - ${isHoliday ? 'HOLIDAY DUTY' : 'NORMAL WORKING'}</h4>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('pStaffPrintContainer')">Print Day Schedule</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('pStaffPrintContainer', 'Principal_Staff_Timetable_${dateVal}')">Download Excel</button>
+                    </div>
+                </div>`;
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Emp ID</th><th>Teacher Name</th><th>Designation</th>`;
+            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            html += `</tr></thead><tbody>`;
+
+            staffList.forEach((st) => {
+                html += `<tr><td><b>${st.empId || '---'}</b></td><td><b>${st.name}</b></td><td>${st.designation}</td>`;
+                periods.forEach(p => {
+                    if(isHoliday) {
+                        let roomVal = holidayRoomRecords[dateVal]?.[st.name]?.[p.id] || "---";
+                        html += `<td style="background-color:#fff9e6;"><b>${roomVal}</b></td>`;
+                    } else {
+                        let assignedClass = "";
+                        for(let cls in masterTimetable) {
+                            if(masterTimetable[cls]?.[dayName]?.[p.id]?.teacher === st.name) {
+                                assignedClass = `<b>${cls}</b><br>(${masterTimetable[cls][dayName][p.id].subject})`;
+                                break;
+                            }
+                        }
+
+                        if(assignedClass) {
+                            html += `<td style="background-color: #f0f8ff;">${assignedClass}</td>`;
+                        } else {
+                            let customVal = teacherStatusRecords[dateVal]?.[st.name]?.[p.id] || teacherWeeklyStatus[st.name]?.[dayName]?.[p.id] || "---";
+                            html += `<td>${customVal}</td>`;
+                        }
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div></div>`;
+            container.innerHTML = html;
+        }
+
+        function renderPrincipalSubstitutionLogs() {
+            const dateVal = document.getElementById('pSubLogDate').value;
+            const container = document.getElementById('pSubLogsView');
+            if(!dateVal) { container.innerHTML = ''; return; }
+
+            const records = substitutionRecords[dateVal] || [];
+            if(records.length === 0) {
+                container.innerHTML = `<p style="color:red; margin-top:15px;">No substitutions finalized for ${dateVal}.</p>`;
+                return;
+            }
+
+            const periodOrderMap = {};
+            periods.forEach((p, idx) => { periodOrderMap[p.id] = idx; });
+            records.sort((a, b) => (periodOrderMap[a.period] ?? 99) - (periodOrderMap[b.period] ?? 99));
+
+            let html = `<div id="pSubLogPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Finalized Substitutions Log: ${dateVal} (${getDayNameFromDate(dateVal)})</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="margin:0;">SRI CHAITANYA SCHOOL - ADIBATLA</h3>
+                        <h4 style="margin:5px 0;">Finalized Substitutions Log: ${dateVal} (${getDayNameFromDate(dateVal)})</h4>
+                    </div>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('pSubLogPrintContainer')">Print Substitution Log</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('pSubLogPrintContainer', 'Substitution_Logs_${dateVal}')">Download Excel</button>
+                    </div>
+                </div>`;
+            html += `<table><thead><tr><th>S.No</th><th>Period</th><th>Class</th><th>Absent Teacher</th><th>Substitute Teacher Assigned</th><th style="width:75px;">Sign</th></tr></thead><tbody>`;
+
+            records.forEach((rec, idx) => {
+                html += `<tr>
+                    <td>${idx + 1}</td>
+                    <td><b>${rec.period}</b></td>
+                    <td><b>${rec.class}</b></td>
+                    <td style="color:red;">${rec.absent}</td>
+                    <td style="color:green; font-weight:bold;">${rec.subTeacher}</td>
+                    <td style="width:75px;"></td>
+                </tr>`;
+            });
+
+            html += `</tbody></table>
+                <div class="signature-section">
+                    <div>___________________<br>Incharge Signature</div>
+                    <div>___________________<br>Principal Signature</div>
+                </div>
+            </div>`;
+            container.innerHTML = html;
+        }
+
+        // ================= TEACHER MODULE VIEW =================
+
+        function viewTeacherSchedule() {
+            if(!currentUser) return;
+            const dateVal = document.getElementById('tDate').value;
+            if(!dateVal) return alert("Please select date.");
+
+            const dayName = getDayNameFromDate(dateVal);
+            const container = document.getElementById('tScheduleDisplay');
+            const isHoliday = (dayTypeRecords[dateVal] === 'holiday');
+
+            let html = `<div id="tPersonalPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Teacher Personal Schedule: ${currentUser.name} (Emp ID: ${currentUser.empId || '---'}) | ${dateVal} (${dayName})</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>Personal Schedule: ${currentUser.name} (Emp ID: ${currentUser.empId || '---'}) | ${dateVal} (${dayName})</h4>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('tPersonalPrintContainer')">Print My Schedule</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('tPersonalPrintContainer', 'Schedule_${currentUser.name}_${dateVal}')">Download Excel</button>
+                    </div>
+                </div>`;
+
+            if(isHoliday) {
+                html += `<p style="color: #b78103; font-weight:bold;">NOTE: Today is in Holiday / Special Duty Mode. Below is your assigned room duty schedule:</p>`;
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Assigned Room / Duty</th><th>Duty Status</th></tr></thead><tbody>`;
+
+                periods.forEach(p => {
+                    let roomDuty = holidayRoomRecords[dateVal]?.[currentUser.name]?.[p.id] || "---";
+                    let statusLabel = (roomDuty !== "---") ? `<span style="color:green; font-weight:bold;">Assigned Duty</span>` : `<span style="color:#777;">No Duty</span>`;
+                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td style="background-color:#fff9e6; font-weight:bold; font-size:13px;">${roomDuty}</td><td>${statusLabel}</td></tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+            } else {
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Status</th><th>Type</th></tr></thead><tbody>`;
+
+                periods.forEach(p => {
+                    let status = teacherStatusRecords[dateVal]?.[currentUser.name]?.[p.id] || teacherWeeklyStatus[currentUser.name]?.[dayName]?.[p.id] || "---";
+                    let type = "Free / Unassigned";
+
+                    for(let cls in masterTimetable) {
+                        const cell = masterTimetable[cls]?.[dayName]?.[p.id];
+                        if(cell && cell.teacher === currentUser.name) {
+                            status = `${cls} (${cell.subject})`;
+                            type = "Original Class";
+                        }
+                    }
+
+                    if(substitutionRecords[dateVal]) {
+                        const sub = substitutionRecords[dateVal].find(s => s.period === p.id && s.subTeacher === currentUser.name);
+                        if(sub) {
+                            status = `${sub.class} (Sub for ${sub.absent})`;
+                            type = `<span style="color:red;font-weight:bold;">Substitution</span>`;
+                        }
+                    }
+
+                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${status}</td><td>${type}</td></tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+            }
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
