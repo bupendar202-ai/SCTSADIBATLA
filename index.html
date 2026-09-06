@@ -402,6 +402,9 @@ table { max-width:100%; }
             <button onclick="showTabDean('d-teacher-weekly')">Teacher-Wise Weekly Timetable</button>
             <button onclick="showTabDean('d-teacher')">Teacher-Wise Day Timetable</button>
             <button onclick="showTabDean('d-sub')">Create Substitutions</button>
+            <button onclick="showTabDean('d-xsession')">X Session Time Table</button>
+            <button onclick="showTabDean('d-exam')">Examinations</button>
+            <button onclick="showTabDean('d-study')">Study Hours</button>
         </div>
 
         <!-- 1. Create Class Wise Timetable -->
@@ -489,6 +492,72 @@ table { max-width:100%; }
                 <button onclick="generateSubstitutionMatrix()">Assign Timetable</button>
             </div>
             <div id="substitutionMatrixContainer" style="margin-top:20px;"></div>
+        </div>
+
+
+        <!-- 5. X Session Time Table -->
+        <div id="d-xsession" class="tab-content" style="display:none;">
+            <h3>X Session Time Table</h3>
+            <p style="color:#555;">Create and view the X Session class-wise timetable separately for the selected board.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+                <div class="form-group" style="flex:1; min-width:180px;">
+                    <label>Orientation:</label>
+                    <select id="xSessionOrientation" onchange="updateXSessionClassOptions()"></select>
+                </div>
+                <div class="form-group" style="flex:1; min-width:180px;">
+                    <label>Class:</label>
+                    <select id="xSessionClass" onchange="renderXSessionClassTimetable()"></select>
+                </div>
+                <div class="form-group" style="flex:1; min-width:180px;">
+                    <label>Section:</label>
+                    <select id="xSessionSection" onchange="renderXSessionClassTimetable()">
+                        <option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option>
+                    </select>
+                </div>
+            </div>
+            <div id="xSessionClassTimetableContainer"></div>
+        </div>
+
+        <!-- 6. Examinations -->
+        <div id="d-exam" class="tab-content" style="display:none;">
+            <h3>Examinations</h3>
+            <div class="nav-tabs">
+                <button id="examRevisionTabBtn" class="active" onclick="showExamTab('revision')">Revision Schedule</button>
+                <button id="examInvigilationTabBtn" onclick="showExamTab('invigilation')">Invigilation</button>
+            </div>
+
+            <div id="examRevisionPanel" class="tab-content active-module">
+                <h4>Revision Schedule</h4>
+                <p style="color:#555;">Select Orientation, Class and Section like the class timetable. Teachers selected here automatically become revision-duty teachers in the substitution list; you do not need to mark them absent.</p>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <div class="form-group" style="flex:1; min-width:180px;"><label>Date:</label><input type="date" id="revisionDate" onchange="renderRevisionScheduleEditor()"></div>
+                    <div class="form-group" style="flex:1; min-width:180px;"><label>Orientation:</label><select id="revisionOrientation" onchange="updateRevisionClassOptions()"></select></div>
+                    <div class="form-group" style="flex:1; min-width:180px;"><label>Class:</label><select id="revisionClass" onchange="renderRevisionScheduleEditor()"></select></div>
+                    <div class="form-group" style="flex:1; min-width:180px;"><label>Section:</label><select id="revisionSection" onchange="renderRevisionScheduleEditor()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+                </div>
+                <div id="revisionScheduleEditor" style="margin-top:15px;"></div>
+                <div id="revisionScheduleList" style="margin-top:20px;"></div>
+            </div>
+
+            <div id="examInvigilationPanel" class="tab-content" style="display:none;">
+                <h4>Invigilation</h4>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <div class="form-group" style="flex:1; min-width:200px;"><label>Date:</label><input type="date" id="invigilationDate" onchange="renderInvigilationEditor()"></div>
+                    <div class="form-group" style="flex:1; min-width:200px;"><label>Period:</label><select id="invigilationPeriod" onchange="renderInvigilationEditor()"></select></div>
+                </div>
+                <div id="invigilationEditor"></div>
+            </div>
+        </div>
+
+        <!-- 7. Study Hours -->
+        <div id="d-study" class="tab-content" style="display:none;">
+            <h3>Study Hours</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
+                <div class="form-group" style="flex:1; min-width:180px;"><label>Orientation:</label><select id="studyOrientation" onchange="updateStudyClassOptions()"></select></div>
+                <div class="form-group" style="flex:1; min-width:180px;"><label>Class:</label><select id="studyClass" onchange="renderStudyHoursTimetable()"></select></div>
+                <div class="form-group" style="flex:1; min-width:180px;"><label>Section:</label><select id="studySection" onchange="renderStudyHoursTimetable()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+            </div>
+            <div id="studyHoursContainer"></div>
         </div>
     </div>
 
@@ -652,7 +721,7 @@ table { max-width:100%; }
             document.querySelectorAll('#deanModule .nav-tabs button').forEach(el => el.classList.remove('active'));
             const tab = document.getElementById(tabId); if(tab) tab.style.display = 'block';
             const buttons = document.querySelectorAll('#deanModule .nav-tabs button');
-            const map = {'d-class':0,'d-teacher-weekly':1,'d-teacher':2,'d-sub':3};
+            const map = {'d-class':0,'d-teacher-weekly':1,'d-teacher':2,'d-sub':3,'d-xsession':4,'d-exam':5,'d-study':6};
             if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
             if(tabId === 'd-teacher-weekly') populateTeacherWeeklyDropdown();
             if(tabId === 'd-sub') populateAbsentCheckboxes();
@@ -2128,6 +2197,332 @@ table { max-width:100%; }
 
             container.innerHTML = html;
         }
+
+
+        // ================= BOARD-SPECIFIC / X SESSION / EXAMINATION FEATURES =================
+        const revisionScheduleRecords = {};
+        const invigilationRecords = {};
+        const studyHoursRecords = {};
+
+        function getBoardOrientations(board = currentBoard) {
+            // STATE BOARD must not show IPL/MPL. CBSE keeps the existing orientations.
+            return board === 'STATE' ? ['C Batch', 'Techno', 'Lead'] : ['IPL', 'MPL', 'C Batch', 'Techno', 'Lead'];
+        }
+
+        function fillBoardOrientationSelect(id, includeBlank = true) {
+            const sel = document.getElementById(id);
+            if(!sel) return;
+            const previous = sel.value;
+            const opts = getBoardOrientations(currentBoard);
+            sel.innerHTML = includeBlank ? '<option value="">Select</option>' : '';
+            opts.forEach(o => sel.innerHTML += `<option value="${o}">${o}</option>`);
+            if(opts.includes(previous)) sel.value = previous;
+        }
+
+        function getBoardClassOptions(orientation) {
+            return classOpts[orientation] || [];
+        }
+
+        function fillClassSelectFor(id, orientation) {
+            const sel = document.getElementById(id);
+            if(!sel) return;
+            sel.innerHTML = '<option value="">Select</option>';
+            getBoardClassOptions(orientation).forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
+        }
+
+        function updateXSessionClassOptions() {
+            const o = document.getElementById('xSessionOrientation')?.value;
+            fillClassSelectFor('xSessionClass', o);
+            renderXSessionClassTimetable();
+        }
+        function updateRevisionClassOptions() {
+            const o = document.getElementById('revisionOrientation')?.value;
+            fillClassSelectFor('revisionClass', o);
+            renderRevisionScheduleEditor();
+        }
+        function updateStudyClassOptions() {
+            const o = document.getElementById('studyOrientation')?.value;
+            fillClassSelectFor('studyClass', o);
+            renderStudyHoursTimetable();
+        }
+
+        function currentSectionKey(prefix) {
+            const c = document.getElementById(prefix + 'Class')?.value || '';
+            const s = document.getElementById(prefix + 'Section')?.value || '';
+            return c ? (s ? `${c} - Sec ${s}` : c) : '';
+        }
+
+        function renderXSessionClassTimetable() {
+            const key = currentSectionKey('xSession');
+            const box = document.getElementById('xSessionClassTimetableContainer');
+            if(!box) return;
+            if(!key) { box.innerHTML=''; return; }
+            box.innerHTML = buildClassWeekTable(key, 'X Session Class-Wise Timetable');
+        }
+
+        function buildClassWeekTable(fullClassKey, title) {
+            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${fullClassKey}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            periods.forEach(p => html += `<th>P-${p.id}<br><small>${p.time}</small></th>`);
+            html += `</tr></thead><tbody>`;
+            days.forEach(day => {
+                html += `<tr><td><b>${day}</b></td>`;
+                periods.forEach(p => {
+                    const cell = masterTimetable[fullClassKey]?.[day]?.[p.id];
+                    html += cell && (cell.subject || cell.teacher) ? `<td><b>${cell.subject || '---'}</b><br><span>${cell.teacher || '---'}</span></td>` : '<td style="color:#aaa;">---</td>';
+                });
+                html += '</tr>';
+            });
+            return html + '</tbody></table></div></div>';
+        }
+
+        function renderRevisionScheduleEditor() {
+            const date = document.getElementById('revisionDate')?.value;
+            const key = currentSectionKey('revision');
+            const box = document.getElementById('revisionScheduleEditor');
+            if(!box) return;
+            if(!date || !key) { box.innerHTML = '<p style="color:#777;">Select date, orientation, class and section.</p>'; return; }
+            const day = getDayNameFromDate(date);
+            let html = `<h4>Revision Teachers for ${key} - ${day}</h4><table><thead><tr><th>Period</th><th>Time</th><th>Revision Teacher(s)</th></tr></thead><tbody>`;
+            periods.forEach(p => {
+                const rec = revisionScheduleRecords[date]?.[currentBoard]?.[key]?.[day]?.[p.id] || [];
+                const options = staffList.filter(st => staffMatchesBoard(st, currentBoard)).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+                html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td><div class="multi-select-box">`;
+                options.forEach(st => {
+                    const checked = rec.includes(st.name) ? 'checked' : '';
+                    html += `<label><input type="checkbox" class="revision-teacher" data-period="${p.id}" value="${st.name}" ${checked}> ${st.name} (${st.subject || 'Staff'})</label>`;
+                });
+                html += `</div></td></tr>`;
+            });
+            html += `</tbody></table><button onclick="saveRevisionSchedule()" style="margin-top:12px;">Save Revision Schedule</button>`;
+            box.innerHTML = html;
+            renderRevisionScheduleList();
+        }
+
+        async function saveRevisionSchedule() {
+            const date = document.getElementById('revisionDate')?.value;
+            const key = currentSectionKey('revision');
+            if(!date || !key) return alert('Select date, orientation, class and section first.');
+            const day = getDayNameFromDate(date);
+            if(!revisionScheduleRecords[date]) revisionScheduleRecords[date] = {};
+            if(!revisionScheduleRecords[date][currentBoard]) revisionScheduleRecords[date][currentBoard] = {};
+            if(!revisionScheduleRecords[date][currentBoard][key]) revisionScheduleRecords[date][currentBoard][key] = {};
+            if(!revisionScheduleRecords[date][currentBoard][key][day]) revisionScheduleRecords[date][currentBoard][key][day] = {};
+            periods.forEach(p => {
+                revisionScheduleRecords[date][currentBoard][key][day][p.id] = Array.from(document.querySelectorAll(`.revision-teacher[data-period="${p.id}"]:checked`)).map(x=>x.value);
+            });
+            await saveMapDoc('revisionScheduleRecords', `${date}__${currentBoard}`, revisionScheduleRecords[date][currentBoard]);
+            alert('Revision Schedule saved. Selected revision teachers will automatically appear in the substitution list for this date.');
+            renderRevisionScheduleList();
+        }
+
+        function renderRevisionScheduleList() {
+            const box = document.getElementById('revisionScheduleList');
+            const date = document.getElementById('revisionDate')?.value;
+            if(!box || !date) return;
+            const data = revisionScheduleRecords[date]?.[currentBoard] || {};
+            let rows = [];
+            Object.keys(data).forEach(key => Object.keys(data[key] || {}).forEach(day => Object.keys(data[key][day] || {}).forEach(period => {
+                const names = data[key][day][period] || [];
+                if(names.length) rows.push({key,day,period,names:names.join(', ')});
+            })));
+            box.innerHTML = rows.length ? `<h4>Saved Revision Schedule</h4><table><thead><tr><th>Class</th><th>Day</th><th>Period</th><th>Revision Teacher(s)</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.key}</td><td>${r.day}</td><td>${r.period}</td><td>${r.names}</td></tr>`).join('')}</tbody></table>` : '<p style="color:#777;">No revision teachers selected yet.</p>';
+        }
+
+        function revisionTeachersForDate(date, board, day, period) {
+            const out = [];
+            const data = revisionScheduleRecords[date]?.[board] || {};
+            Object.keys(data).forEach(key => {
+                const arr = data[key]?.[day]?.[period] || [];
+                arr.forEach(name => { if(!out.includes(name)) out.push(name); });
+            });
+            return out;
+        }
+
+        function showExamTab(which) {
+            document.getElementById('examRevisionPanel').style.display = which === 'revision' ? 'block' : 'none';
+            document.getElementById('examInvigilationPanel').style.display = which === 'invigilation' ? 'block' : 'none';
+            document.getElementById('examRevisionTabBtn').classList.toggle('active', which === 'revision');
+            document.getElementById('examInvigilationTabBtn').classList.toggle('active', which === 'invigilation');
+            if(which === 'revision') { fillBoardOrientationSelect('revisionOrientation'); updateRevisionClassOptions(); }
+            if(which === 'invigilation') renderInvigilationEditor();
+        }
+
+        function renderInvigilationEditor() {
+            const date = document.getElementById('invigilationDate')?.value;
+            const p = document.getElementById('invigilationPeriod')?.value;
+            const box = document.getElementById('invigilationEditor');
+            if(!box) return;
+            if(!date || !p) { box.innerHTML='<p style="color:#777;">Select date and period.</p>'; return; }
+            const selected = invigilationRecords[date]?.[currentBoard]?.[p] || [];
+            const teachers = staffList.filter(st=>staffMatchesBoard(st,currentBoard)).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+            box.innerHTML = `<div class="multi-select-box">${teachers.map(st=>`<label><input type="checkbox" class="invigilator-check" value="${st.name}" ${selected.includes(st.name)?'checked':''}> ${st.name} (${st.subject||'Staff'})</label>`).join('')}</div><button onclick="saveInvigilation()" style="margin-top:10px;">Save Invigilation</button>`;
+        }
+        async function saveInvigilation() {
+            const date=document.getElementById('invigilationDate')?.value, p=document.getElementById('invigilationPeriod')?.value;
+            if(!date||!p) return alert('Select date and period first.');
+            if(!invigilationRecords[date]) invigilationRecords[date]={};
+            if(!invigilationRecords[date][currentBoard]) invigilationRecords[date][currentBoard]={};
+            invigilationRecords[date][currentBoard][p]=Array.from(document.querySelectorAll('.invigilator-check:checked')).map(x=>x.value);
+            await saveMapDoc('invigilationRecords', `${date}__${currentBoard}`, invigilationRecords[date][currentBoard]);
+            alert('Invigilation saved.');
+        }
+
+        function renderStudyHoursTimetable() {
+            const key=currentSectionKey('study');
+            const box=document.getElementById('studyHoursContainer');
+            if(!box) return;
+            if(!key){box.innerHTML='';return;}
+            let html=`<div><h4>Study Hours - ${key}</h4><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            periods.forEach(p=>html+=`<th>P-${p.id}<br><small>${p.time}</small></th>`);
+            html+='</tr></thead><tbody>';
+            days.forEach(day=>{html+=`<tr><td><b>${day}</b></td>`;periods.forEach(p=>{const v=studyHoursRecords[currentBoard]?.[key]?.[day]?.[p.id] || '---';html+=`<td><select onchange="saveStudyHourCell('${key}','${day}','${p.id}',this.value)"><option ${v==='---'?'selected':''}>---</option><option ${v==='Study Hour'?'selected':''}>Study Hour</option><option ${v==='Self Study'?'selected':''}>Self Study</option></select></td>`});html+='</tr>';});
+            box.innerHTML=html+'</tbody></table></div></div>';
+        }
+        async function saveStudyHourCell(key,day,p,val){
+            if(!studyHoursRecords[currentBoard])studyHoursRecords[currentBoard]={};
+            if(!studyHoursRecords[currentBoard][key])studyHoursRecords[currentBoard][key]={};
+            if(!studyHoursRecords[currentBoard][key][day])studyHoursRecords[currentBoard][key][day]={};
+            studyHoursRecords[currentBoard][key][day][p]=val;
+            await saveMapDoc('studyHoursRecords', currentBoard, studyHoursRecords[currentBoard]);
+        }
+
+        function populateXSessionAndExamControls() {
+            fillBoardOrientationSelect('xSessionOrientation');
+            fillBoardOrientationSelect('revisionOrientation');
+            fillBoardOrientationSelect('studyOrientation');
+            updateXSessionClassOptions(); updateRevisionClassOptions(); updateStudyClassOptions();
+            const ps=document.getElementById('invigilationPeriod');
+            if(ps && !ps.options.length) periods.forEach(p=>ps.innerHTML+=`<option value="${p.id}">${p.id} - ${p.time}</option>`);
+        }
+
+        // Extend the existing Dean tab navigation without changing the original timetable screens.
+        const __oldShowTabDean = showTabDean;
+        showTabDean = function(tabId) {
+            __oldShowTabDean(tabId);
+            if(['d-xsession','d-exam','d-study'].includes(tabId)) populateXSessionAndExamControls();
+            if(tabId === 'd-exam') showExamTab('revision');
+        };
+
+        // STATE BOARD orientation guard for the existing class-timetable screens.
+        const __oldUpdateClassSubOptions = updateClassSubOptions;
+        updateClassSubOptions = function() {
+            const orientationEl=document.getElementById('ttOrientation');
+            if(orientationEl) {
+                const allowed=getBoardOrientations(currentBoard);
+                Array.from(orientationEl.options).forEach(opt=>{ if(opt.value) opt.hidden=!allowed.includes(opt.value); });
+                if(orientationEl.value && !allowed.includes(orientationEl.value)) orientationEl.value='';
+            }
+            return __oldUpdateClassSubOptions();
+        };
+        const __oldUpdatePrincipalClassOptions = updatePrincipalClassOptions;
+        updatePrincipalClassOptions = function() {
+            const orientationEl=document.getElementById('pTtOrientation');
+            if(orientationEl) {
+                const allowed=getBoardOrientations(currentBoard);
+                Array.from(orientationEl.options).forEach(opt=>{ if(opt.value) opt.hidden=!allowed.includes(opt.value); });
+                if(orientationEl.value && !allowed.includes(orientationEl.value)) orientationEl.value='';
+            }
+            return __oldUpdatePrincipalClassOptions();
+        };
+
+        // ---------------- Cross-board substitution rules ----------------
+        function teacherCanSubstituteOnBoard(st, board) { return staffMatchesBoard(st, board); }
+        function savedSubstitutionsForDate(date) { return substitutionRecords[date] || []; }
+        function isTeacherAssignedAcrossBoards(date, teacherName, period, ignoreIndex = -1) {
+            return savedSubstitutionsForDate(date).some((r,i)=>i!==ignoreIndex && r.subTeacher===teacherName && String(r.period)===String(period));
+        }
+        function isTeacherRevisionBusy(date, teacherName, period, board) {
+            const day=getDayNameFromDate(date);
+            return revisionTeachersForDate(date, board, day, period).includes(teacherName) ||
+                   revisionTeachersForDate(date, board === 'STATE' ? 'CBSE' : 'STATE', day, period).includes(teacherName);
+        }
+
+        // Replace the original substitution generator so revision-duty teachers are automatically included,
+        // and BOTH-board teachers are blocked across both boards for the same period.
+        generateSubstitutionMatrix = function() {
+            const dateVal=document.getElementById('subDate').value;
+            if(!dateVal) return alert('Select a date first.');
+            const selectedAbsent=Array.from(document.querySelectorAll('.absent-check:checked')).map(cb=>cb.value);
+            const dayName=getDayNameFromDate(dateVal);
+            const autoRevision=revisionTeachersForDate(dateVal,currentBoard,dayName,'');
+            const allRevision=[];
+            periods.forEach(p=>revisionTeachersForDate(dateVal,currentBoard,dayName,p.id).forEach(n=>{if(!allRevision.includes(n))allRevision.push(n);}));
+            if(selectedAbsent.length===0 && allRevision.length===0) return alert('Select at least one absent teacher or create a Revision Schedule for this date.');
+
+            const existingChoices={};
+            document.querySelectorAll('[id^="sub_assign_"]').forEach(sel=>{if(sel.value)existingChoices[`${sel.dataset.period}_${sel.dataset.class}`]=sel.value;});
+            savedSubstitutionsForDate(dateVal).forEach(rec=>{if(rec.board===currentBoard && !existingChoices[`${rec.period}_${rec.class}`])existingChoices[`${rec.period}_${rec.class}`]=rec.subTeacher;});
+
+            const periodsToSub=[];
+            periods.forEach((p,pIndex)=>{
+                for(const cls in masterTimetable){
+                    const cell=masterTimetable[cls]?.[dayName]?.[p.id];
+                    if(cell?.teacher && selectedAbsent.includes(cell.teacher)) periodsToSub.push({absentTeacher:cell.teacher,period:p.id,periodIndex:pIndex,time:p.time,class:cls,subject:cell.subject,reason:'Absent'});
+                }
+            });
+            // Revision teachers are not selected as absent: create a substitution requirement automatically.
+            for(const revTeacher of allRevision){
+                for(const cls in masterTimetable){
+                    const cell=masterTimetable[cls]?.[dayName];
+                    for(const p of periods){
+                        if(p.id && cell?.[p.id]?.teacher===revTeacher && revisionTeachersForDate(dateVal,currentBoard,dayName,p.id).includes(revTeacher)) {
+                            periodsToSub.push({absentTeacher:revTeacher,period:p.id,periodIndex:periods.findIndex(x=>x.id===p.id),time:p.time,class:cls,subject:cell[p.id].subject,reason:'Revision Schedule'});
+                        }
+                    }
+                }
+            }
+            const unique={}; const rows=periodsToSub.filter(x=>{const k=`${x.period}_${x.class}_${x.absentTeacher}`;if(unique[k])return false;unique[k]=1;return true;}).sort((a,b)=>a.periodIndex-b.periodIndex);
+            const container=document.getElementById('substitutionMatrixContainer');
+            if(!rows.length){container.innerHTML=`<p style="color:green;font-weight:bold;">No substitution duties found for ${dayName}.</p>`;return;}
+            let html=`<div id="subMatrixPrintContainer"><div class="print-header"><h2>SRI CHAITANYA SCHOOL</h2><h3>Branch : Adibatla</h3><h4>Final Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div><div class="no-print" style="text-align:center;"><h3 style="color:#0056b3;">SRI CHAITANYA SCHOOL - ADIBATLA</h3><h4>Final Substitution Allotment - ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div><table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Teacher Requiring Substitute</th><th>Reason</th><th>Class & Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
+            rows.forEach((item,index)=>{
+                let freeStaff=staffList.filter(st=>{
+                    if(!teacherCanSubstituteOnBoard(st,currentBoard)) return false;
+                    if(selectedAbsent.includes(st.name)) return false;
+                    if(isTeacherAssignedAcrossBoards(dateVal,st.name,item.period)) return false;
+                    if(isTeacherRevisionBusy(dateVal,st.name,item.period,currentBoard)) return false;
+                    for(const cls in masterTimetable) if(masterTimetable[cls]?.[dayName]?.[item.period]?.teacher===st.name) return false;
+                    const status=teacherStatusRecords[dateVal]?.[st.name]?.[item.period] || teacherWeeklyStatus[st.name]?.[dayName]?.[item.period];
+                    if(status==='Lunch'||status==='Rest') return false;
+                    return true;
+                }).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+                const key=`${item.period}_${item.class}`; const current=existingChoices[key]||'';
+                html+=`<tr><td>${index+1}</td><td><b>${item.period}</b></td><td>${item.time}</td><td style="color:red;font-weight:bold;">${item.absentTeacher}</td><td>${item.reason}</td><td><b>${item.class}</b><br>${item.subject||''}</td><td><select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-absent="${item.absentTeacher}" onchange="validatePeriodClash(this);updateSubPrintDisplay(${index})"><option value="">Select Substitute</option>${freeStaff.map(st=>`<option value="${st.name}" ${current===st.name?'selected':''}>${st.name} (${st.subject||'Staff'})</option>`).join('')}</select><span class="print-only-text" id="print_sub_${index}">${current||'---'}</span></td><td></td></tr>`;
+            });
+            html+=`</tbody></table><div style="margin-top:15px;"><button onclick="saveSubstitutionAllotments(${rows.length})">Save / Finalize Substitutions</button><button class="edit-btn" onclick="editAbsentSelection()">Edit Leave / Revision Selection</button></div></div>`;
+            container.innerHTML=html; reapplyPeriodClashes();
+        };
+
+        // Save current board's records without deleting the other board's records.
+        saveSubstitutionAllotments = async function(count) {
+            const dateVal=document.getElementById('subDate').value; if(!dateVal)return;
+            const oldRecords=savedSubstitutionsForDate(dateVal).filter(r=>r.board!==currentBoard);
+            const newRecords=[];
+            for(let i=0;i<count;i++){
+                const el=document.getElementById(`sub_assign_${i}`);if(!el||!el.value)continue;
+                newRecords.push({period:el.dataset.period,class:el.dataset.class,absent:el.dataset.absent,subTeacher:el.value,board:currentBoard});
+            }
+            substitutionRecords[dateVal]=oldRecords.concat(newRecords);
+            await saveMapDoc('substitutionRecords',dateVal,substitutionRecords[dateVal]);
+            alert(`Substitutions successfully allotted and saved (${newRecords.length} allotted) for ${currentBoard} BOARD.`);
+        };
+
+        // Load the new collections when a Dean/Principal session starts.
+        const __oldLoadDataForRole=loadDataForRole;
+        loadDataForRole=async function(role){
+            await __oldLoadDataForRole(role);
+            const revSnap=await db.collection('revisionScheduleRecords').get(); revSnap.forEach(doc=>{const [date,board]=doc.id.split('__'); if(!revisionScheduleRecords[date])revisionScheduleRecords[date]={}; revisionScheduleRecords[date][board]=doc.data().value||{};});
+            const invSnap=await db.collection('invigilationRecords').get(); invSnap.forEach(doc=>{const [date,board]=doc.id.split('__'); if(!invigilationRecords[date])invigilationRecords[date]={}; invigilationRecords[date][board]=doc.data().value||{};});
+            const studySnap=await db.collection('studyHoursRecords').get(); studySnap.forEach(doc=>studyHoursRecords[doc.id]=doc.data().value||{});
+        };
+
+        // Rebuild board-specific selectors whenever a board is opened.
+        const __oldOpenManagerBoard=openManagerBoard;
+        openManagerBoard=function(board){
+            __oldOpenManagerBoard(board);
+            setTimeout(populateXSessionAndExamControls, 300);
+        };
+
     </script>
 </body>
 </html>
