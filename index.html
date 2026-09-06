@@ -235,10 +235,28 @@ table { max-width:100%; }
         <p id="loginError" style="color: red; display: none; text-align: center; margin-top: 10px;">Invalid credentials!</p>
     </div>
 
+    <!-- Principal Landing Page -->
+    <div id="principalHome" class="module-container">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <h2>Principal Module</h2>
+        <p>Select an option:</p>
+        <div class="board-card-grid">
+            <div class="board-card" onclick="openPrincipalPage('staff')"><h3>STAFF DIRECTORY</h3><p>Manage and view staff records</p></div>
+            <div class="board-card" onclick="openPrincipalPage('STATE')"><h3>STATE</h3><p>Open STATE BOARD timetables only</p></div>
+            <div class="board-card" onclick="openPrincipalPage('CBSE')"><h3>CBSE</h3><p>Open CBSE BOARD timetables only</p></div>
+        </div>
+    </div>
+
     <!-- Principal Module -->
     <div id="principalModule" class="module-container">
         <button class="logout-btn" onclick="logout()">Logout</button>
-        <h2>Principal Master Portal</h2>
+        <div class="page-nav no-print">
+            <button onclick="goBackPage()">← Back</button>
+            <button onclick="goForwardPage()">Forward →</button>
+            <button onclick="openPrincipalHome()">Principal Home</button>
+            <span class="current-board" id="principalBoardLabel">Board: CBSE</span>
+        </div>
+        <h2>Principal Master Portal <small id="principalBoardHeading" style="color:#0056b3;"></small></h2>
         <div class="nav-tabs">
             <button class="active" onclick="showTab('p-staff')">Staff Directory</button>
             <button onclick="showTab('p-class-tt')">Class Timetables</button>
@@ -251,6 +269,12 @@ table { max-width:100%; }
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <div class="form-group" style="flex: 1;"><label>Employee ID:</label><input type="text" id="staffEmpId" placeholder="e.g. SC1001"></div>
                 <div class="form-group" style="flex: 1;"><label>Name:</label><input type="text" id="staffName" placeholder="Full name"></div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Board:</label>
+                    <select id="staffBoard">
+                        <option value="">Select</option><option value="STATE">STATE</option><option value="CBSE">CBSE</option><option value="BOTH">BOTH</option>
+                    </select>
+                </div>
                 <div class="form-group" style="flex: 1;">
                     <label>Designation:</label>
                     <select id="staffDesig">
@@ -279,7 +303,7 @@ table { max-width:100%; }
             
             <h3 style="margin-top: 20px;">Saved Global Staff Database</h3>
             <table id="staffTable">
-                <thead><tr><th>S.No</th><th>Emp ID</th><th>Name</th><th>Designation</th><th>Subject</th><th>Mobile No</th><th>Action</th></tr></thead>
+                <thead><tr><th>S.No</th><th>Emp ID</th><th>Name</th><th>Board</th><th>Designation</th><th>Subject</th><th>Mobile No</th><th>Action</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -347,10 +371,29 @@ table { max-width:100%; }
         </div>
     </div>
 
+    <!-- Dean & Incharges Landing Page -->
+    <div id="deanHome" class="module-container">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <h2>Deans & Incharges Module</h2>
+        <p>Select the board timetable you want to open:</p>
+        <div class="board-card-grid">
+            <div class="board-card" onclick="openManagerBoard('STATE')"><h3>STATE</h3><p>Open STATE BOARD timetables only</p></div>
+            <div class="board-card" onclick="openManagerBoard('CBSE')"><h3>CBSE</h3><p>Open CBSE BOARD timetables only</p></div>
+        </div>
+    </div>
+
     <!-- Dean & Incharges Module -->
     <div id="deanModule" class="module-container">
         <button class="logout-btn" onclick="logout()">Logout</button>
-        <h2>Welcome Deans & Incharges</h2>
+        <div class="page-nav no-print">
+            <button onclick="goBackPage()">← Back</button>
+            <button onclick="goForwardPage()">Forward →</button>
+            <button onclick="openManagerHome()">Board Selection</button>
+            <button onclick="openManagerBoard('STATE')">STATE</button>
+            <button onclick="openManagerBoard('CBSE')">CBSE</button>
+            <span class="current-board" id="deanBoardLabel">Board: CBSE</span>
+        </div>
+        <h2>Welcome Deans & Incharges <small id="deanBoardHeading" style="color:#0056b3;"></small></h2>
         <button id="dualTeacherViewBtn" onclick="openDualTeacherView()" style="margin-bottom:12px;">
             My Teacher Timetable
         </button>
@@ -489,6 +532,9 @@ table { max-width:100%; }
         let substitutionRecords = {};
         let currentUser = null;
         let editingStaffEmpId = null;
+        let currentBoard = 'CBSE';
+        let appPageHistory = [];
+        let appPageIndex = -1;
 
         const PRINCIPAL_EMAIL = 'principaladibatla@gmail.com';
         const PRINCIPAL_ROLE = 'principal';
@@ -507,8 +553,7 @@ table { max-width:100%; }
                 weeklySnap.forEach(doc => teacherWeeklyStatus[doc.id] = doc.data().value || {});
             }
 
-            const ttSnap = await db.collection('timetables').get();
-            ttSnap.forEach(doc => masterTimetable[doc.id] = doc.data().value || {});
+            await loadTimetableForBoard(currentBoard);
 
             const statusSnap = await db.collection('teacherStatusRecords').get();
             statusSnap.forEach(doc => teacherStatusRecords[doc.id] = doc.data().value || {});
@@ -521,6 +566,108 @@ table { max-width:100%; }
 
             const subSnap = await db.collection('substitutionRecords').get();
             subSnap.forEach(doc => substitutionRecords[doc.id] = doc.data().value || []);
+        }
+
+        function normalizeBoard(board) {
+            const b = String(board || '').trim().toUpperCase();
+            return (b === 'STATE' || b === 'CBSE' || b === 'BOTH') ? b : 'BOTH';
+        }
+
+        function staffMatchesBoard(staff, board = currentBoard) {
+            const b = normalizeBoard(staff && staff.board);
+            return b === 'BOTH' || b === board;
+        }
+
+        function timetableDocId(baseKey, board = currentBoard) {
+            return board === 'CBSE' ? baseKey : `STATE__${baseKey}`;
+        }
+
+        async function loadTimetableForBoard(board = currentBoard) {
+            currentBoard = board === 'STATE' ? 'STATE' : 'CBSE';
+            masterTimetable = {};
+            const ttSnap = await db.collection('timetables').get();
+            ttSnap.forEach(doc => {
+                const id = doc.id;
+                if(currentBoard === 'CBSE') {
+                    if(id.startsWith('CBSE__')) masterTimetable[id.substring(6)] = doc.data().value || {};
+                    else if(!id.startsWith('STATE__')) masterTimetable[id] = doc.data().value || {};
+                } else if(id.startsWith('STATE__')) {
+                    masterTimetable[id.substring(7)] = doc.data().value || {};
+                }
+            });
+            const p = document.getElementById('principalBoardLabel');
+            const d = document.getElementById('deanBoardLabel');
+            if(p) p.textContent = `Board: ${currentBoard}`;
+            if(d) d.textContent = `Board: ${currentBoard}`;
+            const ph = document.getElementById('principalBoardHeading');
+            const dh = document.getElementById('deanBoardHeading');
+            if(ph) ph.textContent = `(${currentBoard} BOARD)`;
+            if(dh) dh.textContent = `(${currentBoard} BOARD)`;
+        }
+
+        function recordAppPage(page) {
+            if(appPageIndex < appPageHistory.length - 1) appPageHistory = appPageHistory.slice(0, appPageIndex + 1);
+            appPageHistory.push(page);
+            appPageIndex = appPageHistory.length - 1;
+        }
+
+        function goBackPage() {
+            if(appPageIndex > 0) { appPageIndex--; restoreAppPage(appPageHistory[appPageIndex]); }
+        }
+
+        function goForwardPage() {
+            if(appPageIndex < appPageHistory.length - 1) { appPageIndex++; restoreAppPage(appPageHistory[appPageIndex]); }
+        }
+
+        async function restoreAppPage(page) {
+            if(!page) return;
+            if(page === 'principalHome') return switchView('principalHome');
+            if(page === 'deanHome') return switchView('deanHome');
+            if(page === 'principal-staff') { switchView('principalModule'); showTabById('p-staff'); return; }
+            if(page === 'principal-STATE' || page === 'principal-CBSE') {
+                currentBoard = page.split('-')[1];
+                await loadTimetableForBoard(currentBoard);
+                switchView('principalModule'); showTabById('p-class-tt'); return;
+            }
+            if(page === 'teacherModule') { switchView('teacherModule'); return; }
+            if(page === 'dean-STATE' || page === 'dean-CBSE') {
+                currentBoard = page.split('-')[1];
+                await loadTimetableForBoard(currentBoard);
+                switchView('deanModule'); showTabDeanById('d-class'); return;
+            }
+        }
+
+        function showTabById(tabId) {
+            document.querySelectorAll('#principalModule .tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#principalModule .nav-tabs button').forEach(el => el.classList.remove('active'));
+            const tab = document.getElementById(tabId); if(tab) tab.style.display = 'block';
+            const buttons = document.querySelectorAll('#principalModule .nav-tabs button');
+            const map = {'p-staff':0,'p-class-tt':1,'p-teacher-tt':2,'p-sub-tt':3};
+            if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
+            if(tabId === 'p-teacher-tt') populatePrincipalWeeklyTeacherDropdown();
+        }
+
+        function showTabDeanById(tabId) {
+            document.querySelectorAll('#deanModule .tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#deanModule .nav-tabs button').forEach(el => el.classList.remove('active'));
+            const tab = document.getElementById(tabId); if(tab) tab.style.display = 'block';
+            const buttons = document.querySelectorAll('#deanModule .nav-tabs button');
+            const map = {'d-class':0,'d-teacher-weekly':1,'d-teacher':2,'d-sub':3};
+            if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
+            if(tabId === 'd-teacher-weekly') populateTeacherWeeklyDropdown();
+            if(tabId === 'd-sub') populateAbsentCheckboxes();
+        }
+
+        function openPrincipalHome(push = true) { switchView('principalHome'); if(push) recordAppPage('principalHome'); }
+        function openManagerHome(push = true) { switchView('deanHome'); if(push) recordAppPage('deanHome'); }
+        function openPrincipalPage(option) {
+            if(option === 'staff') { switchView('principalModule'); showTabById('p-staff'); renderStaffTable(); recordAppPage('principal-staff'); return; }
+            currentBoard = option === 'STATE' ? 'STATE' : 'CBSE';
+            loadTimetableForBoard(currentBoard).then(() => { switchView('principalModule'); showTabById('p-class-tt'); recordAppPage(`principal-${currentBoard}`); });
+        }
+        function openManagerBoard(board) {
+            currentBoard = board === 'STATE' ? 'STATE' : 'CBSE';
+            loadTimetableForBoard(currentBoard).then(() => { switchView('deanModule'); showTabDeanById('d-class'); recordAppPage(`dean-${currentBoard}`); });
         }
 
         async function saveStaffToFirestore(staff) {
@@ -669,11 +816,16 @@ table { max-width:100%; }
                 await loadDataForRole(account.role);
 
                 if(role === 'principal') {
-                    switchView('principalModule');
+                    currentBoard = 'CBSE';
+                    await loadTimetableForBoard('CBSE');
+                    switchView('principalHome');
+                    recordAppPage('principalHome');
                     renderStaffTable();
                 } else if(role === 'dean') {
-                    switchView('deanModule');
-                    populateTeacherWeeklyDropdown();
+                    currentBoard = 'CBSE';
+                    await loadTimetableForBoard('CBSE');
+                    switchView('deanHome');
+                    recordAppPage('deanHome');
                     document.getElementById('dualTeacherViewBtn').style.display = account.teacherAccess ? 'inline-block' : 'none';
                 } else {
                     document.getElementById('teacherWelcome').innerText = `Welcome, ${account.name} (Emp ID: ${account.empId || 'N/A'} | ${account.designation} - ${account.subject})`;
@@ -698,6 +850,7 @@ table { max-width:100%; }
         async function logout() {
             try { await auth.signOut(); } catch(e) { console.error(e); }
             currentUser = null;
+            appPageHistory = []; appPageIndex = -1;
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
             switchView('loginModule');
@@ -836,6 +989,7 @@ table { max-width:100%; }
             document.getElementById('backToManagerBtn').style.display = 'inline-block';
             document.getElementById('tDate').value = new Date().toISOString().slice(0,10);
             switchView('teacherModule');
+            recordAppPage('teacherModule');
         }
 
         async function saveStaff() {
@@ -845,10 +999,11 @@ table { max-width:100%; }
             const desig = document.getElementById('staffDesig').value;
             const subj = document.getElementById('staffSubj').value;
             const mob = document.getElementById('staffMob').value.trim();
-            if(!empId || !name || !desig || !subj || !mob) return alert('All fields including Employee ID are mandatory');
+            const board = document.getElementById('staffBoard').value;
+            if(!empId || !name || !desig || !subj || !mob || !board) return alert('All fields including Board and Employee ID are mandatory');
             if(!editingStaffEmpId && staffList.some(s => s.empId.toLowerCase() === empId.toLowerCase())) return alert('Employee ID already exists.');
 
-            const staff = { empId, name, designation: desig, subject: subj, mobile: mob };
+            const staff = { empId, name, board, designation: desig, subject: subj, mobile: mob };
             try {
                 const email = staffEmail(empId);
                 if(editingStaffEmpId && editingStaffEmpId !== empId) {
@@ -893,6 +1048,7 @@ table { max-width:100%; }
             editingStaffEmpId = null;
             document.getElementById('staffEmpId').value = '';
             document.getElementById('staffName').value = '';
+            document.getElementById('staffBoard').value = '';
             document.getElementById('staffDesig').value = '';
             document.getElementById('staffSubj').value = '';
             document.getElementById('staffMob').value = '';
@@ -906,6 +1062,7 @@ table { max-width:100%; }
                     <td>${index + 1}</td>
                     <td><b>${staff.empId || '---'}</b></td>
                     <td>${staff.name}</td>
+                    <td><b>${normalizeBoard(staff.board)}</b></td>
                     <td>${staff.designation}</td>
                     <td>${staff.subject}</td>
                     <td>${staff.mobile}</td>
@@ -962,6 +1119,7 @@ table { max-width:100%; }
             editingStaffEmpId = s.empId;
             document.getElementById('staffEmpId').value = s.empId || '';
             document.getElementById('staffName').value = s.name;
+            document.getElementById('staffBoard').value = normalizeBoard(s.board);
             document.getElementById('staffDesig').value = s.designation;
             document.getElementById('staffSubj').value = s.subject;
             document.getElementById('staffMob').value = s.mobile;
@@ -1010,7 +1168,7 @@ table { max-width:100%; }
                 }
 
                 let teacherOptions = `<option value="">Select Teacher</option>`;
-                staffList.forEach(st => {
+                staffList.filter(st => staffMatchesBoard(st)).forEach(st => {
                     const isBusy = busyTeachers.includes(st.name);
                     const isSelected = currentAssignment.teacher === st.name;
                     if(isBusy && !isSelected) {
@@ -1042,7 +1200,7 @@ table { max-width:100%; }
                 masterTimetable[fullClassKey][day][p.id] = { subject: sub, teacher: teach };
             });
 
-            await saveMapDoc('timetables', fullClassKey, masterTimetable[fullClassKey]);
+            await saveMapDoc('timetables', timetableDocId(fullClassKey), masterTimetable[fullClassKey]);
             alert(`Schedule for ${fullClassKey} (${day}) updated!`);
             document.getElementById('periodGridContainer').innerHTML = '';
             renderSingleClassFullDashboard();
@@ -1093,7 +1251,7 @@ table { max-width:100%; }
             const sel = document.getElementById('twSelectTeacher');
             if(!sel) return;
             sel.innerHTML = '<option value="">Select Teacher</option>';
-            staffList.forEach(st => {
+            staffList.filter(st => staffMatchesBoard(st)).forEach(st => {
                 sel.innerHTML += `<option value="${st.name}">${st.name} (${st.designation} - ${st.subject})</option>`;
             });
         }
@@ -1384,7 +1542,7 @@ table { max-width:100%; }
             const container = document.getElementById('absentStaffCheckboxes');
             const currentlyChecked = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
             container.innerHTML = '';
-            staffList.forEach(st => {
+            staffList.filter(st => staffMatchesBoard(st)).forEach(st => {
                 const isChecked = currentlyChecked.includes(st.name) ? 'checked' : '';
                 container.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check" ${isChecked}> ${st.name} (${st.subject})</label>`;
             });
@@ -1454,6 +1612,7 @@ table { max-width:100%; }
 
             periodsToSub.forEach((item, index) => {
                 let freeStaff = staffList.filter(st => {
+                    if(!staffMatchesBoard(st)) return false;
                     if(selectedAbsent.includes(st.name)) return false;
                     for(let cls in masterTimetable) {
                         if(masterTimetable[cls]?.[dayName]?.[item.period]?.teacher === st.name) return false;
@@ -1691,7 +1850,7 @@ table { max-width:100%; }
             sel.innerHTML = '<option value="">Select Teacher</option>';
 
             const teachers = [...staffList]
-                .filter(st => st && st.name)
+                .filter(st => st && st.name && staffMatchesBoard(st))
                 .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
             teachers.forEach(st => {
