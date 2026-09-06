@@ -863,16 +863,90 @@ table { max-width:100%; }
             if(!user || !pass) { err.innerText = 'Enter username and password.'; err.style.display = 'block'; return; }
 
             try {
-                const email = role === 'principal' ? user : staffEmail(pass);
+                let email = role === 'principal' ? user : staffEmail(pass);
                 if (role === 'principal' && !email.includes('@')) {
                     throw new Error('For Principal login, enter the Firebase Authentication email address.');
                 }
-                const credential = await auth.signInWithEmailAndPassword(email, pass);
+
+                // Principal must use the already-created Principal Firebase account.
+                // Dean/Incharge and Teacher accounts are automatically repaired/created
+                // from the Staff Directory when their Employee ID is used as password.
+                let credential;
+                try {
+                    credential = await auth.signInWithEmailAndPassword(email, pass);
+                } catch(authErr) {
+                    if(role === 'principal') throw authErr;
+
+                    // Load the staff directory and verify that the entered name + employee ID match.
+                    const staffSnap = await db.collection('staff').get();
+                    const employee = staffSnap.docs.map(d => d.data()).find(st =>
+                        st && st.name && st.empId &&
+                        String(st.name).trim().toLowerCase() === user.toLowerCase() &&
+                        String(st.empId).trim() === String(pass).trim()
+                    );
+                    if(!employee) throw new Error('Employee name and Employee ID do not match the Staff Directory.');
+
+                    const manager = isManagerDesignation(employee.designation);
+                    const expectedRole = manager ? 'dean' : 'teacher';
+                    if((role === 'dean' && !manager) || (role === 'teacher' && manager)) {
+                        throw new Error(role === 'dean'
+                            ? 'This employee is not registered as a Dean/Incharge.'
+                            : 'This employee is a Dean/Incharge. Select Deans & Incharges to login.');
+                    }
+
+                    // Repair/create the Firebase Authentication account using Employee ID as password.
+                    try {
+                        const created = await secondaryAuth.createUserWithEmailAndPassword(email, pass);
+                        const newUid = created.user.uid;
+                        await db.collection('users').doc(newUid).set({
+                            uid: newUid,
+                            role: expectedRole,
+                            teacherAccess: manager,
+                            empId: employee.empId,
+                            name: employee.name,
+                            designation: employee.designation,
+                            subject: employee.subject,
+                            board: employee.board || 'CBSE'
+                        }, { merge: true });
+                        await secondaryAuth.signOut();
+                    } catch(createErr) {
+                        if(createErr && createErr.code !== 'auth/email-already-in-use') throw createErr;
+                    }
+                    credential = await auth.signInWithEmailAndPassword(email, pass);
+                }
+
                 const uid = credential.user.uid;
                 const userSnap = await db.collection('users').doc(uid).get();
+                let account;
 
-                if(!userSnap.exists) throw new Error('User account is not assigned a role by the Principal.');
-                const account = userSnap.data();
+                if(userSnap.exists) {
+                    account = userSnap.data();
+                } else {
+                    // Repair an Auth account that exists but has no Firestore role record.
+                    if(role === 'principal') {
+                        account = { uid, role: PRINCIPAL_ROLE, name: 'Principal' };
+                    } else {
+                        const staffSnap = await db.collection('staff').get();
+                        const employee = staffSnap.docs.map(d => d.data()).find(st =>
+                            st && st.name && st.empId &&
+                            String(st.name).trim().toLowerCase() === user.toLowerCase() &&
+                            String(st.empId).trim() === String(pass).trim()
+                        );
+                        if(!employee) throw new Error('User account is not assigned a role by the Principal.');
+                        const manager = isManagerDesignation(employee.designation);
+                        account = {
+                            uid,
+                            role: manager ? 'dean' : 'teacher',
+                            teacherAccess: manager,
+                            empId: employee.empId,
+                            name: employee.name,
+                            designation: employee.designation,
+                            subject: employee.subject,
+                            board: employee.board || 'CBSE'
+                        };
+                    }
+                    await db.collection('users').doc(uid).set(account, { merge: true });
+                }
 
                 if(role === 'principal' && account.role !== PRINCIPAL_ROLE) throw new Error('This account is not a Principal account.');
                 if(role === 'dean' && account.role !== 'dean') throw new Error('This account is not authorized for Dean/Incharge access.');
@@ -891,15 +965,18 @@ table { max-width:100%; }
                     recordAppPage('principalHome');
                     renderStaffTable();
                 } else if(role === 'dean') {
-                    currentBoard = 'CBSE';
-                    await loadTimetableForBoard('CBSE');
+                    currentBoard = normalizeBoard(account.board) === 'STATE' ? 'STATE' : 'CBSE';
+                    await loadTimetableForBoard(currentBoard);
                     switchView('deanHome');
                     recordAppPage('deanHome');
                     document.getElementById('dualTeacherViewBtn').style.display = account.teacherAccess ? 'inline-block' : 'none';
                 } else {
+                    currentBoard = normalizeBoard(account.board) === 'STATE' ? 'STATE' : 'CBSE';
+                    await loadTimetableForBoard(currentBoard);
                     document.getElementById('teacherWelcome').innerText = `Welcome, ${account.name} (Emp ID: ${account.empId || 'N/A'} | ${account.designation} - ${account.subject})`;
                     document.getElementById('backToManagerBtn').style.display = account.teacherAccess ? 'inline-block' : 'none';
                     switchView('teacherModule');
+                    recordAppPage('teacherModule');
                 }
             } catch(e) {
                 console.error(e);
