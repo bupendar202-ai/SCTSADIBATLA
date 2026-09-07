@@ -98,6 +98,11 @@
                 font-size: 9px !important;
                 page-break-inside: auto;
             }
+            #pSubLogPrintContainer table { font-size: 13px !important; }
+            #pSubLogPrintContainer th, #pSubLogPrintContainer td {
+                padding: 5px 4px !important;
+                line-height: 1.25 !important;
+            }
             th, td {
                 padding: 3px 2px !important;
                 line-height: 1.15;
@@ -1692,6 +1697,8 @@ table { max-width:100%; }
                 const isChecked = currentlyChecked.includes(st.name) ? 'checked' : '';
                 container.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check" ${isChecked}> ${st.name} (${st.subject})</label>`;
             });
+            const dateVal = document.getElementById('subDate')?.value;
+            if(dateVal) restoreAbsentSelectionAsync(dateVal);
         }
 
         function generateSubstitutionMatrix() {
@@ -1905,7 +1912,49 @@ table { max-width:100%; }
         }
 
         function editAbsentSelection() {
+            const dateVal = document.getElementById('subDate')?.value;
+            if(dateVal) restoreAbsentSelectionAsync(dateVal);
             document.getElementById('subSelectionPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getSavedAbsentTeachers(dateVal) {
+            const records = savedSubstitutionsForDate(dateVal);
+            const names = [];
+            records.forEach(r => {
+                if(r.absent && !names.includes(r.absent)) names.push(r.absent);
+            });
+            return names;
+        }
+
+        async function saveAbsentSelectionForDate(dateVal, selectedNames) {
+            if(!dateVal) return;
+            const value = { board: currentBoard, absentTeachers: Array.from(new Set(selectedNames || [])) };
+            if(!window.substitutionAbsentSelections) window.substitutionAbsentSelections = {};
+            window.substitutionAbsentSelections[`${dateVal}__${currentBoard}`] = value;
+            await saveMapDoc('substitutionAbsentSelections', `${dateVal}__${currentBoard}`, value);
+        }
+
+        async function loadAbsentSelectionForDate(dateVal) {
+            if(!dateVal) return [];
+            const cached = window.substitutionAbsentSelections?.[`${dateVal}__${currentBoard}`];
+            if(cached?.absentTeachers) return cached.absentTeachers;
+            try {
+                const snap = await db.collection('substitutionAbsentSelections').doc(`${dateVal}__${currentBoard}`).get();
+                if(snap.exists) {
+                    const value = snap.data().value || {};
+                    if(!window.substitutionAbsentSelections) window.substitutionAbsentSelections = {};
+                    window.substitutionAbsentSelections[`${dateVal}__${currentBoard}`] = value;
+                    return value.absentTeachers || [];
+                }
+            } catch(e) { console.warn('Unable to load saved absent selection:', e); }
+            return getSavedAbsentTeachers(dateVal);
+        }
+
+        async function restoreAbsentSelectionAsync(dateVal) {
+            const savedNames = await loadAbsentSelectionForDate(dateVal);
+            document.querySelectorAll('.absent-check').forEach(cb => {
+                cb.checked = savedNames.includes(cb.value);
+            });
         }
 
         async function saveSubstitutionAllotments(count) {
@@ -2185,12 +2234,12 @@ table { max-width:100%; }
                         <button class="excel-btn no-print" onclick="exportTableToExcel('pSubLogPrintContainer', 'Substitution_Logs_${dateVal}')">Download Excel</button>
                     </div>
                 </div>`;
-            html += `<table><thead><tr><th>S.No</th><th>Period</th><th>Class</th><th>Absent Teacher</th><th>Substitute Teacher Assigned</th><th style="width:75px;">Sign</th></tr></thead><tbody>`;
+            html += `<table><thead><tr><th>S.No</th><th>Period / Time</th><th>Class</th><th>Absent Teacher</th><th>Substitute Teacher Assigned</th><th style="width:75px;">Sign</th></tr></thead><tbody>`;
 
             records.forEach((rec, idx) => {
                 html += `<tr>
                     <td>${idx + 1}</td>
-                    <td><b>${rec.period}</b></td>
+                    <td><b>${rec.period}</b><br><small>${(periods.find(p => String(p.id) === String(rec.period)) || {}).time || ''}</small></td>
                     <td><b>${rec.class}</b></td>
                     <td style="color:red;">${rec.absent}</td>
                     <td style="color:green; font-weight:bold;">${rec.subTeacher}</td>
@@ -2566,13 +2615,16 @@ table { max-width:100%; }
                 const key=`${item.period}_${item.class}`; const current=existingChoices[key]||'';
                 html+=`<tr><td>${index+1}</td><td><b>${item.period}</b></td><td>${item.time}</td><td style="color:red;font-weight:bold;">${item.absentTeacher}</td><td>${item.reason}</td><td><b>${item.class}</b><br>${item.subject||''}</td><td><select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-absent="${item.absentTeacher}" onchange="validatePeriodClash(this);updateSubPrintDisplay(${index})"><option value="">Select Substitute</option>${freeStaff.map(st=>`<option value="${st.name}" ${current===st.name?'selected':''}>${st.name} (${st.subject||'Staff'})</option>`).join('')}</select><span class="print-only-text" id="print_sub_${index}">${current||'---'}</span></td><td></td></tr>`;
             });
-            html+=`</tbody></table><div style="margin-top:15px;"><button onclick="saveSubstitutionAllotments(${rows.length})">Save / Finalize Substitutions</button><button class="edit-btn" onclick="editAbsentSelection()">Edit Leave / Revision Selection</button></div></div>`;
+            html+=`</tbody></table><div style="margin-top:15px;"><button onclick="saveSubstitutionAllotments(${rows.length})">Save / Finalize Substitutions</button><button class="edit-btn" onclick="editAbsentSelection()">Edit Leave / Revision Selection</button>
+                <button class="print-btn no-print" onclick="printTargetElement('subMatrixPrintContainer')">Print Substitution</button></div></div>`;
             container.innerHTML=html; reapplyPeriodClashes();
         };
 
         // Save current board's records without deleting the other board's records.
         saveSubstitutionAllotments = async function(count) {
             const dateVal=document.getElementById('subDate').value; if(!dateVal)return;
+             const selectedAbsentNow = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb=>cb.value);
+             await saveAbsentSelectionForDate(dateVal, selectedAbsentNow);
             const oldRecords=savedSubstitutionsForDate(dateVal).filter(r=>r.board!==currentBoard);
             const newRecords=[];
             for(let i=0;i<count;i++){
@@ -2588,6 +2640,9 @@ table { max-width:100%; }
         const __oldLoadDataForRole=loadDataForRole;
         loadDataForRole=async function(role){
             await __oldLoadDataForRole(role);
+            window.substitutionAbsentSelections = {};
+            const absentSnap=await db.collection('substitutionAbsentSelections').get();
+            absentSnap.forEach(doc=>{ window.substitutionAbsentSelections[doc.id]=doc.data().value || {}; });
             const revSnap=await db.collection('revisionScheduleRecords').get(); revSnap.forEach(doc=>{const [date,board]=doc.id.split('__'); if(!revisionScheduleRecords[date])revisionScheduleRecords[date]={}; revisionScheduleRecords[date][board]=doc.data().value||{};});
             const invSnap=await db.collection('invigilationRecords').get(); invSnap.forEach(doc=>{const [date,board]=doc.id.split('__'); if(!invigilationRecords[date])invigilationRecords[date]={}; invigilationRecords[date][board]=doc.data().value||{};});
             const studySnap=await db.collection('studyHoursRecords').get(); studySnap.forEach(doc=>studyHoursRecords[doc.id]=doc.data().value||{});
