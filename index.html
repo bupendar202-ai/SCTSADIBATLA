@@ -1911,7 +1911,26 @@ table { max-width:100%; }
             });
         }
 
-        function editAbsentSelection() {
+        async function syncSubstituteTeachersIntoAbsentList(dateVal) {
+  try {
+    const records = savedSubstitutionsForDate(dateVal) || [];
+    const selectedSubstituteNames = new Set(
+      records.filter(r => r && r.board === currentBoard && r.substituteTeacher)
+        .map(r => String(r.substituteTeacher).trim()).filter(Boolean)
+    );
+    document.querySelectorAll('#absentTeachersList input[type="checkbox"]').forEach(cb => {
+      const name = String(cb.value || '').trim();
+      if (selectedSubstituteNames.has(name)) {
+        cb.checked = false;
+        cb.disabled = true;
+        const label = cb.closest('label');
+        if (label) { label.style.opacity = '0.55'; label.title = 'Already selected as a substitute teacher'; }
+      }
+    });
+  } catch (e) { console.warn('Unable to sync substitute teachers:', e); }
+}
+
+function editAbsentSelection() {
             const dateVal = document.getElementById('subDate')?.value;
             if(dateVal) restoreAbsentSelectionAsync(dateVal);
             document.getElementById('subSelectionPanel').scrollIntoView({ behavior: 'smooth' });
