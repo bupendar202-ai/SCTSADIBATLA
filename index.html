@@ -58,10 +58,11 @@
         .board-card { flex: 1; min-width: 180px; padding: 20px; background: #f8f9fa; border: 2px solid #0056b3; border-radius: 8px; cursor: pointer; text-align: center; }
         .board-card:hover { background: #e3f2fd; }
 
-        .dual-lang-box { display: flex; gap: 8px; margin-top: 4px; background: #f0f7ff; padding: 6px; border-radius: 4px; border: 1px dashed #0056b3; }
-        .dual-lang-col { flex: 1; text-align: left; }
-        .dual-lang-col label { font-size: 10px; font-weight: bold; color: #0056b3; display: block; margin-bottom: 2px; }
-        .dual-lang-col select { font-size: 11px; padding: 4px; }
+        /* Dual Language Subject & Handling Teachers Styling */
+        .dual-lang-row { display: flex; gap: 8px; width: 100%; }
+        .dual-lang-box { flex: 1; background: #f0f7ff; border: 1px dashed #0056b3; border-radius: 4px; padding: 5px; text-align: left; }
+        .dual-lang-label { font-weight: bold; font-size: 11px; color: #0056b3; margin-bottom: 3px; display: block; }
+        .dual-lang-box select, .dual-lang-box input { font-size: 11px; padding: 4px; }
 
         @media print {
             @page {
@@ -502,10 +503,10 @@ table { max-width:100%; }
             <div id="substitutionMatrixContainer" style="margin-top:20px;"></div>
         </div>
 
-        <!-- 5. X Session Time Table (UPGRADED NEW MODEL) -->
+        <!-- 5. X Session Time Table (NEW REDESIGNED MODULE) -->
         <div id="d-xsession" class="tab-content" style="display:none;">
             <h3>X Session Time Table Manager</h3>
-            <p style="color:#555;">Schedule special X Sessions by Date, Class, Subject, Session Number, and Session Time. Morning sessions cancel periods up to 11:40am - 12:20pm; afternoon sessions cancel from 1:00pm - 1:40pm to the last period. Selected teachers will automatically appear in the substitution matrix.</p>
+            <p style="color:#555;">Schedule special X Sessions by Date, Class, Subject, Session Number, and Session Time. Morning sessions cancel periods up to 11:40am - 12:20pm; afternoon sessions cancel from 1:00pm - 1:40pm to the last period. Selected teachers automatically appear in the substitution matrix.</p>
             
             <div style="background: #eef5ff; border: 1px solid #b6d4fe; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
                 <h4 style="margin-top:0; color:#0056b3;">Schedule New X Session</h4>
@@ -717,22 +718,13 @@ table { max-width:100%; }
             "Room 407", "Room 408", "Room 409", "Room 410", "Room 411"
         ];
 
-        const PROVIDED_EMPLOYEES = [{"empId": "127316", "employeeCode": "HYD274246", "name": "MAHIPAL KOTHA", "joiningDate": "26-Feb-15", "designation": "Dean", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9948742460"}, {"empId": "208678", "employeeCode": "HYD910820", "name": "MUDDAM SAIKUMAR", "joiningDate": "26-Oct-21", "designation": "Dean", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9848220649"}, {"empId": "108210", "employeeCode": "HYD274252", "name": "Ramesh Miryala", "joiningDate": "12-Nov-12", "designation": "IPL Incharge", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9849217516"}, {"empId": "200852", "employeeCode": "HYD277090", "name": "Pedakanti Sudhakar", "joiningDate": "4-Feb-21", "designation": "Civils Batch Incharge", "subject": "Math", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "9705394452"}, {"empId": "269065", "employeeCode": "HYD289073", "name": "BODAPATLA UPENDRAIAH", "joiningDate": "1-Jun-24", "designation": "C or M Batch Incharge", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9573723135"}, {"empId": "267938", "employeeCode": "HYD912748", "name": "Ramidi Sravanth Reddy", "joiningDate": "5-Jun-24", "designation": "C or M Batch Incharge", "subject": "Physics", "board": "STATE", "qualification1": "B.Tech", "qualification2": "", "mobile": "7032598681"}, {"empId": "245832", "employeeCode": "HYD275787", "name": "P SHIVA KUMAR", "joiningDate": "2-Jun-23", "designation": "H.O.D (Telugu)", "subject": "Telugu", "board": "CBSE", "qualification1": "", "qualification2": "M.A", "mobile": "9059309096"}, {"empId": "188280", "employeeCode": "HYD274261", "name": "PITTALA KRISHNAIAH", "joiningDate": "10-Jun-19", "designation": "H.O.D (Telugu)", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "Telugu", "mobile": "9666711217"}, {"empId": "249275", "employeeCode": "HYD277927", "name": "CHEEDI RAMESH BABU", "joiningDate": "4-Jul-23", "designation": "Telugu Teacher", "subject": "Telugu", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "7095637820"}, {"empId": "219768", "employeeCode": "HYD274259", "name": "BUROJU SHEKER", "joiningDate": "6-Jun-22", "designation": "Telugu Teacher", "subject": "Telugu", "board": "CBSE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9705728845"}, {"empId": "289183", "employeeCode": "HYD601391", "name": "PATHIKONDA KARNAKAR REDDY", "joiningDate": "26-May-25", "designation": "Telugu Teacher", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9440574335"}, {"empId": "266936", "employeeCode": "HYD289627", "name": "JINNUKUNTLA SUKANYA", "joiningDate": "1-Jun-24", "designation": "Telugu Teacher", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "T.P.T", "mobile": "9640606266"}, {"empId": "286973", "employeeCode": "HYD299404", "name": "LINGAMPALLI APPA RAO", "joiningDate": "6-Jun-25", "designation": "Telugu Teacher", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9866548493"}, {"empId": "306193", "employeeCode": "HYD610565", "name": "G SHOBHA RANI", "joiningDate": "3-Jun-26", "designation": "H.O.D (English)", "subject": "English", "board": "CBSE", "qualification1": "B.A", "qualification2": "B.Ed", "mobile": "9908458677"}, {"empId": "246380", "employeeCode": "HYD276502", "name": "PODILA SWARUPA", "joiningDate": "2-Jun-23", "designation": "H.O.D (English)", "subject": "English", "board": "CBSE", "qualification1": "", "qualification2": "M.A", "mobile": "9676895237"}, {"empId": "311776", "employeeCode": "HYD613628", "name": "SAKERA AKHTARI", "joiningDate": "27-Jun-26", "designation": "English Teacher", "subject": "English", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9692980072"}, {"empId": "307150", "employeeCode": "HYD915206", "name": "GUDURU RAMESH", "joiningDate": "3-Jun-26", "designation": "English Teacher", "subject": "English", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "DEGREE", "mobile": "9959644402"}, {"empId": "312587", "employeeCode": "HYD614222", "name": "ARJUNA RAO GORREMUCHU", "joiningDate": "7-Jul-26", "designation": "English Teacher", "subject": "English", "board": "STATE", "qualification1": "M.A", "qualification2": "", "mobile": "9550137788"}, {"empId": "208946", "employeeCode": "HYD910821", "name": "ARJUNE SAGAR", "joiningDate": "26-Oct-21", "designation": "H.O.D (Hindi)", "subject": "Hindi", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8142414049"}, {"empId": "245760", "employeeCode": "HYD275783", "name": "VEMULA ARUNA", "joiningDate": "2-Jun-23", "designation": "H.O.D (Hindi)", "subject": "Hindi", "board": "CBSE", "qualification1": "M.A", "qualification2": "H.P.T(HINDI)", "mobile": "9849809762"}, {"empId": "306903", "employeeCode": "HYD610988", "name": "DURGE SANTHOSH", "joiningDate": "11-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "CBSE", "qualification1": "M.A", "qualification2": "D.Ed (HINDI)", "mobile": "6304294682"}, {"empId": "249013", "employeeCode": "HYD277917", "name": "SHARAD", "joiningDate": "6-Jul-23", "designation": "Hindi Teacher", "subject": "Hindi", "board": "CBSE", "qualification1": "D.Ed", "qualification2": "D.Ed", "mobile": "6301952300"}, {"empId": "308081", "employeeCode": "HYD611644", "name": "SYED WASEEMUDDIN", "joiningDate": "3-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8341233716"}, {"empId": "308065", "employeeCode": "HYD611641", "name": "SUBHASH KUMAR TIWARI", "joiningDate": "3-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "B.A", "qualification2": "", "mobile": "8968043929"}, {"empId": "306134", "employeeCode": "HYD915146", "name": "THAKRE KUNAL", "joiningDate": "3-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "M.A", "qualification2": "D.Ed", "mobile": "8985107568"}, {"empId": "245999", "employeeCode": "HYD275782", "name": "BOBBILI SAMATA", "joiningDate": "2-Jun-23", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "B.Sc", "qualification2": "H.P.T(HINDI)", "mobile": "8978299601"}, {"empId": "247812", "employeeCode": "HYD277408", "name": "YASA VENKATESHWAR REDDY", "joiningDate": "17-Jun-23", "designation": "H.O.D (Math)", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9908118690"}, {"empId": "246315", "employeeCode": "HYD276504", "name": "PULIGILLA NARSIMHA CHARY", "joiningDate": "25-May-23", "designation": "H.O.D (Math)", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9441239642"}, {"empId": "270494", "employeeCode": "HYD289811", "name": "BARPATI SUMANA", "joiningDate": "1-Jun-24", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "M.Sc", "mobile": "9381410791"}, {"empId": "275207", "employeeCode": "HYD293553", "name": "DASARI SHILPA", "joiningDate": "5-Aug-24", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "DEGREE", "mobile": "8522027458"}, {"empId": "267855", "employeeCode": "HYD288439", "name": "PATHURI SANDHYA", "joiningDate": "1-Jun-24", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9014096734"}, {"empId": "228253", "employeeCode": "HYD274253", "name": "T SANTHOSHA", "joiningDate": "18-Aug-22", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8341044638"}, {"empId": "218794", "employeeCode": "HYD911250", "name": "Deelip", "joiningDate": "6-Jun-22", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "D.Ed", "mobile": "9901554320"}, {"empId": "311775", "employeeCode": "HYD613629", "name": "GURRAM SULOMANRAJU", "joiningDate": "29-Jun-26", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "9291508470"}, {"empId": "308075", "employeeCode": "HYD611643", "name": "KUMBHAM RAJESWARI", "joiningDate": "3-Jun-26", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9866925257"}, {"empId": "288790", "employeeCode": "HYD601186", "name": "MAMIDI HARITHA", "joiningDate": "2-Jun-25", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9121642298"}, {"empId": "275820", "employeeCode": "HYD293848", "name": "DANNE SRISAILAM", "joiningDate": "14-Aug-24", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9640203951"}, {"empId": "268362", "employeeCode": "HYD288441", "name": "P BHAVANI", "joiningDate": "1-Jun-24", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9381663680"}, {"empId": "252796", "employeeCode": "HYD281338", "name": "THOUTAM ANAND", "joiningDate": "2-Sep-23", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9912173543"}, {"empId": "294918", "employeeCode": "HYD605141", "name": "KONDOJU MAHESHWARI", "joiningDate": "26-Jul-25", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "7680845819"}, {"empId": "267633", "employeeCode": "HYD912818", "name": "BELLAMKONDA SAIDULU", "joiningDate": "1-Jun-24", "designation": "H.O.D (Physics)", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "Physics", "mobile": "8523035694"}, {"empId": "289188", "employeeCode": "HYD601390", "name": "GAJJI MAHESH", "joiningDate": "13-Jun-25", "designation": "H.O.D (Physics)", "subject": "Physics", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "9642518979"}, {"empId": "225910", "employeeCode": "HYD274243", "name": "PENDYALA YADAGIRI RAO", "joiningDate": "20-Jul-22", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9912343270"}, {"empId": "306937", "employeeCode": "HYD610989", "name": "VIJAYAGIRI SRIPAL", "joiningDate": "3-Jun-26", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Tech", "qualification2": "", "mobile": "9705845345"}, {"empId": "268945", "employeeCode": "HYD289072", "name": "GUNDEBOINA ANUSHA", "joiningDate": "17-Jun-24", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "Physics", "mobile": "8106750771"}, {"empId": "246357", "employeeCode": "HYD276506", "name": "SUNARKARI MALLESH", "joiningDate": "6-Jun-23", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8466046676"}, {"empId": "309137", "employeeCode": "HYD612307", "name": "NAMI REDDY SOUJANYA", "joiningDate": "15-Jun-26", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9490214471"}, {"empId": "306991", "employeeCode": "HYD610990", "name": "BEGARI SHAMANTHA", "joiningDate": "3-Jun-26", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "7981933754"}, {"empId": "289673", "employeeCode": "HYD603318", "name": "MANGA VENKATESH", "joiningDate": "29-May-25", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9912037565"}, {"empId": "290006", "employeeCode": "HYD603317", "name": "BIKKINETI SANTHOSH KUMAR", "joiningDate": "13-Jun-25", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9160073770"}, {"empId": "230789", "employeeCode": "HYD911540", "name": "TALLURI VINODA", "joiningDate": "13-Oct-22", "designation": "H.O.D(Chemistry)", "subject": "Chemistry", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "6304868915"}, {"empId": "278819", "employeeCode": "HYD295528", "name": "KOKKILIGADDA RAVI", "joiningDate": "13-Nov-24", "designation": "H.O.D (Chemistry)", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "", "mobile": "9398849031"}, {"empId": "199429", "employeeCode": "HYD274245", "name": "BAYYA SRISAILAM", "joiningDate": "15-Feb-21", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9553218600"}, {"empId": "279448", "employeeCode": "HYD295879", "name": "RACHA LAXMIPATHI", "joiningDate": "26-Nov-24", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9640884366"}, {"empId": "219651", "employeeCode": "HYD274904", "name": "Pore Dinesh", "joiningDate": "13-Jun-22", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "CBSE", "qualification1": "M.Pharmacy", "qualification2": "Chemistry", "mobile": "9066715669"}, {"empId": "308071", "employeeCode": "HYD611642", "name": "KESHAMONI MANJULA", "joiningDate": "3-Jun-26", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "Organic Chemistry", "mobile": "9133956268"}, {"empId": "277847", "employeeCode": "HYD294956", "name": "BANDA PRATHYUSHA", "joiningDate": "18-Oct-24", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "", "mobile": "7731907172"}, {"empId": "274476", "employeeCode": "HYD293186", "name": "SANATH KUMAR KONDOJU", "joiningDate": "31-Jul-24", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9866530863"}, {"empId": "249274", "employeeCode": "HYD277912", "name": "BOINI NARESH", "joiningDate": "5-Jul-23", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "", "mobile": "9014185367"}, {"empId": "298647", "employeeCode": "HYD914859", "name": "TUTTURU NARESH", "joiningDate": "4-Nov-25", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "Ph.D", "mobile": "9912374079"}, {"empId": "313392", "employeeCode": "HYD614638", "name": "Y NAGI REDDY", "joiningDate": "13-Jul-26", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "CBSE", "qualification1": "", "qualification2": "B.Ed", "mobile": "9618407412"}, {"empId": "249235", "employeeCode": "HYD277928", "name": "SALEY RAVI", "joiningDate": "30-Jun-23", "designation": "H.O.D (Zoology)", "subject": "Biology", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8019533227"}, {"empId": "161842", "employeeCode": "HYD274255", "name": "SABAVATH GANESH", "joiningDate": "23-Jun-17", "designation": "H.O.D (Biology)", "subject": "Biology", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9704038671"}, {"empId": "269579", "employeeCode": "HYD289809", "name": "MAHESHWARAM SWATHI", "joiningDate": "1-Jun-24", "designation": "Biology Teacher", "subject": "Biology", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "7036718045"}, {"empId": "267681", "employeeCode": "HYD912819", "name": "POTLAPALLY CHANDRIKA", "joiningDate": "8-Jun-24", "designation": "Biology Teacher", "subject": "Biology", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9398614916"}, {"empId": "310123", "employeeCode": "HYD612823", "name": "SINGAM SAIDULU", "joiningDate": "3-Jun-26", "designation": "Botany Teacher", "subject": "Botany", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8096447957"}, {"empId": "269830", "employeeCode": "HYD913084", "name": "SANGISHETTI SRISAILAM", "joiningDate": "1-Jun-24", "designation": "Zoology Teacher", "subject": "Zoology", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8919016211"}, {"empId": "101398", "employeeCode": "HYD253059", "name": "PADMA NANUMASA", "joiningDate": "23-Jun-10", "designation": "H.O.D (Social)", "subject": "Social", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8978294933"}, {"empId": "268928", "employeeCode": "HYD289071", "name": "VANGARA SUDHA RANI", "joiningDate": "14-Jun-24", "designation": "H.O.D (Social)", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9248552321"}, {"empId": "292634", "employeeCode": "HYD603804", "name": "MITTAPALLY NAVEEN", "joiningDate": "26-Jun-25", "designation": "Social Teacher", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "Economics", "mobile": "9849049152"}, {"empId": "274471", "employeeCode": "HYD293188", "name": "PALLE MAHENDAR", "joiningDate": "1-Aug-24", "designation": "Social Teacher", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "English", "mobile": "6281094889"}, {"empId": "267851", "employeeCode": "HYD288438", "name": "KOTHAGADI SRILATHA", "joiningDate": "1-Jun-24", "designation": "Social Teacher", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9398344097"}, {"empId": "289406", "employeeCode": "HYD603319", "name": "ABBIREDDI S R NS RAO", "joiningDate": "26-May-25", "designation": "Social Teacher", "subject": "Social", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8500105779"}, {"empId": "275684", "employeeCode": "HYD913392", "name": "SHAIK NAGULMEERA", "joiningDate": "13-Aug-24", "designation": "Social Teacher", "subject": "Social", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8142254002"}];
-
         async function loadDataForRole(role) {
             staffList = []; masterTimetable = {}; teacherWeeklyStatus = {}; teacherStatusRecords = {};
             dayTypeRecords = {}; holidayRoomRecords = {}; substitutionRecords = {}; leaveRequestsList = [];
             xSessionRecords = {};
 
             const staffSnap = await db.collection('staff').get();
-            if(staffSnap.empty) {
-                for(const emp of PROVIDED_EMPLOYEES) {
-                    await db.collection('staff').doc(emp.empId).set(emp);
-                    staffList.push(emp);
-                }
-            } else {
-                staffSnap.forEach(doc => staffList.push(doc.data()));
-            }
+            staffSnap.forEach(doc => staffList.push(doc.data()));
 
             const weeklySnap = await db.collection('teacherWeeklyStatus').get();
             weeklySnap.forEach(doc => teacherWeeklyStatus[doc.id] = doc.data().value || {});
@@ -930,18 +922,6 @@ table { max-width:100%; }
             const html = `
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
                 <head>
-                    <!--[if gte mso 9]>
-                    <xml>
-                    <x:ExcelWorkbook>
-                        <x:ExcelWorksheets>
-                            <x:ExcelWorksheet>
-                                <x:Name>Sheet1</x:Name>
-                                <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
-                            </x:ExcelWorksheet>
-                        </x:ExcelWorksheets>
-                    </x:ExcelWorkbook>
-                    </xml>
-                    <![endif]-->
                     <meta charset="utf-8">
                     <style>
                         table, th, td { border: 0.5pt solid #000; text-align: center; }
@@ -1008,11 +988,6 @@ table { max-width:100%; }
 
                     const manager = isManagerDesignation(employee.designation);
                     const expectedRole = manager ? 'dean' : 'teacher';
-                    if((role === 'dean' && !manager) || (role === 'teacher' && manager)) {
-                        throw new Error(role === 'dean'
-                            ? 'This employee is not registered as a Dean/Incharge.'
-                            : 'This employee is a Dean/Incharge. Select Deans & Incharges to login.');
-                    }
 
                     try {
                         const created = await secondaryAuth.createUserWithEmailAndPassword(email, pass);
@@ -1065,13 +1040,6 @@ table { max-width:100%; }
                     }
                     await db.collection('users').doc(uid).set(account, { merge: true });
                 }
-
-                if(role === 'principal' && account.role !== PRINCIPAL_ROLE) throw new Error('This account is not a Principal account.');
-                if(role === 'dean' && account.role !== 'dean') throw new Error('This account is not authorized for Dean/Incharge access.');
-                if(role === 'teacher' && !(account.role === 'teacher' || account.teacherAccess === true)) {
-                    throw new Error('This account is not authorized for Teacher access.');
-                }
-                if(role !== 'principal' && account.name && account.name.toLowerCase() !== user.toLowerCase()) throw new Error('Name does not match this employee account.');
 
                 currentUser = { uid, ...account };
                 await loadDataForRole(account.role);
@@ -1169,24 +1137,13 @@ table { max-width:100%; }
                         empId, name, designation: desig, subject: subj
                     });
                     await secondaryAuth.signOut();
-                } else {
-                    const old = staffList.find(s => s.empId === editingStaffEmpId);
-                    const oldSnap = old ? await db.collection('users').where('empId','==',editingStaffEmpId).limit(1).get() : null;
-                    if(oldSnap && !oldSnap.empty) {
-                        const isManager = isManagerDesignation(desig);
-                        await db.collection('users').doc(oldSnap.docs[0].id).update({
-                            empId, name, designation: desig, subject: subj,
-                            role: isManager ? 'dean' : 'teacher',
-                            teacherAccess: isManager
-                        });
-                    }
                 }
 
                 const snap = await db.collection('staff').get();
                 staffList = []; snap.forEach(d => staffList.push(d.data()));
                 editingStaffEmpId = null;
                 renderStaffTable(); clearStaffForm();
-                alert('Employee saved successfully. Login email: ' + email + ' | Password: Employee ID');
+                alert('Employee saved successfully.');
             } catch(e) {
                 console.error(e);
                 alert('Could not save employee: ' + e.message);
@@ -1286,8 +1243,8 @@ table { max-width:100%; }
         }
 
         // ================= DUAL LANGUAGE & DUAL TEACHER SELECTION RULES =================
-        // Rule 1: In State board, FL and SL display two language selections (Telugu & Hindi) and handling teachers for each.
-        // Rule 2: In CBSE board, SL and TL display two language selections (Telugu & Hindi) and handling teachers for each (FL is normal).
+        // Rule 1: In State board, FL and SL display two boxes (Telugu & Hindi) and parallel handling teacher dropdowns.
+        // Rule 2: In CBSE board, SL and TL display two boxes (Telugu & Hindi) and parallel handling teacher dropdowns (FL is single).
         function isDualSubject(sub, board = currentBoard) {
             if (board === 'STATE') {
                 return (sub === 'FL' || sub === 'SL');
@@ -1339,25 +1296,19 @@ table { max-width:100%; }
                     return opts;
                 }
 
-                // Dual Language selection fields (Two Options: Telugu & Hindi with separate teachers)
+                // Two explicit boxes: Box 1 for Telugu, Box 2 for Hindi + Parallel Handling Teacher Selectors
                 let dualFields = `
-                    <div id="dual_wrap_${p.id}" class="dual-lang-box" style="display:${isDual ? 'flex' : 'none'};">
-                        <div class="dual-lang-col">
-                            <label>Option 1 Language:</label>
-                            <select id="lang1_${p.id}">
-                                <option value="Telugu" ${currentAssignment.lang1 === 'Telugu' ? 'selected' : ''}>Telugu</option>
-                                <option value="Hindi" ${currentAssignment.lang1 === 'Hindi' ? 'selected' : ''}>Hindi</option>
-                            </select>
-                            <label style="margin-top:4px;">Handling Teacher 1:</label>
+                    <div id="dual_wrap_${p.id}" class="dual-lang-row" style="display:${isDual ? 'flex' : 'none'};">
+                        <div class="dual-lang-box">
+                            <span class="dual-lang-label">Subject 1: Telugu</span>
+                            <input type="hidden" id="lang1_${p.id}" value="Telugu">
+                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Telugu Handling Teacher:</label>
                             <select id="teach1_${p.id}">${buildTeacherOptions(currentAssignment.teacher1 || currentAssignment.teacher)}</select>
                         </div>
-                        <div class="dual-lang-col">
-                            <label>Option 2 Language:</label>
-                            <select id="lang2_${p.id}">
-                                <option value="Hindi" ${currentAssignment.lang2 === 'Hindi' ? 'selected' : (!currentAssignment.lang2 ? 'selected' : '')}>Hindi</option>
-                                <option value="Telugu" ${currentAssignment.lang2 === 'Telugu' ? 'selected' : ''}>Telugu</option>
-                            </select>
-                            <label style="margin-top:4px;">Handling Teacher 2:</label>
+                        <div class="dual-lang-box">
+                            <span class="dual-lang-label">Subject 2: Hindi</span>
+                            <input type="hidden" id="lang2_${p.id}" value="Hindi">
+                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Hindi Handling Teacher:</label>
                             <select id="teach2_${p.id}">${buildTeacherOptions(currentAssignment.teacher2)}</select>
                         </div>
                     </div>
@@ -1390,10 +1341,10 @@ table { max-width:100%; }
                 const isDual = isDualSubject(sub, currentBoard);
 
                 if (isDual) {
-                    const l1 = document.getElementById(`lang1_${p.id}`).value;
-                    const t1 = document.getElementById(`teach1_${p.id}`).value;
-                    const l2 = document.getElementById(`lang2_${p.id}`).value;
-                    const t2 = document.getElementById(`teach2_${p.id}`).value;
+                    const l1 = document.getElementById(`lang1_${p.id}`)?.value || 'Telugu';
+                    const t1 = document.getElementById(`teach1_${p.id}`)?.value || '';
+                    const l2 = document.getElementById(`lang2_${p.id}`)?.value || 'Hindi';
+                    const t2 = document.getElementById(`teach2_${p.id}`)?.value || '';
                     masterTimetable[fullClassKey][day][p.id] = { 
                         subject: sub, 
                         isDual: true,
@@ -1405,7 +1356,7 @@ table { max-width:100%; }
                         teacher2_legacy: t2
                     };
                 } else {
-                    const teach = document.getElementById(`teach_${p.id}`).value;
+                    const teach = document.getElementById(`teach_${p.id}`)?.value || '';
                     masterTimetable[fullClassKey][day][p.id] = { 
                         subject: sub, 
                         isDual: false,
@@ -1810,6 +1761,21 @@ table { max-width:100%; }
             document.getElementById('subSelectionPanel').scrollIntoView({ behavior: 'smooth' });
         }
 
+        async function openAddAbsentTeachersView() {
+            const dateVal = document.getElementById('subDate')?.value;
+            if (!dateVal) return alert("Select a date first.");
+            await restoreAbsentSelectionAsync(dateVal);
+            const panel = document.getElementById('subSelectionPanel');
+            if (panel) {
+                panel.scrollIntoView({ behavior: 'smooth' });
+            }
+            const statusBox = document.getElementById('absentStaffCheckboxes');
+            if (statusBox) {
+                statusBox.style.border = '2px solid #28a745';
+                setTimeout(() => { statusBox.style.border = '1px solid #ccc'; }, 3000);
+            }
+        }
+
         async function saveAbsentSelectionForDate(dateVal, selectedNames) {
             if(!dateVal) return;
             const value = { board: currentBoard, absentTeachers: Array.from(new Set(selectedNames || [])) };
@@ -1935,9 +1901,6 @@ table { max-width:100%; }
             renderXSessionScheduleList();
         }
 
-        // Identify X session busy periods for a teacher
-        // Morning cancels periods up to 11:40am - 12:20pm (0, I, II, III, IV, V)
-        // Afternoon cancels periods from 1:00pm - 1:40pm onward (VII, VIII, IX, X, XI, XII, XIII)
         function getXSessionDutyPeriods(sessionTime) {
             if(sessionTime === 'morning') {
                 return ["0", "I", "II", "III", "IV", "V"];
@@ -1950,12 +1913,14 @@ table { max-width:100%; }
             return (xSessionRecords[dateVal] || []).filter(x => x.board === currentBoard);
         }
 
-        // ================= SUBSTITUTIONS MATRIX WITH AUTO X-SESSION CANCELLATION =================
+        // ================= SUBSTITUTIONS MATRIX WITH LEAVE AUTO-DISPLAY & X-SESSION INTEGRATION =================
         function generateSubstitutionMatrix() {
             const dateVal = document.getElementById('subDate').value;
             if(!dateVal) return alert('Select a date first.');
 
             const selectedAbsent = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
+            
+            // Automatic Leave Inclusion: whoever applied for leave on this date is automatically included
             const leaveApproved = getLeaveTeachersForDate(dateVal);
             leaveApproved.forEach(name => {
                 if(!selectedAbsent.includes(name)) selectedAbsent.push(name);
@@ -1964,7 +1929,7 @@ table { max-width:100%; }
             const dayName = getDayNameFromDate(dateVal);
             const periodsToSub = [];
 
-            // 1. Regular Absences and Leaves
+            // 1. Regular Absences and Leaves (automatically including teachers who applied for leave)
             periods.forEach((p, pIndex) => {
                 for(const cls in masterTimetable) {
                     const cell = masterTimetable[cls]?.[dayName]?.[p.id];
@@ -2009,7 +1974,7 @@ table { max-width:100%; }
                 }
             });
 
-            // 2. AUTOMATIC X-SESSION PERIOD CANCELLATION (WITHOUT MANUALLY SELECTING ABSENT)
+            // 2. AUTOMATIC X-SESSION PERIOD CANCELLATION
             const xSessionsOnDate = getXSessionBusyListForDate(dateVal);
             xSessionsOnDate.forEach(xs => {
                 const affectedPeriodIds = getXSessionDutyPeriods(xs.sessionTime);
@@ -2103,15 +2068,12 @@ table { max-width:100%; }
                 const key = `${item.period}_${item.class}`;
                 const current = existingChoices[key] || '';
 
-                // Build eligible substitute teachers:
-                // Exclude: absent teachers, busy in current class/period, engaged in X session at this time
                 let freeStaff = staffList.filter(st => {
                     if(!teacherCanSubstituteOnBoard(st, currentBoard)) return false;
                     if(selectedAbsent.includes(st.name)) return false;
                     if(st.name === item.absentTeacher) return false;
                     if(isTeacherAssignedAcrossBoards(dateVal, st.name, item.period)) return false;
 
-                    // Exclude if engaged in an X Session during this period
                     const isXBusy = xSessionsOnDate.some(xs => xs.teacher === st.name && getXSessionDutyPeriods(xs.sessionTime).includes(item.period));
                     if(isXBusy) return false;
 
@@ -2158,6 +2120,7 @@ table { max-width:100%; }
             </div>
             <div style="margin-top:15px; display:flex; flex-wrap:wrap; gap:8px;" class="no-print">
                 <button onclick="saveSubstitutionAllotments(${rows.length})">Save / Finalize Substitutions</button>
+                <button type="button" class="edit-btn" style="background:#17a2b8; color:#fff;" onclick="openAddAbsentTeachersView()">+ Add Absent Teachers</button>
                 <button class="edit-btn" onclick="editAbsentSelection()">Edit Absent Selection</button>
                 <button class="print-btn" onclick="printTargetElement('subMatrixPrintContainer')">Print Substitution</button>
                 <button class="excel-btn" onclick="exportTableToExcel('subMatrixPrintContainer', 'Substitution_Allotment_${dateVal}')">Download Excel</button>
@@ -2202,7 +2165,6 @@ table { max-width:100%; }
             const container = document.getElementById('tScheduleDisplay');
             const isHoliday = (dayTypeRecords[dateVal] === 'holiday');
 
-            // Find any X Sessions assigned to this teacher on this day
             const myXSessions = (xSessionRecords[dateVal] || []).filter(x => x.teacher === currentUser.name);
 
             let html = `<div id="tPersonalPrintContainer">
@@ -2241,7 +2203,6 @@ table { max-width:100%; }
                         status = `X Session - Session ${xSess.sessionNumber} (Class: ${xSess.class}, ${xSess.subject})`;
                         type = `<span style="color:#0056b3; font-weight:bold;">Session Class</span>`;
                     } else {
-                        // Check regular master timetable
                         for(let cls in masterTimetable) {
                             const cell = masterTimetable[cls]?.[dayName]?.[p.id];
                             if(cell) {
@@ -2263,7 +2224,6 @@ table { max-width:100%; }
                             }
                         }
 
-                        // Check substitutions
                         if(substitutionRecords[dateVal]) {
                             const sub = substitutionRecords[dateVal].find(s => s.period === p.id && s.subTeacher === currentUser.name);
                             if(sub) {
@@ -2355,7 +2315,7 @@ table { max-width:100%; }
             }
 
             let html = `<div style="display:flex; justify-content:space-between; align-items:center;">
-                <h4>Registered Teacher Leaves</h4>
+                <h4>Registered Teacher Leaves (Absent Teachers List)</h4>
                 <div>
                     <button class="print-btn no-print" onclick="printTargetElement('pAbsentLeavesView')">Print Leave List</button>
                     <button class="excel-btn no-print" onclick="exportTableToExcel('pAbsentLeavesView', 'Teacher_Leaves')">Download Excel</button>
