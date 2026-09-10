@@ -294,6 +294,7 @@ table { max-width:100%; }
                         <option>Chemistry</option><option>Biology</option><option>Social</option>
                         <option>IT</option><option>Computer</option><option>Wizclub</option>
                         <option>Art & Crafts</option><option>PET</option><option>Reasoning</option><option>Arithmetic</option>
+                        <option>G.K</option><option>Currentaffair</option>
                     </select>
                 </div>
                 <div class="form-group" style="flex: 1;"><label>Mobile No:</label><input type="text" id="staffMob"></div>
@@ -1283,7 +1284,7 @@ table { max-width:100%; }
             const day = document.getElementById('ttDay').value;
             if(!fullClassKey || !day) return alert("Select Class and Day first.");
 
-            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "IT", "WIZCLUB", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP"];
+            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "IT", "WIZCLUB", "PET", "Computer", "Reasoning", "Arithmetic", "Curtentaffairs", "G.K" "Activity", "CBP", "SDP"];
             let html = `<h4>Assigning Timetable for ${fullClassKey} (${day}) - [${currentBoard} BOARD]</h4>`;
             html += `<table><tr><th>Period</th><th>Time</th><th>Subject</th><th>Handling Teacher(s) Selection</th></tr>`;
 
