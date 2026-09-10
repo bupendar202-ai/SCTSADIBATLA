@@ -1253,12 +1253,14 @@ table { max-width:100%; }
             return sec ? `${cls} - Sec ${sec}` : cls;
         }
 
-        // Dual Language Criteria: STATE => FL & SL; CBSE => SL & TL
+        // Dual Selection Criterion: STATE => FL & SL; CBSE => SL & TL
         function isDualSubject(sub, board = currentBoard) {
-            if (board === 'STATE') {
-                return (sub === 'FL' || sub === 'SL');
+            const s = String(sub || '').trim().toUpperCase();
+            const b = String(board || '').trim().toUpperCase();
+            if (b === 'STATE') {
+                return (s === 'FL' || s === 'SL');
             } else {
-                return (sub === 'SL' || sub === 'TL');
+                return (s === 'SL' || s === 'TL');
             }
         }
 
@@ -1305,19 +1307,19 @@ table { max-width:100%; }
                     return opts;
                 }
 
-                // Dual selection: Option 1 for Telugu Teacher and Option 2 for Subject/Hindi Teacher
+                // Dual Selection Option Boxes: Option 1 (Teacher 1) & Option 2 (Teacher 2)
                 let dualFields = `
                     <div id="dual_wrap_${p.id}" class="dual-lang-row" style="display:${isDual ? 'flex' : 'none'};">
                         <div class="dual-lang-box">
-                            <span class="dual-lang-label">Language: Telugu</span>
+                            <span class="dual-lang-label">Teacher 1 (e.g. Telugu)</span>
                             <input type="hidden" id="lang1_${p.id}" value="Telugu">
-                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Telugu Teacher:</label>
+                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Select Teacher 1:</label>
                             <select id="teach1_${p.id}">${buildTeacherOptions(currentAssignment.teacher1 || currentAssignment.teacher)}</select>
                         </div>
                         <div class="dual-lang-box">
-                            <span class="dual-lang-label">Language / Subject: Hindi</span>
+                            <span class="dual-lang-label">Teacher 2 (e.g. Hindi / Subject)</span>
                             <input type="hidden" id="lang2_${p.id}" value="Hindi">
-                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Handling Teacher:</label>
+                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Select Teacher 2:</label>
                             <select id="teach2_${p.id}">${buildTeacherOptions(currentAssignment.teacher2)}</select>
                         </div>
                     </div>
@@ -1918,12 +1920,10 @@ table { max-width:100%; }
             return (xSessionRecords[dateVal] || []).filter(x => x.board === currentBoard);
         }
 
-        // Live Workload Calculation Across the Entire Allotment Grid
         function getLiveWorkloadMap(dateVal) {
             const wlMap = {};
             staffList.forEach(st => { wlMap[st.name] = 0; });
 
-            // 1. Saved substitutions for this date
             const saved = savedSubstitutionsForDate(dateVal);
             saved.forEach(rec => {
                 if(rec.subTeacher && wlMap[rec.subTeacher] !== undefined) {
@@ -1931,7 +1931,6 @@ table { max-width:100%; }
                 }
             });
 
-            // 2. Active dropdown selections in the current DOM
             document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
                 const assigned = sel.value;
                 if(assigned && wlMap[assigned] !== undefined) {
@@ -1968,14 +1967,12 @@ table { max-width:100%; }
             updateAllSubstitutionDropdownLabels();
         }
 
-        // Substitutions Matrix: P1, P2, P3 priorities, Workload counters, and Auto-Leave inclusion
         function generateSubstitutionMatrix() {
             const dateVal = document.getElementById('subDate').value;
             if(!dateVal) return alert('Select a date first.');
 
             const selectedAbsent = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
             
-            // Auto Leave Inclusion without manual ticking
             const leaveApproved = getLeaveTeachersForDate(dateVal);
             leaveApproved.forEach(name => {
                 if(!selectedAbsent.includes(name)) selectedAbsent.push(name);
@@ -2031,7 +2028,6 @@ table { max-width:100%; }
                 }
             });
 
-            // X-Session duty period cancellations
             const xSessionsOnDate = getXSessionBusyListForDate(dateVal);
             xSessionsOnDate.forEach(xs => {
                 const affectedPeriodIds = getXSessionDutyPeriods(xs.sessionTime);
@@ -2130,7 +2126,6 @@ table { max-width:100%; }
                 const key = `${item.period}_${item.class}`;
                 const current = existingChoices[key] || '';
 
-                // Find candidate teachers free in this period
                 let freeStaff = staffList.filter(st => {
                     if(!teacherCanSubstituteOnBoard(st, currentBoard)) return false;
                     if(selectedAbsent.includes(st.name)) return false;
@@ -2152,10 +2147,6 @@ table { max-width:100%; }
                     return true;
                 });
 
-                // Prioritization:
-                // P1: Teachers handling ANY subject in this same class (master timetable)
-                // P2: Teachers handling the same subject
-                // P3: Free teachers
                 const classTeachers = new Set();
                 for(const d of days) {
                     for(const pid of periods.map(p => p.id)) {
@@ -2410,7 +2401,6 @@ table { max-width:100%; }
             }
         }
 
-        // Date-wise Absent Teachers & Leave Requests in Principal Module
         function renderPrincipalAbsentLeaves() {
             const container = document.getElementById('pAbsentLeavesView');
             if(!container) return;
