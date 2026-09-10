@@ -1283,7 +1283,7 @@ table { max-width:100%; }
             const day = document.getElementById('ttDay').value;
             if(!fullClassKey || !day) return alert("Select Class and Day first.");
 
-            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "IT", "WIZCLUB", "PET", "Computer", "Reasoning", "Arithmetic", "Curtentaffairs", "G.K" "Activity", "CBP", "SDP"];
+            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "IT", "WIZCLUB", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP"];
             let html = `<h4>Assigning Timetable for ${fullClassKey} (${day}) - [${currentBoard} BOARD]</h4>`;
             html += `<table><tr><th>Period</th><th>Time</th><th>Subject</th><th>Handling Teacher(s) Selection</th></tr>`;
 
@@ -2219,7 +2219,7 @@ table { max-width:100%; }
                     const isSel = entry.name === current ? 'selected' : '';
                     // Put Teacher Name and Subject FIRST, followed by [P1/P2/P3]
                     const baseLabel = `${entry.name} (${entry.subject}) [${entry.priority}]`;
-                    const currentInfo = initialWlMap[entry.name] || { regular: 0, s: 0, total: 0 };
+                    const currentInfo = initialWlMap[entry.name] || { regular: 0, sub: 0, total: 0 };
                     // Format: Teacher Name (Subject) [P1] (Total WL: X [Regular: Y + Sub: Z])
                     const labelWithWorkload = `${baseLabel} (Total WL: ${currentInfo.T} [Regular: ${currentInfo.R} + Sub: ${currentInfo.S}])`;
                     options += `<option value="${entry.name}" data-base-label="${baseLabel}" ${isSel}>${labelWithWorkload}</option>`;
