@@ -494,7 +494,7 @@ table { max-width:100%; }
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                     <div class="form-group" style="flex: 1; min-width: 200px;">
                         <label>Select Date:</label>
-                        <input type="date" id="subDate" onchange="populateAbsentCheckboxes()">
+                        <input type="date" id="subDate" onchange="restoreSavedSubstitutionForDate(this.value)">
                     </div>
                     <div class="form-group" style="flex: 2; min-width: 250px;">
                         <label>Mark Absent Teachers (Leaves Auto-Selected):</label>
@@ -502,6 +502,7 @@ table { max-width:100%; }
                     </div>
                 </div>
                 <button onclick="generateSubstitutionMatrix()">Assign Timetable</button>
+                <span id="substitutionSaveHint" style="margin-left:10px;color:#555;font-size:12px;">After finalizing, use “+ Add Additional Absent Teachers” to add more teachers without losing existing substitutions.</span>
             </div>
             <div id="substitutionMatrixContainer" style="margin-top:20px;"></div>
         </div>
@@ -863,6 +864,15 @@ table { max-width:100%; }
             }
         }
 
+        async function restoreSavedSubstitutionForDate(dateVal) {
+            if(!dateVal) return;
+            await populateAbsentCheckboxes();
+            const existing = (savedSubstitutionsForDate(dateVal) || []).filter(r => r.board === currentBoard && r.subTeacher);
+            if(existing.length) {
+                generateSubstitutionMatrix();
+            }
+        }
+
         function showTabDeanById(tabId) {
             document.querySelectorAll('#deanModule .tab-content').forEach(el => el.style.display = 'none');
             document.querySelectorAll('#deanModule .nav-tabs button').forEach(el => el.classList.remove('active'));
@@ -874,7 +884,7 @@ table { max-width:100%; }
             if(tabId === 'd-sub') {
                 const sd = document.getElementById('subDate');
                 if(sd && !sd.value) sd.value = new Date().toISOString().slice(0,10);
-                populateAbsentCheckboxes();
+                if(sd && sd.value) restoreSavedSubstitutionForDate(sd.value);
             }
             if(tabId === 'd-xsession') populateXSessionControls();
             if(tabId === 'd-exam') showExamTab('revision');
@@ -1751,16 +1761,35 @@ table { max-width:100%; }
             return result;
         }
 
-        function populateAbsentCheckboxes() {
+        async function populateAbsentCheckboxes() {
             const container = document.getElementById('absentStaffCheckboxes');
+            if(!container) return;
             const currentlyChecked = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
+            const dateVal = document.getElementById('subDate')?.value;
+            let savedNames = [];
+            if(dateVal) savedNames = await loadAbsentSelectionForDate(dateVal);
+
+            // Also recover absent-teacher names from finalized substitution rows.
+            // This protects older records and guarantees relogin/additional-entry flow.
+            if(dateVal) {
+                const rowNames = (savedSubstitutionsForDate(dateVal) || [])
+                    .filter(r => r.board === currentBoard && r.absent)
+                    .map(r => r.absent);
+                savedNames = Array.from(new Set([...(savedNames || []), ...rowNames]));
+            }
+
             container.innerHTML = '';
             staffList.filter(st => staffMatchesBoard(st)).forEach(st => {
-                const isChecked = currentlyChecked.includes(st.name) ? 'checked' : '';
+                const isChecked = (currentlyChecked.includes(st.name) || savedNames.includes(st.name)) ? 'checked' : '';
                 container.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check" ${isChecked}> ${st.name} (${st.subject})</label>`;
             });
-            const dateVal = document.getElementById('subDate')?.value;
-            if(dateVal) restoreAbsentSelectionAsync(dateVal);
+
+            if(dateVal) {
+                const leaveApproved = getLeaveTeachersForDate(dateVal);
+                document.querySelectorAll('.absent-check').forEach(cb => {
+                    if(leaveApproved.includes(cb.value) || savedNames.includes(cb.value)) cb.checked = true;
+                });
+            }
         }
 
         function editAbsentSelection() {
@@ -1772,27 +1801,34 @@ table { max-width:100%; }
         async function openAddAbsentTeachersView() {
             const dateVal = document.getElementById('subDate')?.value;
             if (!dateVal) return alert("Select a date first.");
-            
-            // Reloads all absent teachers from storage and leave records
+
+            // Reload every previously selected absent teacher first.  The manager can
+            // then tick additional teachers; the old selections remain checked.
+            await populateAbsentCheckboxes();
             await restoreAbsentSelectionAsync(dateVal);
-            
+
             const panel = document.getElementById('subSelectionPanel');
-            if (panel) {
-                panel.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (panel) panel.scrollIntoView({ behavior: 'smooth' });
+
             const statusBox = document.getElementById('absentStaffCheckboxes');
             if (statusBox) {
                 statusBox.style.border = '2px solid #28a745';
                 setTimeout(() => { statusBox.style.border = '1px solid #ccc'; }, 3000);
             }
+            alert('Previous absent teachers and finalized substitutions are preserved. Select the additional absent teacher(s), then click Assign Timetable and Save / Finalize Substitutions.');
         }
 
         async function saveAbsentSelectionForDate(dateVal, selectedNames) {
             if(!dateVal) return;
-            const value = { board: currentBoard, absentTeachers: Array.from(new Set(selectedNames || [])) };
+            const storageKey = `${dateVal}__${currentBoard}`;
+            const previous = await loadAbsentSelectionForDate(dateVal);
+            const value = {
+                board: currentBoard,
+                absentTeachers: Array.from(new Set([...(previous || []), ...(selectedNames || [])]))
+            };
             if(!window.substitutionAbsentSelections) window.substitutionAbsentSelections = {};
-            window.substitutionAbsentSelections[`${dateVal}__${currentBoard}`] = value;
-            await saveMapDoc('substitutionAbsentSelections', `${dateVal}__${currentBoard}`, value);
+            window.substitutionAbsentSelections[storageKey] = value;
+            await saveMapDoc('substitutionAbsentSelections', storageKey, value);
         }
 
         async function loadAbsentSelectionForDate(dateVal) {
@@ -2255,7 +2291,7 @@ table { max-width:100%; }
             </div>
             <div style="margin-top:15px; display:flex; flex-wrap:wrap; gap:8px;" class="no-print">
                 <button onclick="saveSubstitutionAllotments(${rows.length})">Save / Finalize Substitutions</button>
-                <button type="button" class="edit-btn" style="background:#17a2b8; color:#fff;" onclick="openAddAbsentTeachersView()">+ Add Absent Teachers</button>
+                <button type="button" class="edit-btn" style="background:#17a2b8; color:#fff;" onclick="openAddAbsentTeachersView()">+ Add Additional Absent Teachers</button>
                 <button class="edit-btn" onclick="editAbsentSelection()">Edit Absent Selection</button>
                 <button class="print-btn" onclick="printTargetElement('subMatrixPrintContainer')">Print Substitution</button>
                 <button class="excel-btn" onclick="exportTableToExcel('subMatrixPrintContainer', 'Substitution_Allotment_${dateVal}')">Download Excel</button>
@@ -2265,29 +2301,58 @@ table { max-width:100%; }
         }
 
         async function saveSubstitutionAllotments(count) {
-            const dateVal = document.getElementById('subDate').value; 
+            const dateVal = document.getElementById('subDate').value;
             if(!dateVal) return;
 
-            const selectedAbsentNow = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
-            await saveAbsentSelectionForDate(dateVal, selectedAbsentNow);
+            // IMPORTANT: Never replace the already-finalized substitutions for this
+            // board.  Merge the current screen with the previously saved records.
+            const checkedNow = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
+            const previouslySavedAbsent = await loadAbsentSelectionForDate(dateVal);
+            const allAbsentNames = Array.from(new Set([...(previouslySavedAbsent || []), ...checkedNow]));
+            await saveAbsentSelectionForDate(dateVal, allAbsentNames);
 
-            const oldRecords = savedSubstitutionsForDate(dateVal).filter(r => r.board !== currentBoard);
-            const newRecords = [];
+            const allExisting = savedSubstitutionsForDate(dateVal);
+            const otherBoardRecords = allExisting.filter(r => r.board !== currentBoard);
+            const sameBoardRecords = allExisting.filter(r => r.board === currentBoard);
+
+            // Update only rows represented by the current matrix; keep every other
+            // previously-finalized row untouched. This is what makes Add Absent Teacher
+            // safe after a relogin.
+            const updatedRows = [];
             for(let i = 0; i < count; i++) {
                 const el = document.getElementById(`sub_assign_${i}`);
-                if(!el || !el.value) continue;
-                newRecords.push({
-                    period: el.dataset.period,
-                    class: el.dataset.class,
-                    absent: el.dataset.absent,
-                    subTeacher: el.value,
-                    board: currentBoard
+                if(!el) continue;
+                const key = `${el.dataset.period}__${el.dataset.class}__${el.dataset.absent}`;
+                if(!el.value) continue;
+                updatedRows.push({
+                    key,
+                    record: {
+                        period: el.dataset.period,
+                        class: el.dataset.class,
+                        absent: el.dataset.absent,
+                        subTeacher: el.value,
+                        board: currentBoard
+                    }
                 });
             }
 
-            substitutionRecords[dateVal] = oldRecords.concat(newRecords);
+            const updateMap = new Map(updatedRows.map(x => [x.key, x.record]));
+            const mergedSameBoard = sameBoardRecords.map(rec => {
+                const key = `${rec.period}__${rec.class}__${rec.absent}`;
+                return updateMap.has(key) ? updateMap.get(key) : rec;
+            });
+            const existingKeys = new Set(mergedSameBoard.map(rec => `${rec.period}__${rec.class}__${rec.absent}`));
+            updatedRows.forEach(x => {
+                if(!existingKeys.has(x.key)) {
+                    mergedSameBoard.push(x.record);
+                    existingKeys.add(x.key);
+                }
+            });
+
+            substitutionRecords[dateVal] = otherBoardRecords.concat(mergedSameBoard);
             await saveMapDoc('substitutionRecords', dateVal, substitutionRecords[dateVal]);
-            alert(`Substitutions successfully saved (${newRecords.length} allotted) for ${currentBoard} BOARD.`);
+
+            alert(`Substitutions successfully saved (${updatedRows.length} current rows). Previous finalized substitutions were preserved for ${currentBoard} BOARD.`);
             updateAllSubstitutionDropdownLabels();
         }
 
