@@ -2221,7 +2221,7 @@ table { max-width:100%; }
                     const baseLabel = `${entry.name} (${entry.subject}) [${entry.priority}]`;
                     const currentInfo = initialWlMap[entry.name] || { regular: 0, sub: 0, total: 0 };
                     // Format: Teacher Name (Subject) [P1] (Total WL: X [Regular: Y + Sub: Z])
-                    const labelWithWorkload = `${baseLabel} (Total WL: ${currentInfo.T} [Regular: ${currentInfo.R} + Sub: ${currentInfo.S}])`;
+                    const labelWithWorkload = `${baseLabel} (T WL: ${currentInfo.total} [R: ${currentInfo.regular} + S: ${currentInfo.sub}])`;
                     options += `<option value="${entry.name}" data-base-label="${baseLabel}" ${isSel}>${labelWithWorkload}</option>`;
                 });
 
