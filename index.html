@@ -104,7 +104,7 @@
                 font-size: 11px !important; 
                 page-break-inside: avoid;
             }
-            table {
+            table { 
                 width: 100% !important; 
                 margin-top: 6px !important; 
                 font-size: 9px !important; 
@@ -115,11 +115,11 @@
                 padding: 5px 4px !important;
                 line-height: 1.25 !important;
             }
-            th, td {
-                padding: 3px 2px !important;
+            th, td { 
+                padding: 3px 2px !important; 
                 line-height: 1.15;
             }
-            tr {
+            tr { 
                 page-break-inside: avoid;
                 page-break-after: auto;
             }
@@ -1307,7 +1307,6 @@ table { max-width:100%; }
                     return opts;
                 }
 
-                // Dual Selection Option Boxes: Option 1 (Teacher 1) & Option 2 (Teacher 2)
                 let dualFields = `
                     <div id="dual_wrap_${p.id}" class="dual-lang-row" style="display:${isDual ? 'flex' : 'none'};">
                         <div class="dual-lang-box">
@@ -1920,26 +1919,55 @@ table { max-width:100%; }
             return (xSessionRecords[dateVal] || []).filter(x => x.board === currentBoard);
         }
 
+        // Calculates Regular Periods on this Day + Substitution Periods on this Day
         function getLiveWorkloadMap(dateVal) {
+            const dayName = getDayNameFromDate(dateVal);
             const wlMap = {};
-            staffList.forEach(st => { wlMap[st.name] = 0; });
+
+            staffList.forEach(st => {
+                let regCount = 0;
+                for (const cls in masterTimetable) {
+                    periods.forEach(p => {
+                        const cell = masterTimetable[cls]?.[dayName]?.[p.id];
+                        if (cell) {
+                            if (cell.isDual) {
+                                if (cell.teacher1 === st.name || cell.teacher2 === st.name || cell.teacher === st.name) {
+                                    regCount++;
+                                }
+                            } else if (cell.teacher === st.name || cell.teacher2 === st.name) {
+                                regCount++;
+                            }
+                        }
+                    });
+                }
+                wlMap[st.name] = { regular: regCount, sub: 0, total: regCount };
+            });
 
             const saved = savedSubstitutionsForDate(dateVal);
+            const currentSubCountMap = {};
+
             saved.forEach(rec => {
-                if(rec.subTeacher && wlMap[rec.subTeacher] !== undefined) {
-                    wlMap[rec.subTeacher]++;
+                if (rec.subTeacher && wlMap[rec.subTeacher] !== undefined) {
+                    currentSubCountMap[rec.subTeacher] = (currentSubCountMap[rec.subTeacher] || 0) + 1;
                 }
             });
 
+            // Adjust dynamically with active dropdown selections on the screen
             document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
                 const assigned = sel.value;
-                if(assigned && wlMap[assigned] !== undefined) {
+                if (assigned && wlMap[assigned] !== undefined) {
                     const originalSaved = saved.find(r => r.board === currentBoard && r.period === sel.dataset.period && r.class === sel.dataset.class);
-                    if(!originalSaved || originalSaved.subTeacher !== assigned) {
-                        wlMap[assigned]++;
+                    if (!originalSaved || originalSaved.subTeacher !== assigned) {
+                        currentSubCountMap[assigned] = (currentSubCountMap[assigned] || 0) + 1;
                     }
                 }
             });
+
+            for (const tName in wlMap) {
+                const subCount = currentSubCountMap[tName] || 0;
+                wlMap[tName].sub = subCount;
+                wlMap[tName].total = wlMap[tName].regular + subCount;
+            }
 
             return wlMap;
         }
@@ -1952,8 +1980,8 @@ table { max-width:100%; }
             document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
                 Array.from(sel.options).forEach(opt => {
                     if(opt.value && opt.dataset.baseLabel) {
-                        const count = wlMap[opt.value] || 0;
-                        opt.textContent = `${opt.dataset.baseLabel} (WL: ${count})`;
+                        const info = wlMap[opt.value] || { regular: 0, sub: 0, total: 0 };
+                        opt.textContent = `${opt.dataset.baseLabel} (Total WL: ${info.total} [Regular: ${info.regular} + Sub: ${info.sub}])`;
                     }
                 });
             });
@@ -2180,18 +2208,21 @@ table { max-width:100%; }
 
                 categorizedStaff.sort((a, b) => {
                     if(a.pRank !== b.pRank) return a.pRank - b.pRank;
-                    const wlA = initialWlMap[a.name] || 0;
-                    const wlB = initialWlMap[b.name] || 0;
-                    if(wlA !== wlB) return wlA - wlB;
+                    const totalA = (initialWlMap[a.name] || {}).total || 0;
+                    const totalB = (initialWlMap[b.name] || {}).total || 0;
+                    if(totalA !== totalB) return totalA - totalB;
                     return a.name.localeCompare(b.name);
                 });
 
                 let options = `<option value="">Select Substitute</option>`;
                 categorizedStaff.forEach(entry => {
                     const isSel = entry.name === current ? 'selected' : '';
-                    const baseLabel = `[${entry.priority}] ${entry.name} (${entry.subject})`;
-                    const currentWL = initialWlMap[entry.name] || 0;
-                    options += `<option value="${entry.name}" data-base-label="${baseLabel}" ${isSel}>${baseLabel} (WL: ${currentWL})</option>`;
+                    // Put Teacher Name and Subject FIRST, followed by [P1/P2/P3]
+                    const baseLabel = `${entry.name} (${entry.subject}) [${entry.priority}]`;
+                    const currentInfo = initialWlMap[entry.name] || { regular: 0, sub: 0, total: 0 };
+                    // Format: Teacher Name (Subject) [P1] (Total WL: X [Regular: Y + Sub: Z])
+                    const labelWithWorkload = `${baseLabel} (Total WL: ${currentInfo.total} [Regular: ${currentInfo.regular} + Sub: ${currentInfo.sub}])`;
+                    options += `<option value="${entry.name}" data-base-label="${baseLabel}" ${isSel}>${labelWithWorkload}</option>`;
                 });
 
                 html += `<tr>
