@@ -2221,7 +2221,7 @@ table { max-width:100%; }
                     // Put Teacher Name and Subject FIRST, followed by [P1/P2/P3]
                     const baseLabel = `${entry.name} (${entry.subject}) [${entry.priority}]`;
                     const currentInfo = initialWlMap[entry.name] || { regular: 0, sub: 0, total: 0 };
-                    // Format: Teacher Name (Subject) [P1] (Total WL: X [Regular: Y + Sub: Z])
+                    // Format: Teacher Name (Subject) [P1] (WL:X[R:Y+S:Z])
                     const labelWithWorkload = `${baseLabel} (Total WL: ${currentInfo.total} [Regular: ${currentInfo.regular} + Sub: ${currentInfo.sub}])`;
                     options += `<option value="${entry.name}" data-base-label="${baseLabel}" ${isSel}>${labelWithWorkload}</option>`;
                 });
