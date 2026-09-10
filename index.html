@@ -1772,7 +1772,10 @@ table { max-width:100%; }
         async function openAddAbsentTeachersView() {
             const dateVal = document.getElementById('subDate')?.value;
             if (!dateVal) return alert("Select a date first.");
+            
+            // Reloads all absent teachers from storage and leave records
             await restoreAbsentSelectionAsync(dateVal);
+            
             const panel = document.getElementById('subSelectionPanel');
             if (panel) {
                 panel.scrollIntoView({ behavior: 'smooth' });
@@ -2122,9 +2125,13 @@ table { max-width:100%; }
                 return;
             }
 
+            // Capture already selected choices from screen or Firestore
             const existingChoices = {};
             savedSubstitutionsForDate(dateVal).forEach(rec => {
                 if(rec.board === currentBoard) existingChoices[`${rec.period}_${rec.class}`] = rec.subTeacher;
+            });
+            document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
+                if (sel.value) existingChoices[`${sel.dataset.period}_${sel.dataset.class}`] = sel.value;
             });
 
             const initialWlMap = getLiveWorkloadMap(dateVal);
@@ -2217,10 +2224,8 @@ table { max-width:100%; }
                 let options = `<option value="">Select Substitute</option>`;
                 categorizedStaff.forEach(entry => {
                     const isSel = entry.name === current ? 'selected' : '';
-                    // Put Teacher Name and Subject FIRST, followed by [P1/P2/P3]
                     const baseLabel = `${entry.name} (${entry.subject}) [${entry.priority}]`;
                     const currentInfo = initialWlMap[entry.name] || { regular: 0, sub: 0, total: 0 };
-                    // Format: Teacher Name (Subject) [P1] (Total WL: X [Regular: Y + Sub: Z])
                     const labelWithWorkload = `${baseLabel} (Total WL: ${currentInfo.total} [Regular: ${currentInfo.regular} + Sub: ${currentInfo.sub}])`;
                     options += `<option value="${entry.name}" data-base-label="${baseLabel}" ${isSel}>${labelWithWorkload}</option>`;
                 });
