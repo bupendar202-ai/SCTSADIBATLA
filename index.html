@@ -3310,10 +3310,16 @@ function getAutomaticAbsentTeachersForDate(dateVal) {
         }));
         const inv=invigilationRecords[dateVal]?.[b]||{};
         Object.values(inv).forEach(arr=>{
-            (Array.isArray(arr)?arr:[]).forEach(x=>{
-                if(typeof x==='string') add(x);
-                else if(x?.teacher) add(x.teacher);
-            });
+            if(Array.isArray(arr)) {
+                arr.forEach(x=>{
+                    if(typeof x==='string') add(x);
+                    else if(x?.teacher) add(x.teacher);
+                    else if(Array.isArray(x?.teachers)) x.teachers.forEach(add);
+                });
+            } else if(arr && typeof arr==='object') {
+                if(Array.isArray(arr.teachers)) arr.teachers.forEach(add);
+                else if(arr.teacher) add(arr.teacher);
+            }
         });
     });
     return names;
@@ -3323,8 +3329,8 @@ function getAutomaticAbsentTeachersForDate(dateVal) {
    row for this board, including rows belonging to absent teachers added later. */
 function mergeCurrentBoardSubstitutionRecords(dateVal, currentRows) {
     const all = Array.isArray(substitutionRecords[dateVal]) ? substitutionRecords[dateVal] : [];
-    const otherBoard = all.filter(r => r.board !== currentBoard);
-    const current = all.filter(r => r.board === currentBoard);
+    const otherBoard = all.filter(r => (r.board || 'CBSE') !== currentBoard);
+    const current = all.filter(r => !r.board || r.board === currentBoard);
     const map = new Map();
     current.forEach(r=>{
         const k=`${r.period}__${r.class}__${r.absent}`;
@@ -3401,35 +3407,98 @@ function populateAbsentCheckboxes() {
 /* Assign Timetable: first restore all saved/manual/automatic absent data, then render.
    This makes the button work after re-login/refresh and preserves earlier finalized substitutions. */
 async function assignTimetableWithSavedData() {
-    const dateVal=document.getElementById('subDate')?.value;
-    if(!dateVal) return alert('Select a date first.');
+    const dateVal = document.getElementById('subDate')?.value;
+    const container = document.getElementById('substitutionMatrixContainer');
+    if(!dateVal) {
+        if(container) container.innerHTML = '<p style="color:#c00;font-weight:bold;">Please select a date first.</p>';
+        return alert('Select a date first.');
+    }
 
     try {
-        const savedAbsent=await loadAbsentSelectionForDateRaw(dateVal);
-        const savedRows=(substitutionRecords[dateVal]||[]).filter(r=>r.board===currentBoard);
-        const names=new Set(savedAbsent||[]);
-        savedRows.forEach(r=>{ if(r.absent) names.add(r.absent); });
-        getAutomaticAbsentTeachersForDate(dateVal).forEach(n=>names.add(n));
+        /* Always recover saved absent names first. This includes legacy records
+           that were created before BOARD was stored on each substitution row. */
+        let savedAbsent = [];
+        try { savedAbsent = await loadAbsentSelectionForDateRaw(dateVal) || []; } catch(e) {}
 
-        /* Rebuild the checkbox list without losing the restored selection. */
-        const container=document.getElementById('absentStaffCheckboxes');
-        if(container) {
-            container.innerHTML='';
-            staffList.filter(st=>staffMatchesBoard(st,currentBoard)).sort((a,b)=>a.name.localeCompare(b.name)).forEach(st=>{
-                const checked=names.has(st.name)?' checked':'';
-                const auto=getAutomaticAbsentTeachersForDate(dateVal).includes(st.name);
-                const label=auto ? ' (Auto)' : '';
-                container.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check"${checked}> ${st.name} (${st.subject||'Staff'})${label}</label>`;
+        const allSavedRows = Array.isArray(substitutionRecords[dateVal]) ? substitutionRecords[dateVal] : [];
+        const currentBoardRows = allSavedRows.filter(r => !r.board || r.board === currentBoard);
+
+        const names = new Set(savedAbsent);
+        currentBoardRows.forEach(r => { if(r?.absent) names.add(r.absent); });
+
+        /* Automatically include leave + Revision + X-Revision + Invigilation. */
+        try {
+            getAutomaticAbsentTeachersForDate(dateVal).forEach(n => names.add(n));
+        } catch(e) {
+            console.warn('Automatic duty recovery warning:', e);
+        }
+
+        const box = document.getElementById('absentStaffCheckboxes');
+        if(box) {
+            const allowed = staffList.filter(st => staffMatchesBoard(st,currentBoard))
+                .sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+            box.innerHTML = '';
+            const autoNames = new Set();
+            try { getAutomaticAbsentTeachersForDate(dateVal).forEach(n=>autoNames.add(n)); } catch(e) {}
+            allowed.forEach(st => {
+                const checked = names.has(st.name) ? ' checked' : '';
+                const auto = autoNames.has(st.name) ? ' <b style="color:#0a7;">(Auto)</b>' : '';
+                box.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check"${checked}> ${st.name} (${st.subject||'Staff'})${auto}</label>`;
             });
         }
-        await saveAbsentSelectionForDate(dateVal,Array.from(names),true);
+
+        /* Persist the combined absent list, but never delete an older name. */
+        try { await saveAbsentSelectionForDate(dateVal,Array.from(names),true); } catch(e) {
+            console.warn('Absent selection save warning:', e);
+        }
+
+        /* The matrix renderer itself also restores previously finalized rows. */
         generateSubstitutionMatrix();
+
+        /* If there are finalized rows but no current timetable match, explicitly
+           render the saved rows so Assign Timetable never appears blank. */
+        if(container && !container.querySelector('table') && currentBoardRows.length) {
+            renderSavedFinalizedSubstitutionsOnly(dateVal,currentBoardRows);
+        }
     } catch(e) {
-        console.error(e);
-        /* Even if the saved-selection read fails, still show the current data. */
-        generateSubstitutionMatrix();
+        console.error('Assign Timetable error:',e);
+        if(container) {
+            container.innerHTML = `<div class="leave-box" style="border:2px solid #c00;">
+                <b>Saved substitution data could not be rendered automatically.</b>
+                <p>${String(e.message||e)}</p>
+                <button type="button" onclick="location.reload()">Reload Saved Data</button>
+            </div>`;
+        }
     }
 }
+
+function renderSavedFinalizedSubstitutionsOnly(dateVal, rows) {
+    const container=document.getElementById('substitutionMatrixContainer');
+    if(!container) return;
+    const dayName=getDayNameFromDate(dateVal);
+    const unique=new Map();
+    (rows||[]).forEach(r=>{
+        const key=`${r.period}__${r.class}__${r.absent}`;
+        if(!unique.has(key)) unique.set(key,r);
+    });
+    const list=Array.from(unique.values());
+    let html=`<div id="subMatrixPrintContainer"><div class="print-header"><h2>SRI CHAITANYA SCHOOL</h2><h3>Branch : Adibatla</h3>
+      <h4>Saved Finalized Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div>
+      <table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Absent / Duty Teacher</th><th>Class</th><th>Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
+    list.forEach((r,i)=>{
+        const p=periods.find(x=>String(x.id)===String(r.period));
+        html+=`<tr><td>${i+1}</td><td><b>${r.period||''}</b></td><td>${r.time||p?.time||''}</td>
+        <td style="color:red;font-weight:bold;">${r.absent||''}</td><td><b>${r.class||''}</b></td><td>${r.subject||''}</td>
+        <td><b>${r.subTeacher||'---'}</b></td><td></td></tr>`;
+    });
+    html+=`</tbody></table>
+      <div style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap;" class="no-print">
+        <button onclick="generateSubstitutionMatrix()">Edit / Assign New Substitutions</button>
+        <button class="print-btn" onclick="printTargetElement('subMatrixPrintContainer')">Print Substitution</button>
+      </div></div>`;
+    container.innerHTML=html;
+}
+
 
 /* Generate matrix while retaining the selected teacher for every existing saved row. */
 function generateSubstitutionMatrix() {
@@ -3477,9 +3546,10 @@ function generateSubstitutionMatrix() {
         }));
         const inv=invigilationRecords[dateVal]?.[board]||{};
         Object.keys(inv).forEach(pid=>{
-            const arr=Array.isArray(inv[pid])?inv[pid]:[];
+            const raw=inv[pid];
+            const arr=Array.isArray(raw) ? raw : (raw?.teachers || []);
             arr.forEach(item=>{
-                const name=typeof item==='string'?item:item?.teacher;
+                const name=typeof item==='string'?item:(item?.teacher||item);
                 if(!name) return;
                 if(!selectedAbsent.includes(name)) selectedAbsent.push(name);
                 const p=periods.find(x=>String(x.id)===String(pid))||{id:pid,time:''};
@@ -3497,7 +3567,7 @@ function generateSubstitutionMatrix() {
 
     /* Always include previously finalized rows, even when their absent checkbox is not
        currently selected. Their existing substitute is restored in the dropdown below. */
-    const savedRowsForBoard=(substitutionRecords[dateVal]||[]).filter(r=>r.board===currentBoard);
+    const savedRowsForBoard=(substitutionRecords[dateVal]||[]).filter(r=>!r.board || r.board===currentBoard);
     savedRowsForBoard.forEach(r=>{
         if(!r.absent) return;
         const p=periods.find(x=>String(x.id)===String(r.period))||{id:r.period,time:r.time||''};
@@ -3523,7 +3593,7 @@ function generateSubstitutionMatrix() {
 
     const saved=savedSubstitutionsForDate(dateVal);
     const existing={};
-    saved.filter(r=>r.board===currentBoard).forEach(r=>existing[`${r.period}_${r.class}_${r.absent}`]=r.subTeacher||'');
+    saved.filter(r=>!r.board || r.board===currentBoard).forEach(r=>existing[`${r.period}_${r.class}_${r.absent}`]=r.subTeacher||'');
 
     const initialWlMap=getLiveWorkloadMap(dateVal);
     let html=`<div id="subMatrixPrintContainer"><div class="print-header"><h2>SRI CHAITANYA SCHOOL</h2><h3>Branch : Adibatla</h3><h4>Final Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div>
