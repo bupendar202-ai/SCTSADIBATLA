@@ -54,15 +54,6 @@
         .leave-box { background: #eef5ff; border: 1px solid #b6d4fe; border-radius: 6px; padding: 15px; margin-bottom: 20px; }
         .date-picker-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
 
-        .board-card-grid { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
-        .board-card { flex: 1; min-width: 180px; padding: 20px; background: #f8f9fa; border: 2px solid #0056b3; border-radius: 8px; cursor: pointer; text-align: center; }
-        .board-card:hover { background: #e3f2fd; }
-
-        .dual-lang-row { display: flex; gap: 8px; width: 100%; }
-        .dual-lang-box { flex: 1; background: #f0f7ff; border: 1px dashed #0056b3; border-radius: 4px; padding: 5px; text-align: left; }
-        .dual-lang-label { font-weight: bold; font-size: 11px; color: #0056b3; margin-bottom: 3px; display: block; }
-        .dual-lang-box select, .dual-lang-box input { font-size: 11px; padding: 4px; }
-
         @media print {
             @page {
                 size: A4 portrait;
@@ -99,15 +90,15 @@
 
             .signature-section { 
                 display: flex !important; 
-                margin-top: 30px !important; 
-                padding: 0 20px !important; 
-                font-size: 11px !important; 
+                margin-top: 30px !important;
+                padding: 0 20px !important;
+                font-size: 11px !important;
                 page-break-inside: avoid;
             }
             table {
-                width: 100% !important; 
-                margin-top: 6px !important; 
-                font-size: 9px !important; 
+                width: 100% !important;
+                margin-top: 6px !important;
+                font-size: 9px !important;
                 page-break-inside: auto;
             }
             #pSubLogPrintContainer table { font-size: 13px !important; }
@@ -375,10 +366,6 @@ table { max-width:100%; }
         <!-- Principal Absent Teachers (Leave Requests) View -->
         <div id="p-absent-leaves" class="tab-content" style="display:none;">
             <h3>Absent Teachers & Leave Records</h3>
-            <div class="form-group" style="max-width:300px; margin-bottom:15px;">
-                <label><b>Select Date to Filter Absentees:</b></label>
-                <input type="date" id="pAbsentFilterDate" onchange="renderPrincipalAbsentLeaves()">
-            </div>
             <div id="pAbsentLeavesView"></div>
         </div>
     </div>
@@ -497,82 +484,17 @@ table { max-width:100%; }
                         <input type="date" id="subDate" onchange="populateAbsentCheckboxes()">
                     </div>
                     <div class="form-group" style="flex: 2; min-width: 250px;">
-                        <label>Mark Absent Teachers (Leaves Auto-Selected):</label>
+                        <label>Mark Absent Teachers (Multiple Selection):</label>
                         <div class="multi-select-box" id="absentStaffCheckboxes"></div>
                     </div>
                 </div>
-                <button onclick="assignTimetableWithSavedData()">Assign Timetable</button>
+                <button onclick="generateSubstitutionMatrix()">Assign Timetable</button>
             </div>
             <div id="substitutionMatrixContainer" style="margin-top:20px;"></div>
         </div>
 
         <!-- 5. X Session Time Table -->
         <div id="d-xsession" class="tab-content" style="display:none;">
-            <h3>X Session Time Table Manager</h3>
-            <p style="color:#555;">Schedule special X Sessions by Date, Class, Subject, Session Number, and Session Time. Morning sessions cancel periods up to 11:40am - 12:20pm; afternoon sessions cancel from 1:00pm - 1:40pm to the last period. Selected teachers automatically appear in the substitution matrix.</p>
-            
-            <div style="background: #eef5ff; border: 1px solid #b6d4fe; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
-                <h4 style="margin-top:0; color:#0056b3;">Schedule New X Session</h4>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <div class="form-group" style="flex:1; min-width:160px;">
-                        <label>Select Date:</label>
-                        <input type="date" id="xsDate" onchange="renderXSessionScheduleList()">
-                    </div>
-                    <div class="form-group" style="flex:1; min-width:160px;">
-                        <label>Class:</label>
-                        <select id="xsClass">
-                            <option value="">Select Class</option>
-                            <option value="X-A">X-A</option><option value="X-B">X-B</option>
-                            <option value="X-C">X-C</option><option value="X-D">X-D</option>
-                            <option value="X-E">X-E</option><option value="X-F">X-F</option>
-                            <option value="X-G">X-G</option><option value="X-H">X-H</option>
-                            <option value="X-I">X-I</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex:1; min-width:160px;">
-                        <label>Subject:</label>
-                        <select id="xsSubject">
-                            <option value="">Select Subject</option>
-                            <option value="FL">FL</option><option value="SL">SL</option><option value="TL">TL</option>
-                            <option value="Math">Math</option><option value="Physics">Physics</option>
-                            <option value="Chemistry">Chemistry</option><option value="Biology">Biology</option>
-                            <option value="Social">Social</option><option value="IT">IT</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex:1; min-width:140px;">
-                        <label>Session Number:</label>
-                        <select id="xsSessionNum">
-                            <option value="">Select #</option>
-                            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                            <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                            <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-                            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-                            <option value="13">13</option><option value="14">14</option><option value="15">15</option>
-                            <option value="16">16</option><option value="17">17</option><option value="18">18</option>
-                            <option value="19">19</option><option value="20">20</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex:1; min-width:180px;">
-                        <label>Session Time:</label>
-                        <select id="xsSessionTime">
-                            <option value="morning">Morning (Up to 11:40am - 12:20pm)</option>
-                            <option value="afternoon">Afternoon (1:00pm - 1:40pm to Last Period)</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="flex:1; min-width:200px;">
-                        <label>Handling Teacher:</label>
-                        <select id="xsTeacherSelect">
-                            <option value="">Select Teacher</option>
-                        </select>
-                    </div>
-                </div>
-                <button onclick="saveXSessionSchedule()" style="margin-top: 10px;">Allot X Session</button>
-            </div>
-
-            <div id="xSessionScheduleTableContainer"></div>
-        
-            <hr style="margin:25px 0;">
-<div id="d-xsession" class="tab-content" style="display:none;">
             <h3>X Session Time Table</h3>
             <p style="color:#555;">Create and view the X Session class-wise timetable separately for the selected board.</p>
             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
@@ -592,8 +514,6 @@ table { max-width:100%; }
                 </div>
             </div>
             <div id="xSessionClassTimetableContainer"></div>
-        </div>
-
         </div>
 
         <!-- 6. Examinations -->
@@ -620,12 +540,9 @@ table { max-width:100%; }
             <div id="examInvigilationPanel" class="tab-content" style="display:none;">
                 <h4>Invigilation</h4>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Date:</label><input type="date" id="invigilationDate" onchange="renderInvigilationEditor()"></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Orientation:</label><select id="invigilationOrientation" onchange="updateInvigilationClassOptions()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Class:</label><select id="invigilationClass" onchange="renderInvigilationEditor()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Section:</label><select id="invigilationSection" onchange="renderInvigilationEditor()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+                    <div class="form-group" style="flex:1; min-width:200px;"><label>Date:</label><input type="date" id="invigilationDate" onchange="renderInvigilationEditor()"></div>
+                    <div class="form-group" style="flex:1; min-width:200px;"><label>Period:</label><select id="invigilationPeriod" onchange="renderInvigilationEditor()"></select></div>
                 </div>
-                <p style="color:#555;margin:5px 0 10px;">Select a period below, choose one or more invigilators, then use <b>Add Period</b> for the next period. Selected invigilators are automatically routed to substitution and their teacher schedules.</p>
                 <div id="invigilationEditor"></div>
             </div>
         </div>
@@ -649,51 +566,6 @@ table { max-width:100%; }
             Back to Dean / Incharge Dashboard
         </button>
         <h3 id="teacherWelcome"></h3>
-
-        <!-- Teacher Dashboard -->
-        <div id="teacherDashboardCards" class="board-card-grid" style="margin-bottom:20px;">
-            <div class="board-card" onclick="openTeacherDashboardArea('schedule')">
-                <h3>MY TIMETABLE</h3><p>View your daily timetable</p>
-            </div>
-            <div class="board-card" id="teacherFloorCard" onclick="openTeacherDashboardArea('floor')" style="display:none;">
-                <h3>FLOOR INCHARGE</h3><p>Manage floor classes for the day</p>
-            </div>
-            <div class="board-card" onclick="openTeacherDashboardArea('leave')">
-                <h3>LEAVE</h3><p>Apply for leave</p>
-            </div>
-        </div>
-
-        <div id="teacherFloorDashboard" class="leave-box" style="display:none;">
-            <h4 style="margin-top:0;color:#0056b3;">Floor Incharge Dashboard</h4>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Date:</label><input type="date" id="floorDate" onchange="renderFloorInchargeClasses()">
-                </div>
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Floor No:</label>
-                    <select id="floorNo" onchange="renderFloorInchargeClasses()">
-                        <option value="">Select</option><option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option>
-                    </select>
-                </div>
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Orientation:</label><select id="floorOrientation" onchange="updateFloorClassOptions()"></select>
-                </div>
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Class:</label><select id="floorClass" onchange="renderFloorInchargeClasses()"></select>
-                </div>
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Section:</label>
-                    <select id="floorSection" onchange="renderFloorInchargeClasses()">
-                        <option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option>
-                    </select>
-                </div>
-            </div>
-            <div id="floorSelectedClasses" style="margin-top:10px;"></div>
-            <button onclick="addFloorClassSelection()" style="margin-top:10px;">+ Add More</button>
-            <button onclick="clearFloorClassSelection()" class="delete-btn" style="margin-top:10px;">Remove All</button>
-        </div>
 
         <!-- Apply for Leave Section -->
         <div class="leave-box">
@@ -749,60 +621,28 @@ table { max-width:100%; }
         let holidayRoomRecords = {};
         let substitutionRecords = {};
         let leaveRequestsList = [];
-        let xSessionRecords = {};
         let currentUser = null;
         let editingStaffEmpId = null;
         let currentBoard = 'CBSE';
         let appPageHistory = [];
         let appPageIndex = -1;
 
+        const PRINCIPAL_EMAIL = 'principaladibatla@gmail.com';
         const PRINCIPAL_ROLE = 'principal';
+        const MANAGER_DESIGNATIONS = ['Dean', 'IPL Incharge', 'C Batch Incharge', 'S Batch Incharge', 'HOD', '10th Incharge'];
 
         function staffEmail(empId) { return `${String(empId).trim().toLowerCase()}@scadibatla.local`; }
-
-        const periods = [
-            { id: "0", time: "8:10am - 8:50am", session: "morning" }, 
-            { id: "I", time: "8:50am - 9:30am", session: "morning" },
-            { id: "II", time: "9:30am - 10:10am", session: "morning" }, 
-            { id: "III", time: "10:10am - 10:50am", session: "morning" },
-            { id: "IV", time: "11:00am - 11:40am", session: "morning" }, 
-            { id: "V", time: "11:40am - 12:20pm", session: "morning" },
-            { id: "VI", time: "12:20pm - 1:00pm", session: "lunch" }, 
-            { id: "VII", time: "1:00pm - 1:40pm", session: "afternoon" },
-            { id: "VIII", time: "1:40pm - 2:20pm", session: "afternoon" }, 
-            { id: "IX", time: "2:20pm - 3:00pm", session: "afternoon" },
-            { id: "X", time: "3:10pm - 3:50pm", session: "afternoon" }, 
-            { id: "XI", time: "3:50pm - 4:30pm", session: "afternoon" },
-            { id: "XII", time: "4:30pm - 5:10pm", session: "afternoon" }, 
-            { id: "XIII", time: "5:10pm - 5:50pm", session: "afternoon" }
-        ];
-
-        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const classOpts = {
-            "IPL": ["C1 IPL", "C2 IPL", "C3 IPL", "C4 IPL", "C5 IPL"],
-            "MPL": ["M1 MPL", "M2 MPL", "M3 MPL"],
-            "C Batch": ["C1", "C2", "C3", "C4", "C5"],
-            "Lead": ["L1", "L2", "L3", "L4", "L5"],
-            "Techno": ["X", "IX", "VIII", "VII", "VI"]
-        };
-
-        const roomOptionsList = [
-            "Room 301", "Room 302", "Room 303", "Room 304", "Room 305", "Room 306",
-            "Room 307", "Room 308", "Room 309", "Room 310", "Room 311",
-            "Room 401", "Room 402", "Room 403", "Room 404", "Room 405", "Room 406",
-            "Room 407", "Room 408", "Room 409", "Room 410", "Room 411"
-        ];
 
         async function loadDataForRole(role) {
             staffList = []; masterTimetable = {}; teacherWeeklyStatus = {}; teacherStatusRecords = {};
             dayTypeRecords = {}; holidayRoomRecords = {}; substitutionRecords = {}; leaveRequestsList = [];
-            xSessionRecords = {};
 
-            const staffSnap = await db.collection('staff').get();
-            staffSnap.forEach(doc => staffList.push(doc.data()));
-
-            const weeklySnap = await db.collection('teacherWeeklyStatus').get();
-            weeklySnap.forEach(doc => teacherWeeklyStatus[doc.id] = doc.data().value || {});
+            if(role === 'principal' || role === 'dean') {
+                const staffSnap = await db.collection('staff').get();
+                staffSnap.forEach(doc => staffList.push(doc.data()));
+                const weeklySnap = await db.collection('teacherWeeklyStatus').get();
+                weeklySnap.forEach(doc => teacherWeeklyStatus[doc.id] = doc.data().value || {});
+            }
 
             await loadTimetableForBoard(currentBoard);
 
@@ -838,9 +678,6 @@ table { max-width:100%; }
             
             const studySnap = await db.collection('studyHoursRecords').get(); 
             studySnap.forEach(doc => studyHoursRecords[doc.id] = doc.data().value || {});
-
-            const xsSnap = await db.collection('xSessionRecords').get();
-            xsSnap.forEach(doc => xSessionRecords[doc.id] = doc.data().value || []);
 
             try {
                 const leaveSnap = await db.collection('teacherLeaveRequests').get();
@@ -906,7 +743,7 @@ table { max-width:100%; }
             if(!page) return;
             if(page === 'principalHome') return switchView('principalHome');
             if(page === 'deanHome') return switchView('deanHome');
-            if(page === 'principal-staff') { switchView('principalModule'); showTabById('p-staff'); renderStaffTable(); return; }
+            if(page === 'principal-staff') { switchView('principalModule'); showTabById('p-staff'); return; }
             if(page === 'principal-STATE' || page === 'principal-CBSE') {
                 currentBoard = page.split('-')[1];
                 await loadTimetableForBoard(currentBoard);
@@ -928,11 +765,7 @@ table { max-width:100%; }
             const map = {'p-staff':0,'p-class-tt':1,'p-teacher-tt':2,'p-sub-tt':3,'p-absent-leaves':4};
             if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
             if(tabId === 'p-teacher-tt') populatePrincipalWeeklyTeacherDropdown();
-            if(tabId === 'p-absent-leaves') {
-                const f = document.getElementById('pAbsentFilterDate');
-                if(f && !f.value) f.value = new Date().toISOString().slice(0,10);
-                renderPrincipalAbsentLeaves();
-            }
+            if(tabId === 'p-absent-leaves') renderPrincipalAbsentLeaves();
         }
 
         function showTabDeanById(tabId) {
@@ -943,14 +776,9 @@ table { max-width:100%; }
             const map = {'d-class':0,'d-teacher-weekly':1,'d-teacher':2,'d-sub':3,'d-xsession':4,'d-exam':5,'d-study':6};
             if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
             if(tabId === 'd-teacher-weekly') populateTeacherWeeklyDropdown();
-            if(tabId === 'd-sub') {
-                const sd = document.getElementById('subDate');
-                if(sd && !sd.value) sd.value = new Date().toISOString().slice(0,10);
-                populateAbsentCheckboxes();
-            }
-            if(tabId === 'd-xsession') populateXSessionControls();
+            if(tabId === 'd-sub') populateAbsentCheckboxes();
+            if(['d-xsession','d-exam','d-study'].includes(tabId)) populateXSessionAndExamControls();
             if(tabId === 'd-exam') showExamTab('revision');
-            if(['d-exam','d-study'].includes(tabId)) populateXSessionAndExamControls();
         }
 
         function openPrincipalHome(push = true) { switchView('principalHome'); if(push) recordAppPage('principalHome'); }
@@ -978,6 +806,32 @@ table { max-width:100%; }
             await db.collection(collectionName).doc(docId).set({ value });
         }
 
+        const periods = [
+            { id: "0", time: "8:10am - 8:50am" }, { id: "I", time: "8:50am - 9:30am" },
+            { id: "II", time: "9:30am - 10:10am" }, { id: "III", time: "10:10am - 10:50am" },
+            { id: "IV", time: "11:00am - 11:40am" }, { id: "V", time: "11:40am - 12:20pm" },
+            { id: "VI", time: "12:20pm - 1:00pm" }, { id: "VII", time: "1:00pm - 1:40pm" },
+            { id: "VIII", time: "1:40pm - 2:20pm" }, { id: "IX", time: "2:20pm - 3:00pm" },
+            { id: "X", time: "3:10pm - 3:50pm" }, { id: "XI", time: "3:50pm - 4:30pm" },
+            { id: "XII", time: "4:30pm - 5:10pm" }, { id: "XIII", time: "5:10pm - 5:50pm" }
+        ];
+
+        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const classOpts = {
+            "IPL": ["C1 IPL", "C2 IPL", "C3 IPL", "C4 IPL", "C5 IPL"],
+            "MPL": ["M1 MPL", "M2 MPL", "M3 MPL"],
+            "C Batch": ["C1", "C2", "C3", "C4", "C5"],
+            "Lead": ["L1", "L2", "L3", "L4", "L5"],
+            "Techno": ["X", "IX", "VIII", "VII", "VI"]
+        };
+
+        const roomOptionsList = [
+            "Room 301", "Room 302", "Room 303", "Room 304", "Room 305", "Room 306",
+            "Room 307", "Room 308", "Room 309", "Room 310", "Room 311",
+            "Room 401", "Room 402", "Room 403", "Room 404", "Room 405", "Room 406",
+            "Room 407", "Room 408", "Room 409", "Room 410", "Room 411"
+        ];
+
         function printTargetElement(elemId) {
             document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area'));
             const elem = document.getElementById(elemId);
@@ -996,7 +850,7 @@ table { max-width:100%; }
             const cloneTable = table.cloneNode(true);
             cloneTable.querySelectorAll('button, .no-print').forEach(el => el.remove());
             cloneTable.querySelectorAll('select').forEach(sel => {
-                const text = sel.options[sel.selectedIndex]?.text || sel.value || '';
+                const text = sel.value || '';
                 const span = document.createElement('span');
                 span.innerText = text;
                 sel.parentNode.replaceChild(span, sel);
@@ -1005,6 +859,18 @@ table { max-width:100%; }
             const html = `
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
                 <head>
+                    <!--[if gte mso 9]>
+                    <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>Sheet1</x:Name>
+                                <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorksheets>
+                    </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->5
                     <meta charset="utf-8">
                     <style>
                         table, th, td { border: 0.5pt solid #000; text-align: center; }
@@ -1044,6 +910,8 @@ table { max-width:100%; }
             }
         }
 
+        document.getElementById('roleSelect').addEventListener('change', updateLoginFields);
+
         async function handleLogin() {
             const role = document.getElementById('roleSelect').value;
             const user = document.getElementById('username').value.trim();
@@ -1055,6 +923,10 @@ table { max-width:100%; }
 
             try {
                 let email = role === 'principal' ? user : staffEmail(pass);
+                if (role === 'principal' && !email.includes('@')) {
+                    throw new Error('For Principal login, enter the Firebase Authentication email address.');
+                }
+
                 let credential;
                 try {
                     credential = await auth.signInWithEmailAndPassword(email, pass);
@@ -1071,6 +943,11 @@ table { max-width:100%; }
 
                     const manager = isManagerDesignation(employee.designation);
                     const expectedRole = manager ? 'dean' : 'teacher';
+                    if((role === 'dean' && !manager) || (role === 'teacher' && manager)) {
+                        throw new Error(role === 'dean'
+                            ? 'This employee is not registered as a Dean/Incharge.'
+                            : 'This employee is a Dean/Incharge. Select Deans & Incharges to login.');
+                    }
 
                     try {
                         const created = await secondaryAuth.createUserWithEmailAndPassword(email, pass);
@@ -1124,6 +1001,13 @@ table { max-width:100%; }
                     await db.collection('users').doc(uid).set(account, { merge: true });
                 }
 
+                if(role === 'principal' && account.role !== PRINCIPAL_ROLE) throw new Error('This account is not a Principal account.');
+                if(role === 'dean' && account.role !== 'dean') throw new Error('This account is not authorized for Dean/Incharge access.');
+                if(role === 'teacher' && !(account.role === 'teacher' || account.teacherAccess === true)) {
+                    throw new Error('This account is not authorized for Teacher access.');
+                }
+                if(role !== 'principal' && account.name && account.name.toLowerCase() !== user.toLowerCase()) throw new Error('Name does not match this employee account.');
+
                 currentUser = { uid, ...account };
                 await loadDataForRole(account.role);
 
@@ -1155,6 +1039,8 @@ table { max-width:100%; }
             }
         }
 
+        updateLoginFields();
+
         function switchView(viewId) {
             document.querySelectorAll('.module-container, .login-box').forEach(el => el.classList.remove('active-module'));
             document.getElementById(viewId).classList.add('active-module');
@@ -1170,17 +1056,39 @@ table { max-width:100%; }
         }
 
         function showTab(tabId) {
-            showTabById(tabId);
+            document.querySelectorAll('#principalModule .tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#principalModule .nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            if (event && event.target) event.target.classList.add('active');
+
+            if(tabId === 'p-teacher-tt') {
+                populatePrincipalWeeklyTeacherDropdown();
+            }
+            if(tabId === 'p-absent-leaves') {
+                renderPrincipalAbsentLeaves();
+            }
         }
         
         function showTabDean(tabId) {
-            showTabDeanById(tabId);
+            document.querySelectorAll('#deanModule .tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#deanModule .nav-tabs button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            if (event && event.target) event.target.classList.add('active');
+            if(tabId === 'd-teacher-weekly') populateTeacherWeeklyDropdown();
+            if(tabId === 'd-sub') populateAbsentCheckboxes();
+            if(['d-xsession','d-exam','d-study'].includes(tabId)) populateXSessionAndExamControls();
+            if(tabId === 'd-exam') showExamTab('revision');
         }
 
         function isManagerDesignation(desig) {
             const d = String(desig || '').trim().toLowerCase();
-            return d === 'dean' || d.includes('incharge') || d === 'hod' || d.includes('h.o.d');
+            return d === 'dean' ||
+                   d.includes('incharge') ||
+                   d === 'hod' ||
+                   d.includes('h.o.d');
         }
+
+        const PROVIDED_EMPLOYEES = [{"empId": "127316", "employeeCode": "HYD274246", "name": "MAHIPAL KOTHA", "joiningDate": "26-Feb-15", "designation": "Dean", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9948742460"}, {"empId": "208678", "employeeCode": "HYD910820", "name": "MUDDAM SAIKUMAR", "joiningDate": "26-Oct-21", "designation": "Dean", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9848220649"}, {"empId": "108210", "employeeCode": "HYD274252", "name": "Ramesh Miryala", "joiningDate": "12-Nov-12", "designation": "IPL Incharge", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9849217516"}, {"empId": "200852", "employeeCode": "HYD277090", "name": "Pedakanti Sudhakar", "joiningDate": "4-Feb-21", "designation": "Civils Batch Incharge", "subject": "Math", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "9705394452"}, {"empId": "269065", "employeeCode": "HYD289073", "name": "BODAPATLA UPENDRAIAH", "joiningDate": "1-Jun-24", "designation": "C or M Batch Incharge", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9573723135"}, {"empId": "267938", "employeeCode": "HYD912748", "name": "Ramidi Sravanth Reddy", "joiningDate": "5-Jun-24", "designation": "C or M Batch Incharge", "subject": "Physics", "board": "STATE", "qualification1": "B.Tech", "qualification2": "", "mobile": "7032598681"}, {"empId": "245832", "employeeCode": "HYD275787", "name": "P SHIVA KUMAR", "joiningDate": "2-Jun-23", "designation": "H.O.D (Telugu)", "subject": "Telugu", "board": "CBSE", "qualification1": "", "qualification2": "M.A", "mobile": "9059309096"}, {"empId": "188280", "employeeCode": "HYD274261", "name": "PITTALA KRISHNAIAH", "joiningDate": "10-Jun-19", "designation": "H.O.D (Telugu)", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "Telugu", "mobile": "9666711217"}, {"empId": "249275", "employeeCode": "HYD277927", "name": "CHEEDI RAMESH BABU", "joiningDate": "4-Jul-23", "designation": "Telugu Teacher", "subject": "Telugu", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "7095637820"}, {"empId": "219768", "employeeCode": "HYD274259", "name": "BUROJU SHEKER", "joiningDate": "6-Jun-22", "designation": "Telugu Teacher", "subject": "Telugu", "board": "CBSE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9705728845"}, {"empId": "289183", "employeeCode": "HYD601391", "name": "PATHIKONDA KARNAKAR REDDY", "joiningDate": "26-May-25", "designation": "Telugu Teacher", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9440574335"}, {"empId": "266936", "employeeCode": "HYD289627", "name": "JINNUKUNTLA SUKANYA", "joiningDate": "1-Jun-24", "designation": "Telugu Teacher", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "T.P.T", "mobile": "9640606266"}, {"empId": "286973", "employeeCode": "HYD299404", "name": "LINGAMPALLI APPA RAO", "joiningDate": "6-Jun-25", "designation": "Telugu Teacher", "subject": "Telugu", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9866548493"}, {"empId": "306193", "employeeCode": "HYD610565", "name": "G SHOBHA RANI", "joiningDate": "3-Jun-26", "designation": "H.O.D (English)", "subject": "English", "board": "CBSE", "qualification1": "B.A", "qualification2": "B.Ed", "mobile": "9908458677"}, {"empId": "246380", "employeeCode": "HYD276502", "name": "PODILA SWARUPA", "joiningDate": "2-Jun-23", "designation": "H.O.D (English)", "subject": "English", "board": "CBSE", "qualification1": "", "qualification2": "M.A", "mobile": "9676895237"}, {"empId": "311776", "employeeCode": "HYD613628", "name": "SAKERA AKHTARI", "joiningDate": "27-Jun-26", "designation": "English Teacher", "subject": "English", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9692980072"}, {"empId": "307150", "employeeCode": "HYD915206", "name": "GUDURU RAMESH", "joiningDate": "3-Jun-26", "designation": "English Teacher", "subject": "English", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "DEGREE", "mobile": "9959644402"}, {"empId": "312587", "employeeCode": "HYD614222", "name": "ARJUNA RAO GORREMUCHU", "joiningDate": "7-Jul-26", "designation": "English Teacher", "subject": "English", "board": "STATE", "qualification1": "M.A", "qualification2": "", "mobile": "9550137788"}, {"empId": "208946", "employeeCode": "HYD910821", "name": "ARJUNE SAGAR", "joiningDate": "26-Oct-21", "designation": "H.O.D (Hindi)", "subject": "Hindi", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8142414049"}, {"empId": "245760", "employeeCode": "HYD275783", "name": "VEMULA ARUNA", "joiningDate": "2-Jun-23", "designation": "H.O.D (Hindi)", "subject": "Hindi", "board": "CBSE", "qualification1": "M.A", "qualification2": "H.P.T(HINDI)", "mobile": "9849809762"}, {"empId": "306903", "employeeCode": "HYD610988", "name": "DURGE SANTHOSH", "joiningDate": "11-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "CBSE", "qualification1": "M.A", "qualification2": "D.Ed (HINDI)", "mobile": "6304294682"}, {"empId": "249013", "employeeCode": "HYD277917", "name": "SHARAD", "joiningDate": "6-Jul-23", "designation": "Hindi Teacher", "subject": "Hindi", "board": "CBSE", "qualification1": "D.Ed", "qualification2": "D.Ed", "mobile": "6301952300"}, {"empId": "308081", "employeeCode": "HYD611644", "name": "SYED WASEEMUDDIN", "joiningDate": "3-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8341233716"}, {"empId": "308065", "employeeCode": "HYD611641", "name": "SUBHASH KUMAR TIWARI", "joiningDate": "3-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "B.A", "qualification2": "", "mobile": "8968043929"}, {"empId": "306134", "employeeCode": "HYD915146", "name": "THAKRE KUNAL", "joiningDate": "3-Jun-26", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "M.A", "qualification2": "D.Ed", "mobile": "8985107568"}, {"empId": "245999", "employeeCode": "HYD275782", "name": "BOBBILI SAMATA", "joiningDate": "2-Jun-23", "designation": "Hindi Teacher", "subject": "Hindi", "board": "STATE", "qualification1": "B.Sc", "qualification2": "H.P.T(HINDI)", "mobile": "8978299601"}, {"empId": "247812", "employeeCode": "HYD277408", "name": "YASA VENKATESHWAR REDDY", "joiningDate": "17-Jun-23", "designation": "H.O.D (Math)", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9908118690"}, {"empId": "246315", "employeeCode": "HYD276504", "name": "PULIGILLA NARSIMHA CHARY", "joiningDate": "25-May-23", "designation": "H.O.D (Math)", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9441239642"}, {"empId": "270494", "employeeCode": "HYD289811", "name": "BARPATI SUMANA", "joiningDate": "1-Jun-24", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "M.Sc", "mobile": "9381410791"}, {"empId": "275207", "employeeCode": "HYD293553", "name": "DASARI SHILPA", "joiningDate": "5-Aug-24", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "DEGREE", "mobile": "8522027458"}, {"empId": "267855", "employeeCode": "HYD288439", "name": "PATHURI SANDHYA", "joiningDate": "1-Jun-24", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9014096734"}, {"empId": "228253", "employeeCode": "HYD274253", "name": "T SANTHOSHA", "joiningDate": "18-Aug-22", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8341044638"}, {"empId": "218794", "employeeCode": "HYD911250", "name": "Deelip", "joiningDate": "6-Jun-22", "designation": "Math Teacher", "subject": "Math", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "D.Ed", "mobile": "9901554320"}, {"empId": "311775", "employeeCode": "HYD613629", "name": "GURRAM SULOMANRAJU", "joiningDate": "29-Jun-26", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "9291508470"}, {"empId": "308075", "employeeCode": "HYD611643", "name": "KUMBHAM RAJESWARI", "joiningDate": "3-Jun-26", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9866925257"}, {"empId": "288790", "employeeCode": "HYD601186", "name": "MAMIDI HARITHA", "joiningDate": "2-Jun-25", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9121642298"}, {"empId": "275820", "employeeCode": "HYD293848", "name": "DANNE SRISAILAM", "joiningDate": "14-Aug-24", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9640203951"}, {"empId": "268362", "employeeCode": "HYD288441", "name": "P BHAVANI", "joiningDate": "1-Jun-24", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9381663680"}, {"empId": "252796", "employeeCode": "HYD281338", "name": "THOUTAM ANAND", "joiningDate": "2-Sep-23", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9912173543"}, {"empId": "294918", "employeeCode": "HYD605141", "name": "KONDOJU MAHESHWARI", "joiningDate": "26-Jul-25", "designation": "Math Teacher", "subject": "Math", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "7680845819"}, {"empId": "267633", "employeeCode": "HYD912818", "name": "BELLAMKONDA SAIDULU", "joiningDate": "1-Jun-24", "designation": "H.O.D (Physics)", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "Physics", "mobile": "8523035694"}, {"empId": "289188", "employeeCode": "HYD601390", "name": "GAJJI MAHESH", "joiningDate": "13-Jun-25", "designation": "H.O.D (Physics)", "subject": "Physics", "board": "STATE", "qualification1": "B.Tech", "qualification2": "B.Ed", "mobile": "9642518979"}, {"empId": "225910", "employeeCode": "HYD274243", "name": "PENDYALA YADAGIRI RAO", "joiningDate": "20-Jul-22", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9912343270"}, {"empId": "306937", "employeeCode": "HYD610989", "name": "VIJAYAGIRI SRIPAL", "joiningDate": "3-Jun-26", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Tech", "qualification2": "", "mobile": "9705845345"}, {"empId": "268945", "employeeCode": "HYD289072", "name": "GUNDEBOINA ANUSHA", "joiningDate": "17-Jun-24", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "Physics", "mobile": "8106750771"}, {"empId": "246357", "employeeCode": "HYD276506", "name": "SUNARKARI MALLESH", "joiningDate": "6-Jun-23", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8466046676"}, {"empId": "309137", "employeeCode": "HYD612307", "name": "NAMI REDDY SOUJANYA", "joiningDate": "15-Jun-26", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9490214471"}, {"empId": "306991", "employeeCode": "HYD610990", "name": "BEGARI SHAMANTHA", "joiningDate": "3-Jun-26", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "7981933754"}, {"empId": "289673", "employeeCode": "HYD603318", "name": "MANGA VENKATESH", "joiningDate": "29-May-25", "designation": "Physics Teacher", "subject": "Physics", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9912037565"}, {"empId": "290006", "employeeCode": "HYD603317", "name": "BIKKINETI SANTHOSH KUMAR", "joiningDate": "13-Jun-25", "designation": "Physics Teacher", "subject": "Physics", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9160073770"}, {"empId": "230789", "employeeCode": "HYD911540", "name": "TALLURI VINODA", "joiningDate": "13-Oct-22", "designation": "H.O.D(Chemistry)", "subject": "Chemistry", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "6304868915"}, {"empId": "278819", "employeeCode": "HYD295528", "name": "KOKKILIGADDA RAVI", "joiningDate": "13-Nov-24", "designation": "H.O.D (Chemistry)", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "", "mobile": "9398849031"}, {"empId": "199429", "employeeCode": "HYD274245", "name": "BAYYA SRISAILAM", "joiningDate": "15-Feb-21", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9553218600"}, {"empId": "279448", "employeeCode": "HYD295879", "name": "RACHA LAXMIPATHI", "joiningDate": "26-Nov-24", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9640884366"}, {"empId": "219651", "employeeCode": "HYD274904", "name": "Pore Dinesh", "joiningDate": "13-Jun-22", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "CBSE", "qualification1": "M.Pharmacy", "qualification2": "Chemistry", "mobile": "9066715669"}, {"empId": "308071", "employeeCode": "HYD611642", "name": "KESHAMONI MANJULA", "joiningDate": "3-Jun-26", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "Organic Chemistry", "mobile": "9133956268"}, {"empId": "277847", "employeeCode": "HYD294956", "name": "BANDA PRATHYUSHA", "joiningDate": "18-Oct-24", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "", "mobile": "7731907172"}, {"empId": "274476", "employeeCode": "HYD293186", "name": "SANATH KUMAR KONDOJU", "joiningDate": "31-Jul-24", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "9866530863"}, {"empId": "249274", "employeeCode": "HYD277912", "name": "BOINI NARESH", "joiningDate": "5-Jul-23", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "", "mobile": "9014185367"}, {"empId": "298647", "employeeCode": "HYD914859", "name": "TUTTURU NARESH", "joiningDate": "4-Nov-25", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "STATE", "qualification1": "M.Sc", "qualification2": "Ph.D", "mobile": "9912374079"}, {"empId": "313392", "employeeCode": "HYD614638", "name": "Y NAGI REDDY", "joiningDate": "13-Jul-26", "designation": "Chemistry Teacher", "subject": "Chemistry", "board": "CBSE", "qualification1": "", "qualification2": "B.Ed", "mobile": "9618407412"}, {"empId": "249235", "employeeCode": "HYD277928", "name": "SALEY RAVI", "joiningDate": "30-Jun-23", "designation": "H.O.D (Zoology)", "subject": "Biology", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8019533227"}, {"empId": "161842", "employeeCode": "HYD274255", "name": "SABAVATH GANESH", "joiningDate": "23-Jun-17", "designation": "H.O.D (Biology)", "subject": "Biology", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9704038671"}, {"empId": "269579", "employeeCode": "HYD289809", "name": "MAHESHWARAM SWATHI", "joiningDate": "1-Jun-24", "designation": "Biology Teacher", "subject": "Biology", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "7036718045"}, {"empId": "267681", "employeeCode": "HYD912819", "name": "POTLAPALLY CHANDRIKA", "joiningDate": "8-Jun-24", "designation": "Biology Teacher", "subject": "Biology", "board": "CBSE", "qualification1": "B.Sc", "qualification2": "B.Ed", "mobile": "9398614916"}, {"empId": "310123", "employeeCode": "HYD612823", "name": "SINGAM SAIDULU", "joiningDate": "3-Jun-26", "designation": "Botany Teacher", "subject": "Botany", "board": "CBSE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8096447957"}, {"empId": "269830", "employeeCode": "HYD913084", "name": "SANGISHETTI SRISAILAM", "joiningDate": "1-Jun-24", "designation": "Zoology Teacher", "subject": "Zoology", "board": "STATE", "qualification1": "M.Sc", "qualification2": "B.Ed", "mobile": "8919016211"}, {"empId": "101398", "employeeCode": "HYD253059", "name": "PADMA NANUMASA", "joiningDate": "23-Jun-10", "designation": "H.O.D (Social)", "subject": "Social", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8978294933"}, {"empId": "268928", "employeeCode": "HYD289071", "name": "VANGARA SUDHA RANI", "joiningDate": "14-Jun-24", "designation": "H.O.D (Social)", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9248552321"}, {"empId": "292634", "employeeCode": "HYD603804", "name": "MITTAPALLY NAVEEN", "joiningDate": "26-Jun-25", "designation": "Social Teacher", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "Economics", "mobile": "9849049152"}, {"empId": "274471", "employeeCode": "HYD293188", "name": "PALLE MAHENDAR", "joiningDate": "1-Aug-24", "designation": "Social Teacher", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "English", "mobile": "6281094889"}, {"empId": "267851", "employeeCode": "HYD288438", "name": "KOTHAGADI SRILATHA", "joiningDate": "1-Jun-24", "designation": "Social Teacher", "subject": "Social", "board": "CBSE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "9398344097"}, {"empId": "289406", "employeeCode": "HYD603319", "name": "ABBIREDDI S R NS RAO", "joiningDate": "26-May-25", "designation": "Social Teacher", "subject": "Social", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8500105779"}, {"empId": "275684", "employeeCode": "HYD913392", "name": "SHAIK NAGULMEERA", "joiningDate": "13-Aug-24", "designation": "Social Teacher", "subject": "Social", "board": "STATE", "qualification1": "M.A", "qualification2": "B.Ed", "mobile": "8142254002"}];
 
         function openDualTeacherView() {
             if(!currentUser || !currentUser.teacherAccess) return;
@@ -1220,13 +1128,24 @@ table { max-width:100%; }
                         empId, name, designation: desig, subject: subj
                     });
                     await secondaryAuth.signOut();
+                } else {
+                    const old = staffList.find(s => s.empId === editingStaffEmpId);
+                    const oldSnap = old ? await db.collection('users').where('empId','==',editingStaffEmpId).limit(1).get() : null;
+                    if(oldSnap && !oldSnap.empty) {
+                        const isManager = isManagerDesignation(desig);
+                        await db.collection('users').doc(oldSnap.docs[0].id).update({
+                            empId, name, designation: desig, subject: subj,
+                            role: isManager ? 'dean' : 'teacher',
+                            teacherAccess: isManager
+                        });
+                    }
                 }
 
                 const snap = await db.collection('staff').get();
                 staffList = []; snap.forEach(d => staffList.push(d.data()));
                 editingStaffEmpId = null;
                 renderStaffTable(); clearStaffForm();
-                alert('Employee saved successfully.');
+                alert('Employee saved successfully. Login email: ' + email + ' | Password: Employee ID');
             } catch(e) {
                 console.error(e);
                 alert('Could not save employee: ' + e.message);
@@ -1265,12 +1184,24 @@ table { max-width:100%; }
                 alert('Only the Principal can delete employee records.');
                 return;
             }
+
             const employee = staffList[index];
-            if (!employee) return alert('Employee record not found.');
-            const employeeId = String(employee.empId || '');
+            if (!employee) {
+                alert('Employee record not found.');
+                return;
+            }
+
+            const employeeId = String(employee.empId || employee.employeeId || '');
             const displayName = employee.name || employeeId;
 
-            if (!confirm(`Delete ${displayName} (${employeeId}) from staff directory?\n\nThis will remove the employee record from Firestore.`)) return;
+            if (!employeeId) {
+                alert('This employee does not have a valid Employee ID.');
+                return;
+            }
+
+            if (!confirm(`Delete ${displayName} (${employeeId}) from the staff directory?\n\nThis will remove the employee record from Firestore.`)) {
+                return;
+            }
 
             try {
                 await db.collection('staff').doc(employeeId).delete();
@@ -1279,7 +1210,7 @@ table { max-width:100%; }
                 alert(`${displayName} was deleted successfully.`);
             } catch (error) {
                 console.error('Delete staff error:', error);
-                alert('Unable to delete employee: ' + (error.message || error));
+                alert('Unable to delete this employee: ' + (error.message || error));
             }
         }
 
@@ -1325,28 +1256,31 @@ table { max-width:100%; }
             return sec ? `${cls} - Sec ${sec}` : cls;
         }
 
-        // Dual Selection Criterion: STATE => FL & SL; CBSE => SL & TL
-        function isDualSubject(sub, board = currentBoard) {
-            const s = String(sub || '').trim().toUpperCase();
-            const b = String(board || '').trim().toUpperCase();
-            if (b === 'STATE') {
-                return (s === 'FL' || s === 'SL');
+        // ================= TIMETABLE ENGINE WITH DUAL LANGUAGE / TEACHER SUPPORT =================
+        function isDualSubject(sub) {
+            if (currentBoard === 'STATE') {
+                return (sub === 'FL' || sub === 'SL');
             } else {
-                return (s === 'SL' || s === 'TL');
+                return (sub === 'SL' || sub === 'TL');
             }
         }
 
         function onSubjectSelectChanged(periodId, fullClassKey, day) {
             const subVal = document.getElementById(`sub_${periodId}`).value;
             const dualWrap = document.getElementById(`dual_wrap_${periodId}`);
-            const singleWrap = document.getElementById(`single_teach_wrap_${periodId}`);
+            const teach1 = document.getElementById(`teach_${periodId}`);
+            const teach2 = document.getElementById(`teach2_${periodId}`);
 
-            if (isDualSubject(subVal, currentBoard)) {
-                dualWrap.style.display = 'flex';
-                singleWrap.style.display = 'none';
+            if (isDualSubject(subVal)) {
+                dualWrap.style.display = 'block';
+                teach2.style.display = 'inline-block';
+                teach1.style.width = '48%';
+                teach2.style.width = '48%';
             } else {
                 dualWrap.style.display = 'none';
-                singleWrap.style.display = 'block';
+                teach2.style.display = 'none';
+                teach1.style.width = '100%';
+                teach2.value = '';
             }
         }
 
@@ -1356,58 +1290,59 @@ table { max-width:100%; }
             if(!fullClassKey || !day) return alert("Select Class and Day first.");
 
             const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "IT", "WIZCLUB", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP"];
-            let html = `<h4>Assigning Timetable for ${fullClassKey} (${day}) - [${currentBoard} BOARD]</h4>`;
-            html += `<table><tr><th>Period</th><th>Time</th><th>Subject</th><th>Handling Teacher(s) Selection</th></tr>`;
+            let html = `<h4>Assigning Timetable for ${fullClassKey} (${day})</h4>`;
+            html += `<table><tr><th>Period</th><th>Time</th><th>Subject & Languages</th><th>Teacher(s) Selection</th></tr>`;
 
             periods.forEach((p) => {
-                let currentAssignment = masterTimetable[fullClassKey]?.[day]?.[p.id] || { 
-                    subject: '', teacher: '', isDual: false,
-                    lang1: 'Telugu', teacher1: '',
-                    lang2: 'Hindi', teacher2: ''
-                };
+                let currentAssignment = masterTimetable[fullClassKey]?.[day]?.[p.id] || { subject: '', teacher: '', teacher2: '', langOption: '' };
                 
-                let isDual = isDualSubject(currentAssignment.subject, currentBoard);
+                let isDual = isDualSubject(currentAssignment.subject);
 
                 let subjSelect = `<select id="sub_${p.id}" onchange="onSubjectSelectChanged('${p.id}', '${fullClassKey}', '${day}')"><option value="">Select</option>` + 
                     subjects.map(s => `<option value="${s}" ${currentAssignment.subject === s ? 'selected' : ''}>${s}</option>`).join('') + `</select>`;
 
+                let langSelect = `<div id="dual_wrap_${p.id}" style="margin-top:5px; display:${isDual ? 'block' : 'none'};">
+                    <label style="font-size:11px; font-weight:bold;">Language Option:</label>
+                    <select id="lang_opt_${p.id}">
+                        <option value="Telugu or Hindi" ${currentAssignment.langOption === 'Telugu or Hindi' ? 'selected' : ''}>Telugu or Hindi</option>
+                        <option value="Telugu" ${currentAssignment.langOption === 'Telugu' ? 'selected' : ''}>Telugu</option>
+                        <option value="Hindi" ${currentAssignment.langOption === 'Hindi' ? 'selected' : ''}>Hindi</option>
+                    </select>
+                </div>`;
+
+                let busyTeachers = [];
+                for(let otherClass in masterTimetable) {
+                    if(otherClass !== fullClassKey && masterTimetable[otherClass]?.[day]?.[p.id]) {
+                        const cell = masterTimetable[otherClass][day][p.id];
+                        if(cell.teacher) busyTeachers.push(cell.teacher);
+                        if(cell.teacher2) busyTeachers.push(cell.teacher2);
+                    }
+                }
+
                 function buildTeacherOptions(selectedName) {
                     let opts = `<option value="">Select Teacher</option>`;
                     staffList.filter(st => staffMatchesBoard(st)).forEach(st => {
-                        opts += `<option value="${st.name}" ${selectedName === st.name ? 'selected' : ''}>${st.name} (${st.subject})</option>`;
+                        const isBusy = busyTeachers.includes(st.name);
+                        const isSelected = selectedName === st.name;
+                        if(isBusy && !isSelected) {
+                            opts += `<option value="${st.name}" disabled style="color:red;">${st.name} [Engaged in Other Class]</option>`;
+                        } else {
+                            opts += `<option value="${st.name}" ${isSelected ? 'selected' : ''}>${st.name} (${st.subject})</option>`;
+                        }
                     });
                     return opts;
                 }
 
-                // Dual Selection Option Boxes: Option 1 (Teacher 1) & Option 2 (Teacher 2)
-                let dualFields = `
-                    <div id="dual_wrap_${p.id}" class="dual-lang-row" style="display:${isDual ? 'flex' : 'none'};">
-                        <div class="dual-lang-box">
-                            <span class="dual-lang-label">Teacher 1 (e.g. Telugu)</span>
-                            <input type="hidden" id="lang1_${p.id}" value="Telugu">
-                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Select Teacher 1:</label>
-                            <select id="teach1_${p.id}">${buildTeacherOptions(currentAssignment.teacher1 || currentAssignment.teacher)}</select>
-                        </div>
-                        <div class="dual-lang-box">
-                            <span class="dual-lang-label">Teacher 2 (e.g. Hindi / Subject)</span>
-                            <input type="hidden" id="lang2_${p.id}" value="Hindi">
-                            <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Select Teacher 2:</label>
-                            <select id="teach2_${p.id}">${buildTeacherOptions(currentAssignment.teacher2)}</select>
-                        </div>
-                    </div>
-                `;
-
-                let singleTeacherField = `
-                    <div id="single_teach_wrap_${p.id}" style="display:${isDual ? 'none' : 'block'};">
-                        <select id="teach_${p.id}">${buildTeacherOptions(currentAssignment.teacher)}</select>
-                    </div>
-                `;
-
                 html += `<tr>
                     <td><b>${p.id}</b></td>
                     <td>${p.time}</td>
-                    <td>${subjSelect}</td>
-                    <td>${singleTeacherField}${dualFields}</td>
+                    <td>${subjSelect}${langSelect}</td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <select id="teach_${p.id}" style="width:${isDual ? '48%' : '100%'};">${buildTeacherOptions(currentAssignment.teacher)}</select>
+                            <select id="teach2_${p.id}" style="width:48%; display:${isDual ? 'inline-block' : 'none'};">${buildTeacherOptions(currentAssignment.teacher2)}</select>
+                        </div>
+                    </td>
                 </tr>`;
             });
 
@@ -1421,32 +1356,16 @@ table { max-width:100%; }
 
             periods.forEach(p => {
                 const sub = document.getElementById(`sub_${p.id}`).value;
-                const isDual = isDualSubject(sub, currentBoard);
+                const teach = document.getElementById(`teach_${p.id}`).value;
+                const teach2 = document.getElementById(`teach2_${p.id}`)?.value || '';
+                const langOpt = document.getElementById(`lang_opt_${p.id}`)?.value || '';
 
-                if (isDual) {
-                    const l1 = document.getElementById(`lang1_${p.id}`)?.value || 'Telugu';
-                    const t1 = document.getElementById(`teach1_${p.id}`)?.value || '';
-                    const l2 = document.getElementById(`lang2_${p.id}`)?.value || 'Hindi';
-                    const t2 = document.getElementById(`teach2_${p.id}`)?.value || '';
-                    masterTimetable[fullClassKey][day][p.id] = { 
-                        subject: sub, 
-                        isDual: true,
-                        lang1: l1,
-                        teacher1: t1,
-                        lang2: l2,
-                        teacher2: t2,
-                        teacher: t1,
-                        teacher2_legacy: t2
-                    };
-                } else {
-                    const teach = document.getElementById(`teach_${p.id}`)?.value || '';
-                    masterTimetable[fullClassKey][day][p.id] = { 
-                        subject: sub, 
-                        isDual: false,
-                        teacher: teach,
-                        teacher2: ''
-                    };
-                }
+                masterTimetable[fullClassKey][day][p.id] = { 
+                    subject: sub, 
+                    teacher: teach, 
+                    teacher2: isDualSubject(sub) ? teach2 : '', 
+                    langOption: isDualSubject(sub) ? langOpt : ''
+                };
             });
 
             await saveMapDoc('timetables', timetableDocId(fullClassKey), masterTimetable[fullClassKey]);
@@ -1482,13 +1401,10 @@ table { max-width:100%; }
                 periods.forEach(p => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
-                        if(cell.isDual) {
-                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${cell.lang1 || 'Telugu'}: ${cell.teacher1 || cell.teacher || '---'}<br>${cell.lang2 || 'Hindi'}: ${cell.teacher2 || '---'}</small></td>`;
-                        } else {
-                            let tDesc = cell.teacher || '---';
-                            if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
-                        }
+                        let tDesc = cell.teacher || '---';
+                        if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
+                        let langInfo = cell.langOption ? `<br><small style="color:#0056b3;">[${cell.langOption}]</small>` : '';
+                        html += `<td><b>${cell.subject}</b>${langInfo}<br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
                     } else {
                         html += `<td style="color:#aaa;">---</td>`;
                     }
@@ -1499,6 +1415,8 @@ table { max-width:100%; }
             html += `</tbody></table></div></div>`;
             container.innerHTML = html;
         }
+
+        // ================= TEACHER-WISE WEEKLY TIMETABLE =================
 
         function populateTeacherWeeklyDropdown() {
             const sel = document.getElementById('twSelectTeacher');
@@ -1537,19 +1455,9 @@ table { max-width:100%; }
                     let assignedClass = "";
                     for(let cls in masterTimetable) {
                         const cell = masterTimetable[cls]?.[day]?.[p.id];
-                        if(cell) {
-                            if(cell.isDual) {
-                                if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
-                                    assignedClass = `<b>${cls}</b><br>(${cell.subject} - ${cell.lang1 || 'Telugu'})`;
-                                    break;
-                                } else if(cell.teacher2 === teacherName) {
-                                    assignedClass = `<b>${cls}</b><br>(${cell.subject} - ${cell.lang2 || 'Hindi'})`;
-                                    break;
-                                }
-                            } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                assignedClass = `<b>${cls}</b><br>(${cell.subject})`;
-                                break;
-                            }
+                        if(cell && (cell.teacher === teacherName || cell.teacher2 === teacherName)) {
+                            assignedClass = `<b>${cls}</b><br>(${cell.subject})`;
+                            break;
                         }
                     }
 
@@ -1600,6 +1508,8 @@ table { max-width:100%; }
             toggleTeacherWeeklyRowEdit(dIdx, false);
             renderTeacherWeeklyTimetable();
         }
+
+        // ================= TEACHER-WISE DAY TIMETABLE =================
 
         function onDayTimetableDateChange() {
             const dateVal = document.getElementById('dtSelectDate').value;
@@ -1662,19 +1572,9 @@ table { max-width:100%; }
                         let assignedClass = "";
                         for(let cls in masterTimetable) {
                             const cell = masterTimetable[cls]?.[dayName]?.[p.id];
-                            if(cell) {
-                                if(cell.isDual) {
-                                    if(cell.teacher1 === st.name || cell.teacher === st.name) {
-                                        assignedClass = `<b>${cls}</b><br>(${cell.subject} - ${cell.lang1 || 'Telugu'})`;
-                                        break;
-                                    } else if(cell.teacher2 === st.name) {
-                                        assignedClass = `<b>${cls}</b><br>(${cell.subject} - ${cell.lang2 || 'Hindi'})`;
-                                        break;
-                                    }
-                                } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
-                                    assignedClass = `<b>${cls}</b><br>(${cell.subject})`;
-                                    break;
-                                }
+                            if(cell && (cell.teacher === st.name || cell.teacher2 === st.name)) {
+                                assignedClass = `<b>${cls}</b><br>(${cell.subject})`;
+                                break;
                             }
                         }
 
@@ -1833,7 +1733,47 @@ table { max-width:100%; }
                 container.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check" ${isChecked}> ${st.name} (${st.subject})</label>`;
             });
             const dateVal = document.getElementById('subDate')?.value;
-            if(dateVal) { restoreAbsentSelectionAsync(dateVal).then(() => syncSubstituteTeachersIntoAbsentList(dateVal)); }
+            if(dateVal) restoreAbsentSelectionAsync(dateVal);
+        }
+
+        async function syncSubstituteTeachersIntoAbsentList(dateVal) {
+            try {
+                const records = savedSubstitutionsForDate(dateVal) || [];
+                const selectedSubstituteNames = new Set(
+                    records.filter(r => r && r.board === currentBoard && (r.subTeacher || r.substituteTeacher))
+                        .map(r => String(r.subTeacher || r.substituteTeacher).trim()).filter(Boolean)
+                );
+
+                if (window._activeSubSessionCache) {
+                    Object.values(window._activeSubSessionCache).forEach(item => {
+                        if (item && item.subTeacher) {
+                            selectedSubstituteNames.add(String(item.subTeacher).trim());
+                        }
+                    });
+                }
+
+                document.querySelectorAll('#absentStaffCheckboxes input[type="checkbox"]').forEach(cb => {
+                    const name = String(cb.value || '').trim();
+                    if (selectedSubstituteNames.has(name)) {
+                        cb.checked = false;
+                        cb.disabled = true;
+                        const label = cb.closest('label');
+                        if (label) { 
+                            label.style.opacity = '0.55'; 
+                            label.title = 'Already selected as a substitute teacher'; 
+                        }
+                    } else {
+                        cb.disabled = false;
+                        const label = cb.closest('label');
+                        if (label) { 
+                            label.style.opacity = '1'; 
+                            label.title = ''; 
+                        }
+                    }
+                });
+            } catch (e) { 
+                console.warn('Unable to sync substitute teachers:', e); 
+            }
         }
 
         function editAbsentSelection() {
@@ -1845,16 +1785,42 @@ table { max-width:100%; }
         async function openAddAbsentTeachersView() {
             const dateVal = document.getElementById('subDate')?.value;
             if (!dateVal) return alert("Select a date first.");
+
+            document.querySelectorAll('[id^="sub_assign_"]').forEach(sel => {
+                const p = sel.dataset.period;
+                const c = sel.dataset.class;
+                const abs = sel.dataset.absent;
+                if (sel.value) {
+                    if (!window._activeSubSessionCache) window._activeSubSessionCache = {};
+                    window._activeSubSessionCache[`${p}_${c}`] = {
+                        subTeacher: sel.value,
+                        absent: abs
+                    };
+                }
+            });
+
             await restoreAbsentSelectionAsync(dateVal);
+            await syncSubstituteTeachersIntoAbsentList(dateVal);
+
             const panel = document.getElementById('subSelectionPanel');
             if (panel) {
                 panel.scrollIntoView({ behavior: 'smooth' });
             }
+
             const statusBox = document.getElementById('absentStaffCheckboxes');
             if (statusBox) {
                 statusBox.style.border = '2px solid #28a745';
                 setTimeout(() => { statusBox.style.border = '1px solid #ccc'; }, 3000);
             }
+        }
+
+        function getSavedAbsentTeachers(dateVal) {
+            const records = savedSubstitutionsForDate(dateVal);
+            const names = [];
+            records.forEach(r => {
+                if(r.absent && !names.includes(r.absent)) names.push(r.absent);
+            });
+            return names;
         }
 
         async function saveAbsentSelectionForDate(dateVal, selectedNames) {
@@ -1878,7 +1844,7 @@ table { max-width:100%; }
                     return value.absentTeachers || [];
                 }
             } catch(e) { console.warn('Unable to load saved absent selection:', e); }
-            return (substitutionRecords[dateVal] || []).map(r => r.absent).filter(Boolean);
+            return getSavedAbsentTeachers(dateVal);
         }
 
         async function restoreAbsentSelectionAsync(dateVal) {
@@ -1892,9 +1858,6 @@ table { max-width:100%; }
                     cb.checked = savedNames.includes(cb.value);
                 }
             });
-            if (typeof syncSubstituteTeachersIntoAbsentList === 'function') {
-                syncSubstituteTeachersIntoAbsentList(dateVal);
-            }
         }
 
         function teacherCanSubstituteOnBoard(st, board) { return staffMatchesBoard(st, board); }
@@ -1902,149 +1865,13 @@ table { max-width:100%; }
         function isTeacherAssignedAcrossBoards(date, teacherName, period, ignoreIndex = -1) {
             return savedSubstitutionsForDate(date).some((r,i)=>i!==ignoreIndex && r.subTeacher===teacherName && String(r.period)===String(period));
         }
-
-        function populateXSessionControls() {
-            const sel = document.getElementById('xsTeacherSelect');
-            if(!sel) return;
-            sel.innerHTML = '<option value="">Select Teacher</option>';
-            staffList.filter(st => staffMatchesBoard(st)).sort((a,b)=>a.name.localeCompare(b.name)).forEach(st => {
-                sel.innerHTML += `<option value="${st.name}">${st.name} (${st.subject})</option>`;
-            });
-            const dInput = document.getElementById('xsDate');
-            if(dInput && !dInput.value) dInput.value = new Date().toISOString().slice(0,10);
-            renderXSessionScheduleList();
+        function isTeacherRevisionBusy(date, teacherName, period, board) {
+            const day = getDayNameFromDate(date);
+            return revisionTeachersForDate(date, board, day, period).includes(teacherName) ||
+                   revisionTeachersForDate(date, board === 'STATE' ? 'CBSE' : 'STATE', day, period).includes(teacherName);
         }
 
-        async function saveXSessionSchedule() {
-            const date = document.getElementById('xsDate').value;
-            const cls = document.getElementById('xsClass').value;
-            const sub = document.getElementById('xsSubject').value;
-            const sNum = document.getElementById('xsSessionNum').value;
-            const sTime = document.getElementById('xsSessionTime').value;
-            const teacher = document.getElementById('xsTeacherSelect').value;
-
-            if(!date || !cls || !sub || !sNum || !sTime || !teacher) {
-                return alert('Please fill in Date, Class, Subject, Session Number, Session Time, and Handling Teacher.');
-            }
-
-            if(!xSessionRecords[date]) xSessionRecords[date] = [];
-
-            xSessionRecords[date] = xSessionRecords[date].filter(x => !(x.class === cls && x.sessionTime === sTime && x.board === currentBoard));
-
-            const record = {
-                date,
-                class: cls,
-                subject: sub,
-                sessionNumber: sNum,
-                sessionTime: sTime,
-                teacher,
-                board: currentBoard
-            };
-
-            xSessionRecords[date].push(record);
-            await saveMapDoc('xSessionRecords', date, xSessionRecords[date]);
-            alert(`X Session ${sNum} Allotted to ${teacher}. Their regular periods are now vacated and automatically routed to the Substitution list.`);
-            renderXSessionScheduleList();
-        }
-
-        function renderXSessionScheduleList() {
-            const date = document.getElementById('xsDate')?.value;
-            const container = document.getElementById('xSessionScheduleTableContainer');
-            if(!container || !date) return;
-
-            const list = (xSessionRecords[date] || []).filter(x => x.board === currentBoard);
-            if(!list.length) {
-                container.innerHTML = `<p style="color:#777;">No X Sessions scheduled for ${date}.</p>`;
-                return;
-            }
-
-            let html = `<h4>Scheduled X Sessions for ${date} (${getDayNameFromDate(date)})</h4><table><thead><tr>
-                <th>Session #</th><th>Class</th><th>Subject</th><th>Session Time</th><th>Assigned Teacher</th><th>Action</th>
-            </tr></thead><tbody>`;
-
-            list.forEach((item, idx) => {
-                html += `<tr>
-                    <td><b>Session ${item.sessionNumber}</b></td>
-                    <td><b>${item.class}</b></td>
-                    <td>${item.subject}</td>
-                    <td>${item.sessionTime === 'morning' ? 'Morning (Up to 11:40am - 12:20pm)' : 'Afternoon (1:00pm - 1:40pm to Last Period)'}</td>
-                    <td style="color:#0056b3; font-weight:bold;">${item.teacher}</td>
-                    <td><button onclick="deleteXSession('${date}', ${idx})">Cancel</button></td>
-                </tr>`;
-            });
-            html += `</tbody></table>`;
-            container.innerHTML = html;
-        }
-
-        async function deleteXSession(date, idx) {
-            if(!confirm('Cancel this X Session allotment?')) return;
-            xSessionRecords[date].splice(idx, 1);
-            await saveMapDoc('xSessionRecords', date, xSessionRecords[date]);
-            renderXSessionScheduleList();
-        }
-
-        function getXSessionDutyPeriods(sessionTime) {
-            if(sessionTime === 'morning') {
-                return ["0", "I", "II", "III", "IV", "V"];
-            } else {
-                return ["VII", "VIII", "IX", "X", "XI", "XII", "XIII"];
-            }
-        }
-
-        function getXSessionBusyListForDate(dateVal) {
-            return (xSessionRecords[dateVal] || []).filter(x => x.board === currentBoard);
-        }
-
-        function getLiveWorkloadMap(dateVal) {
-            const wlMap = {};
-            staffList.forEach(st => { wlMap[st.name] = 0; });
-
-            const saved = savedSubstitutionsForDate(dateVal);
-            saved.forEach(rec => {
-                if(rec.subTeacher && wlMap[rec.subTeacher] !== undefined) {
-                    wlMap[rec.subTeacher]++;
-                }
-            });
-
-            document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
-                const assigned = sel.value;
-                if(assigned && wlMap[assigned] !== undefined) {
-                    const originalSaved = saved.find(r => r.board === currentBoard && r.period === sel.dataset.period && r.class === sel.dataset.class);
-                    if(!originalSaved || originalSaved.subTeacher !== assigned) {
-                        wlMap[assigned]++;
-                    }
-                }
-            });
-
-            return wlMap;
-        }
-
-        function updateAllSubstitutionDropdownLabels() {
-            const dateVal = document.getElementById('subDate')?.value;
-            if(!dateVal) return;
-            const wlMap = getLiveWorkloadMap(dateVal);
-
-            document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
-                Array.from(sel.options).forEach(opt => {
-                    if(opt.value && opt.dataset.baseLabel) {
-                        const count = wlMap[opt.value] || 0;
-                        opt.textContent = `${opt.dataset.baseLabel} (WL: ${count})`;
-                    }
-                });
-            });
-        }
-
-        function onSubstitutionDropdownChange(selElem, index) {
-            // Keep both versions' substitution safeguards/print display.
-            validatePeriodClash(selElem);
-            const printSpan = document.getElementById(`print_sub_${index}`);
-            if(printSpan) {
-                printSpan.textContent = selElem.value || '---';
-            }
-            updateDynamicWorkloads();
-            updateAllSubstitutionDropdownLabels();
-        }
-
+        // ================= SUBSTITUTIONS MATRIX WITH P1/P2/P3 & DYNAMIC WORKLOAD =================
         function generateSubstitutionMatrix() {
             const dateVal = document.getElementById('subDate').value;
             if(!dateVal) return alert('Select a date first.');
@@ -2057,24 +1884,50 @@ table { max-width:100%; }
             });
 
             const dayName = getDayNameFromDate(dateVal);
-            const periodsToSub = [];
+            const allRevision = [];
+            periods.forEach(p => {
+                revisionTeachersForDate(dateVal, currentBoard, dayName, p.id).forEach(n => {
+                    if(!allRevision.includes(n)) allRevision.push(n);
+                });
+            });
 
+            if(selectedAbsent.length === 0 && allRevision.length === 0) {
+                return alert('Select at least one absent teacher or create a Revision Schedule for this date.');
+            }
+
+            const existingChoices = {};
+
+            if (window._activeSubSessionCache) {
+                Object.keys(window._activeSubSessionCache).forEach(k => {
+                    existingChoices[k] = window._activeSubSessionCache[k].subTeacher;
+                });
+            }
+
+            document.querySelectorAll('[id^="sub_assign_"]').forEach(sel => {
+                if(sel.value) existingChoices[`${sel.dataset.period}_${sel.dataset.class}`] = sel.value;
+            });
+
+            savedSubstitutionsForDate(dateVal).forEach(rec => {
+                const key = `${rec.period}_${rec.class}`;
+                if(rec.board === currentBoard && !existingChoices[key]) {
+                    existingChoices[key] = rec.subTeacher;
+                }
+            });
+
+            const periodsToSub = [];
             periods.forEach((p, pIndex) => {
                 for(const cls in masterTimetable) {
                     const cell = masterTimetable[cls]?.[dayName]?.[p.id];
-                    if(!cell) continue;
-
-                    if(cell.isDual) {
-                        if(cell.teacher1 && selectedAbsent.includes(cell.teacher1)) {
+                    if(cell) {
+                        if(cell.teacher && selectedAbsent.includes(cell.teacher)) {
                             periodsToSub.push({
-                                absentTeacher: cell.teacher1,
+                                absentTeacher: cell.teacher,
                                 period: p.id,
                                 periodIndex: pIndex,
                                 time: p.time,
                                 class: cls,
-                                subject: `${cell.subject} (${cell.lang1 || 'Telugu'})`,
-                                rawSubject: cell.lang1 || 'Telugu',
-                                reason: leaveApproved.includes(cell.teacher1) ? 'Approved Leave' : 'Absent'
+                                subject: cell.subject,
+                                reason: leaveApproved.includes(cell.teacher) ? 'Approved Leave' : 'Absent'
                             });
                         }
                         if(cell.teacher2 && selectedAbsent.includes(cell.teacher2)) {
@@ -2084,79 +1937,32 @@ table { max-width:100%; }
                                 periodIndex: pIndex,
                                 time: p.time,
                                 class: cls,
-                                subject: `${cell.subject} (${cell.lang2 || 'Hindi'})`,
-                                rawSubject: cell.lang2 || 'Hindi',
+                                subject: cell.subject + ' (2nd Teacher)',
                                 reason: leaveApproved.includes(cell.teacher2) ? 'Approved Leave' : 'Absent'
-                            });
-                        }
-                    } else {
-                        if(cell.teacher && selectedAbsent.includes(cell.teacher)) {
-                            periodsToSub.push({
-                                absentTeacher: cell.teacher,
-                                period: p.id,
-                                periodIndex: pIndex,
-                                time: p.time,
-                                class: cls,
-                                subject: cell.subject,
-                                rawSubject: cell.subject,
-                                reason: leaveApproved.includes(cell.teacher) ? 'Approved Leave' : 'Absent'
                             });
                         }
                     }
                 }
             });
 
-            const xSessionsOnDate = getXSessionBusyListForDate(dateVal);
-            xSessionsOnDate.forEach(xs => {
-                const affectedPeriodIds = getXSessionDutyPeriods(xs.sessionTime);
-                affectedPeriodIds.forEach(pId => {
-                    const pIndex = periods.findIndex(p => p.id === pId);
-                    const pObj = periods[pIndex] || { id: pId, time: '' };
-
-                    for(const cls in masterTimetable) {
-                        const cell = masterTimetable[cls]?.[dayName]?.[pId];
-                        if(!cell) continue;
-
-                        if(cell.isDual) {
-                            if(cell.teacher1 === xs.teacher) {
-                                periodsToSub.push({
-                                    absentTeacher: xs.teacher,
-                                    period: pId,
-                                    periodIndex: pIndex,
-                                    time: pObj.time,
-                                    class: cls,
-                                    subject: `${cell.subject} (${cell.lang1 || 'Telugu'})`,
-                                    rawSubject: cell.lang1 || 'Telugu',
-                                    reason: `X Session Duty (Session ${xs.sessionNumber})`
-                                });
-                            }
-                            if(cell.teacher2 === xs.teacher) {
-                                periodsToSub.push({
-                                    absentTeacher: xs.teacher,
-                                    period: pId,
-                                    periodIndex: pIndex,
-                                    time: pObj.time,
-                                    class: cls,
-                                    subject: `${cell.subject} (${cell.lang2 || 'Hindi'})`,
-                                    rawSubject: cell.lang2 || 'Hindi',
-                                    reason: `X Session Duty (Session ${xs.sessionNumber})`
-                                });
-                            }
-                        } else if(cell.teacher === xs.teacher) {
+            for(const revTeacher of allRevision) {
+                for(const cls in masterTimetable) {
+                    const cell = masterTimetable[cls]?.[dayName];
+                    for(const p of periods) {
+                        if(p.id && (cell?.[p.id]?.teacher === revTeacher || cell?.[p.id]?.teacher2 === revTeacher) && revisionTeachersForDate(dateVal, currentBoard, dayName, p.id).includes(revTeacher)) {
                             periodsToSub.push({
-                                absentTeacher: xs.teacher,
-                                period: pId,
-                                periodIndex: pIndex,
-                                time: pObj.time,
+                                absentTeacher: revTeacher,
+                                period: p.id,
+                                periodIndex: periods.findIndex(x => x.id === p.id),
+                                time: p.time,
                                 class: cls,
-                                subject: cell.subject,
-                                rawSubject: cell.subject,
-                                reason: `X Session Duty (Session ${xs.sessionNumber})`
+                                subject: cell[p.id].subject,
+                                reason: 'Revision Schedule'
                             });
                         }
                     }
-                });
-            });
+                }
+            }
 
             const unique = {};
             const rows = periodsToSub.filter(x => {
@@ -2168,16 +1974,9 @@ table { max-width:100%; }
 
             const container = document.getElementById('substitutionMatrixContainer');
             if(!rows.length) {
-                container.innerHTML = `<p style="color:green;font-weight:bold;">No substitution duties required for ${dayName}.</p>`;
+                container.innerHTML = `<p style="color:green;font-weight:bold;">No substitution duties found for ${dayName}.</p>`;
                 return;
             }
-
-            const existingChoices = {};
-            savedSubstitutionsForDate(dateVal).forEach(rec => {
-                if(rec.board === currentBoard) existingChoices[`${rec.period}_${rec.class}`] = rec.subTeacher;
-            });
-
-            const initialWlMap = getLiveWorkloadMap(dateVal);
 
             let html = `<div id="subMatrixPrintContainer">
                 <div class="print-header">
@@ -2185,17 +1984,21 @@ table { max-width:100%; }
                     <h3>Branch : Adibatla</h3>
                     <h4>Final Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4>
                 </div>
+                <div class="no-print" style="text-align:center;">
+                    <h3 style="color:#0056b3;">SRI CHAITANYA SCHOOL - ADIBATLA</h3>
+                    <h4>Final Substitution Allotment - ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4>
+                </div>
                 <table>
                     <thead>
                         <tr>
                             <th>S.No</th>
                             <th>Period</th>
                             <th>Time</th>
-                            <th>Original Teacher</th>
-                            <th>Reason / Session</th>
+                            <th>Teacher Requiring Substitute</th>
+                            <th>Reason</th>
                             <th>Class & Subject</th>
                             <th>Substitute Teacher Assigned</th>
-                            <th style="width:75px;">Sign</th>
+                            <th>Sign</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -2207,69 +2010,68 @@ table { max-width:100%; }
                 let freeStaff = staffList.filter(st => {
                     if(!teacherCanSubstituteOnBoard(st, currentBoard)) return false;
                     if(selectedAbsent.includes(st.name)) return false;
-                    if(st.name === item.absentTeacher) return false;
                     if(isTeacherAssignedAcrossBoards(dateVal, st.name, item.period)) return false;
-
-                    const isXBusy = xSessionsOnDate.some(xs => xs.teacher === st.name && getXSessionDutyPeriods(xs.sessionTime).includes(item.period));
-                    if(isXBusy) return false;
-
+                    if(isTeacherRevisionBusy(dateVal, st.name, item.period, currentBoard)) return false;
+                    
                     for(const cls in masterTimetable) {
                         const cell = masterTimetable[cls]?.[dayName]?.[item.period];
-                        if(cell) {
-                            if(cell.isDual && (cell.teacher1 === st.name || cell.teacher2 === st.name || cell.teacher === st.name)) return false;
-                            if(!cell.isDual && (cell.teacher === st.name || cell.teacher2 === st.name)) return false;
-                        }
+                        if(cell && (cell.teacher === st.name || cell.teacher2 === st.name)) return false;
                     }
                     const status = teacherStatusRecords[dateVal]?.[st.name]?.[item.period] || teacherWeeklyStatus[st.name]?.[dayName]?.[item.period];
                     if(status === 'Lunch' || status === 'Rest') return false;
                     return true;
                 });
 
-                const classTeachers = new Set();
-                for(const d of days) {
-                    for(const pid of periods.map(p => p.id)) {
-                        const c = masterTimetable[item.class]?.[d]?.[pid];
-                        if(c) {
-                            if(c.isDual) {
-                                if(c.teacher1) classTeachers.add(c.teacher1);
-                                if(c.teacher2) classTeachers.add(c.teacher2);
+                let evaluatedStaff = freeStaff.map(fs => {
+                    let baseWorkload = 0;
+                    let handlesThisClass = false;
+
+                    periods.forEach(p => {
+                        for(let cls in masterTimetable) {
+                            const c = masterTimetable[cls]?.[dayName]?.[p.id];
+                            if(c && (c.teacher === fs.name || c.teacher2 === fs.name)) {
+                                baseWorkload++;
+                                if(cls === item.class) handlesThisClass = true;
                             }
-                            if(c.teacher) classTeachers.add(c.teacher);
                         }
+                    });
+
+                    let pRank = 3;
+                    let pLabel = "P3 (Free)";
+                    if(handlesThisClass) {
+                        pRank = 1;
+                        pLabel = "P1 (Same Handling Class)";
+                    } else if(fs.subject === item.subject || item.subject.includes(fs.subject)) {
+                        pRank = 2;
+                        pLabel = "P2 (Same Subject)";
+                    }
+
+                    return {
+                        staff: fs,
+                        pRank,
+                        pLabel,
+                        baseWorkload
+                    };
+                });
+
+                evaluatedStaff.sort((a, b) => a.pRank - b.pRank || a.baseWorkload - b.baseWorkload);
+
+                if (current && !evaluatedStaff.some(e => e.staff.name === current)) {
+                    const curStaffObj = staffList.find(st => st.name === current);
+                    if (curStaffObj) {
+                        evaluatedStaff.unshift({
+                            staff: curStaffObj,
+                            pRank: 3,
+                            pLabel: "P3 (Free)",
+                            baseWorkload: 0
+                        });
                     }
                 }
 
-                const categorizedStaff = freeStaff.map(st => {
-                    let priority = 'P3';
-                    let pRank = 3;
-                    const stSub = String(st.subject || '').trim().toLowerCase();
-                    const rawSub = String(item.rawSubject || '').trim().toLowerCase();
-
-                    if(classTeachers.has(st.name)) {
-                        priority = 'P1';
-                        pRank = 1;
-                    } else if(stSub && rawSub && (stSub === rawSub || rawSub.includes(stSub) || stSub.includes(rawSub))) {
-                        priority = 'P2';
-                        pRank = 2;
-                    }
-
-                    return { ...st, priority, pRank };
-                });
-
-                categorizedStaff.sort((a, b) => {
-                    if(a.pRank !== b.pRank) return a.pRank - b.pRank;
-                    const wlA = initialWlMap[a.name] || 0;
-                    const wlB = initialWlMap[b.name] || 0;
-                    if(wlA !== wlB) return wlA - wlB;
-                    return a.name.localeCompare(b.name);
-                });
-
                 let options = `<option value="">Select Substitute</option>`;
-                categorizedStaff.forEach(entry => {
-                    const isSel = entry.name === current ? 'selected' : '';
-                    const baseLabel = `[${entry.priority}] ${entry.name} (${entry.subject})`;
-                    const currentWL = initialWlMap[entry.name] || 0;
-                    options += `<option value="${entry.name}" data-base-label="${baseLabel}" ${isSel}>${baseLabel} (WL: ${currentWL})</option>`;
+                evaluatedStaff.forEach(entry => {
+                    const isSel = entry.staff.name === current ? 'selected' : '';
+                    options += `<option value="${entry.staff.name}" data-baseload="${entry.baseWorkload}" data-plabel="${entry.pLabel}" ${isSel}>${entry.staff.name} - [${entry.pLabel} | Workload: ${entry.baseWorkload} P]</option>`;
                 });
 
                 html += `<tr>
@@ -2277,10 +2079,10 @@ table { max-width:100%; }
                     <td><b>${item.period}</b></td>
                     <td>${item.time}</td>
                     <td style="color:red;font-weight:bold;">${item.absentTeacher}</td>
-                    <td><b>${item.reason}</b></td>
+                    <td>${item.reason}</td>
                     <td><b>${item.class}</b><br>${item.subject || ''}</td>
                     <td>
-                        <select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-absent="${item.absentTeacher}" onchange="onSubstitutionDropdownChange(this, ${index})">
+                        <select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-absent="${item.absentTeacher}" onchange="onSubDropdownChanged(this, ${index})">
                             ${options}
                         </select>
                         <span class="print-only-text" id="print_sub_${index}">${current || '---'}</span>
@@ -2298,7 +2100,7 @@ table { max-width:100%; }
             <div style="margin-top:15px; display:flex; flex-wrap:wrap; gap:8px;" class="no-print">
                 <button onclick="saveSubstitutionAllotments(${rows.length})">Save / Finalize Substitutions</button>
                 <button type="button" class="edit-btn" style="background:#17a2b8; color:#fff;" onclick="openAddAbsentTeachersView()">+ Add Absent Teachers</button>
-                <button class="edit-btn" onclick="editAbsentSelection()">Edit Absent Selection</button>
+                <button class="edit-btn" onclick="editAbsentSelection()">Edit Leave / Revision Selection</button>
                 <button class="print-btn" onclick="printTargetElement('subMatrixPrintContainer')">Print Substitution</button>
                 <button class="excel-btn" onclick="exportTableToExcel('subMatrixPrintContainer', 'Substitution_Allotment_${dateVal}')">Download Excel</button>
             </div>`;
@@ -2306,7 +2108,100 @@ table { max-width:100%; }
             container.innerHTML = html;
             updateDynamicWorkloads();
             reapplyPeriodClashes();
-            syncSubstituteTeachersIntoAbsentList(dateVal);
+        }
+
+        function onSubDropdownChanged(el, index) {
+            validatePeriodClash(el);
+            updateSubPrintDisplay(index);
+            updateDynamicWorkloads();
+        }
+
+        function updateDynamicWorkloads() {
+            const allSelects = Array.from(document.querySelectorAll('.sub-select-dropdown'));
+            const subCounts = {};
+            allSelects.forEach(sel => {
+                if(sel.value) {
+                    subCounts[sel.value] = (subCounts[sel.value] || 0) + 1;
+                }
+            });
+
+            allSelects.forEach(sel => {
+                Array.from(sel.options).forEach(opt => {
+                    if(!opt.value) return;
+                    const baseLoad = parseInt(opt.dataset.baseload || '0', 10);
+                    const pLabel = opt.dataset.plabel || 'P3 (Free)';
+                    const extra = subCounts[opt.value] || 0;
+                    const isCurrent = (sel.value === opt.value);
+                    const totalLoad = baseLoad + extra;
+
+                    opt.textContent = `${opt.value} - [${pLabel} | Workload: ${totalLoad} P]`;
+                });
+            });
+        }
+
+        function updateSubPrintDisplay(index) {
+            const selectEl = document.getElementById(`sub_assign_${index}`);
+            const printSpan = document.getElementById(`print_sub_${index}`);
+            if(selectEl && printSpan) {
+                printSpan.innerText = selectEl.value || '---';
+            }
+        }
+
+        function validatePeriodClash(currentSelect) {
+            const selectedTeacher = currentSelect.value;
+            const currentPeriod = currentSelect.dataset.period;
+            const currentIndex = currentSelect.dataset.index;
+
+            if(!selectedTeacher) {
+                reapplyPeriodClashes();
+                return;
+            }
+
+            const allSelects = document.querySelectorAll('.sub-select-dropdown');
+            let hasClash = false;
+
+            allSelects.forEach(sel => {
+                if(sel.dataset.index !== currentIndex && sel.dataset.period === currentPeriod && sel.value === selectedTeacher) {
+                    hasClash = true;
+                }
+            });
+
+            if(hasClash) {
+                alert(`Conflict Warning: ${selectedTeacher} is already assigned to Period ${currentPeriod} in another class! Please choose another teacher.`);
+                currentSelect.value = "";
+                updateSubPrintDisplay(currentIndex);
+            }
+
+            reapplyPeriodClashes();
+        }
+
+        function reapplyPeriodClashes() {
+            const allSelects = Array.from(document.querySelectorAll('.sub-select-dropdown'));
+            const busyInSub = {};
+            allSelects.forEach(sel => {
+                if(sel.value) {
+                    if(!busyInSub[sel.dataset.period]) busyInSub[sel.dataset.period] = [];
+                    busyInSub[sel.dataset.period].push({ teacher: sel.value, index: sel.dataset.index });
+                }
+            });
+
+            allSelects.forEach(sel => {
+                const p = sel.dataset.period;
+                const myIndex = sel.dataset.index;
+                const assignedOthers = (busyInSub[p] || []).filter(item => item.index !== myIndex).map(item => item.teacher);
+
+                Array.from(sel.options).forEach(opt => {
+                    if(opt.value && assignedOthers.includes(opt.value)) {
+                        opt.disabled = true;
+                        if(!opt.text.includes("[Allotted in Same Period]")) {
+                            opt.text += " [Allotted in Same Period]";
+                        }
+                    } else if(opt.value) {
+                        opt.disabled = false;
+                        opt.text = opt.text.replace(" [Allotted in Same Period]", "");
+                    }
+                });
+            });
         }
 
         async function saveSubstitutionAllotments(count) {
@@ -2332,95 +2227,13 @@ table { max-width:100%; }
 
             substitutionRecords[dateVal] = oldRecords.concat(newRecords);
             await saveMapDoc('substitutionRecords', dateVal, substitutionRecords[dateVal]);
-            alert(`Substitutions successfully saved (${newRecords.length} allotted) for ${currentBoard} BOARD.`);
-            updateAllSubstitutionDropdownLabels();
+
+            window._activeSubSessionCache = {};
+
+            alert(`Substitutions successfully allotted and saved (${newRecords.length} allotted) for ${currentBoard} BOARD.`);
         }
 
-        function viewTeacherSchedule() {
-            if(!currentUser) return;
-            const dateVal = document.getElementById('tDate').value;
-            if(!dateVal) return alert("Please select date.");
-
-            const dayName = getDayNameFromDate(dateVal);
-            const container = document.getElementById('tScheduleDisplay');
-            const isHoliday = (dayTypeRecords[dateVal] === 'holiday');
-
-            const myXSessions = (xSessionRecords[dateVal] || []).filter(x => x.teacher === currentUser.name);
-
-            let html = `<div id="tPersonalPrintContainer">
-                <div class="print-header">
-                    <h2>SRI CHAITANYA SCHOOL</h2>
-                    <h3>Branch : Adibatla</h3>
-                    <h4>Teacher Personal Schedule: ${currentUser.name} | ${dateVal} (${dayName})</h4>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h4>Personal Schedule: ${currentUser.name} | ${dateVal} (${dayName})</h4>
-                    <div>
-                        <button class="print-btn no-print" onclick="printTargetElement('tPersonalPrintContainer')">Print My Schedule</button>
-                        <button class="excel-btn no-print" onclick="exportTableToExcel('tPersonalPrintContainer', 'Schedule_${currentUser.name}_${dateVal}')">Download Excel</button>
-                    </div>
-                </div>`;
-
-            if(isHoliday) {
-                html += `<p style="color: #b78103; font-weight:bold;">NOTE: Today is in Holiday / Special Duty Mode. Assigned room duties:</p>`;
-                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Assigned Room</th><th>Status</th></tr></thead><tbody>`;
-                periods.forEach(p => {
-                    let roomDuty = holidayRoomRecords[dateVal]?.[currentUser.name]?.[p.id] || "---";
-                    let statusLabel = (roomDuty !== "---") ? `<span style="color:green; font-weight:bold;">Assigned</span>` : `<span style="color:#777;">No Duty</span>`;
-                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td style="background-color:#fff9e6; font-weight:bold;">${roomDuty}</td><td>${statusLabel}</td></tr>`;
-                });
-                html += `</tbody></table></div>`;
-            } else {
-                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Status</th><th>Type</th></tr></thead><tbody>`;
-
-                periods.forEach(p => {
-                    let status = teacherStatusRecords[dateVal]?.[currentUser.name]?.[p.id] || teacherWeeklyStatus[currentUser.name]?.[dayName]?.[p.id] || "---";
-                    let type = "Free / Unassigned";
-
-                    const xSess = myXSessions.find(xs => getXSessionDutyPeriods(xs.sessionTime).includes(p.id));
-                    if(xSess) {
-                        status = `X Session - Session ${xSess.sessionNumber} (Class: ${xSess.class}, ${xSess.subject})`;
-                        type = `<span style="color:#0056b3; font-weight:bold;">Session Class</span>`;
-                    } else {
-                        for(let cls in masterTimetable) {
-                            const cell = masterTimetable[cls]?.[dayName]?.[p.id];
-                            if(cell) {
-                                if(cell.isDual) {
-                                    if(cell.teacher1 === currentUser.name || cell.teacher === currentUser.name) {
-                                        status = `${cls} (${cell.subject} - ${cell.lang1 || 'Telugu'})`;
-                                        type = "Original Class";
-                                        break;
-                                    } else if(cell.teacher2 === currentUser.name) {
-                                        status = `${cls} (${cell.subject} - ${cell.lang2 || 'Hindi'})`;
-                                        type = "Original Class";
-                                        break;
-                                    }
-                                } else if(cell.teacher === currentUser.name || cell.teacher2 === currentUser.name) {
-                                    status = `${cls} (${cell.subject})`;
-                                    type = "Original Class";
-                                    break;
-                                }
-                            }
-                        }
-
-                        if(substitutionRecords[dateVal]) {
-                            const sub = substitutionRecords[dateVal].find(s => s.period === p.id && s.subTeacher === currentUser.name);
-                            if(sub) {
-                                status = `${sub.class} (Sub for ${sub.absent})`;
-                                type = `<span style="color:red;font-weight:bold;">Substitution</span>`;
-                            }
-                        }
-                    }
-
-                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${status}</td><td>${type}</td></tr>`;
-                });
-
-                html += `</tbody></table></div>`;
-            }
-
-            container.innerHTML = html;
-        }
-
+        // ================= TEACHER MODULE: APPLY FOR LEAVE =================
         function buildLeaveDatePickers() {
             const container = document.getElementById('leaveDatePickersContainer');
             const num = parseInt(document.getElementById('leaveDaysCount').value, 10);
@@ -2468,8 +2281,8 @@ table { max-width:100%; }
             };
 
             try {
-                const docRef = await db.collection('teacherLeaveRequests').add(leaveDoc);
-                leaveRequestsList.push({ id: docRef.id, ...leaveDoc });
+                await db.collection('teacherLeaveRequests').add(leaveDoc);
+                leaveRequestsList.push(leaveDoc);
                 status.style.color = 'green';
                 status.innerText = 'Leave submitted successfully and registered with Principal & Incharges!';
                 document.getElementById('leaveDaysCount').value = '';
@@ -2482,27 +2295,21 @@ table { max-width:100%; }
             }
         }
 
+        // ================= PRINCIPAL: ABSENT TEACHERS & LEAVE RECORDS =================
         function renderPrincipalAbsentLeaves() {
             const container = document.getElementById('pAbsentLeavesView');
             if(!container) return;
 
-            const filterDate = document.getElementById('pAbsentFilterDate')?.value;
-
-            let filteredList = leaveRequestsList;
-            if(filterDate) {
-                filteredList = leaveRequestsList.filter(req => req.dates && req.dates.includes(filterDate));
-            }
-
-            if(!filteredList || filteredList.length === 0) {
-                container.innerHTML = `<p style="color:#666;">No leave records registered ${filterDate ? 'for ' + filterDate : 'yet'}.</p>`;
+            if(!leaveRequestsList || leaveRequestsList.length === 0) {
+                container.innerHTML = '<p style="color:#666;">No leave records submitted yet.</p>';
                 return;
             }
 
             let html = `<div style="display:flex; justify-content:space-between; align-items:center;">
-                <h4>Registered Teacher Leaves (${filterDate ? 'Date: ' + filterDate : 'All Records'})</h4>
+                <h4>Registered Teacher Leaves</h4>
                 <div>
                     <button class="print-btn no-print" onclick="printTargetElement('pAbsentLeavesView')">Print Leave List</button>
-                    <button class="excel-btn no-print" onclick="exportTableToExcel('pAbsentLeavesView', 'Teacher_Leaves_${filterDate || 'All'}')">Download Excel</button>
+                    <button class="excel-btn no-print" onclick="exportTableToExcel('pAbsentLeavesView', 'Teacher_Leaves')">Download Excel</button>
                 </div>
             </div>`;
 
@@ -2519,7 +2326,7 @@ table { max-width:100%; }
                 </thead>
                 <tbody>`;
 
-            filteredList.forEach((req, idx) => {
+            leaveRequestsList.forEach((req, idx) => {
                 html += `<tr>
                     <td>${idx + 1}</td>
                     <td><b>${req.teacherName}</b><br><small>${req.designation || ''} (${req.subject || ''})</small></td>
@@ -2533,6 +2340,8 @@ table { max-width:100%; }
             html += `</tbody></table>`;
             container.innerHTML = html;
         }
+
+        // ================= PRINCIPAL MODULE VIEWS =================
 
         function updatePrincipalClassOptions() {
             const orientationEl = document.getElementById('pTtOrientation');
@@ -2581,13 +2390,10 @@ table { max-width:100%; }
                 periods.forEach(p => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
-                        if(cell.isDual) {
-                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${cell.lang1 || 'Telugu'}: ${cell.teacher1 || cell.teacher || '---'}<br>${cell.lang2 || 'Hindi'}: ${cell.teacher2 || '---'}</small></td>`;
-                        } else {
-                            let tDesc = cell.teacher || '---';
-                            if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
-                        }
+                        let tDesc = cell.teacher || '---';
+                        if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
+                        let langInfo = cell.langOption ? `<br><small style="color:#0056b3;">[${cell.langOption}]</small>` : '';
+                        html += `<td><b>${cell.subject}</b>${langInfo}<br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
                     } else {
                         html += `<td style="color:#aaa;">---</td>`;
                     }
@@ -2599,9 +2405,12 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
+        // ================= PRINCIPAL: INDIVIDUAL TEACHER WEEKLY TIMETABLE =================
+
         function populatePrincipalWeeklyTeacherDropdown() {
             const sel = document.getElementById('pWeeklyTeacherSelect');
             if(!sel) return;
+
             const previous = sel.value;
             sel.innerHTML = '<option value="">Select Teacher</option>';
 
@@ -2676,19 +2485,12 @@ table { max-width:100%; }
 
                     for(const cls in masterTimetable) {
                         const cell = masterTimetable[cls]?.[day]?.[p.id];
-                        if(cell) {
-                            if(cell.isDual) {
-                                if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
-                                    assigned = { cls, subject: `${cell.subject} (${cell.lang1 || 'Telugu'})` };
-                                    break;
-                                } else if(cell.teacher2 === teacherName) {
-                                    assigned = { cls, subject: `${cell.subject} (${cell.lang2 || 'Hindi'})` };
-                                    break;
-                                }
-                            } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                assigned = { cls, subject: cell.subject || '' };
-                                break;
-                            }
+                        if(cell && (cell.teacher === teacherName || cell.teacher2 === teacherName)) {
+                            assigned = {
+                                cls,
+                                subject: cell.subject || ''
+                            };
+                            break;
                         }
                     }
 
@@ -2698,7 +2500,11 @@ table { max-width:100%; }
                             <span>${assigned.subject}</span>
                         </td>`;
                     } else {
-                        const status = teacherWeeklyStatus[teacherName]?.[day]?.[p.id] || '---';
+                        const status =
+                            teacherStatusRecords[window.__principalWeeklyDate || '']?.[teacherName]?.[p.id] ||
+                            teacherWeeklyStatus[teacherName]?.[day]?.[p.id] ||
+                            '---';
+
                         html += `<td>${status}</td>`;
                     }
                 });
@@ -2707,6 +2513,7 @@ table { max-width:100%; }
             });
 
             html += `</tbody></table></div></div>`;
+
             container.innerHTML = html;
         }
 
@@ -2745,19 +2552,9 @@ table { max-width:100%; }
                         let assignedClass = "";
                         for(let cls in masterTimetable) {
                             const cell = masterTimetable[cls]?.[dayName]?.[p.id];
-                            if(cell) {
-                                if(cell.isDual) {
-                                    if(cell.teacher1 === st.name || cell.teacher === st.name) {
-                                        assignedClass = `<b>${cls}</b><br>(${cell.subject} - ${cell.lang1 || 'Telugu'})`;
-                                        break;
-                                    } else if(cell.teacher2 === st.name) {
-                                        assignedClass = `<b>${cls}</b><br>(${cell.subject} - ${cell.lang2 || 'Hindi'})`;
-                                        break;
-                                    }
-                                } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
-                                    assignedClass = `<b>${cls}</b><br>(${cell.subject})`;
-                                    break;
-                                }
+                            if(cell && (cell.teacher === st.name || cell.teacher2 === st.name)) {
+                                assignedClass = `<b>${cls}</b><br>(${cell.subject})`;
+                                break;
                             }
                         }
 
@@ -2829,6 +2626,75 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
+        // ================= TEACHER MODULE VIEW =================
+
+        function viewTeacherSchedule() {
+            if(!currentUser) return;
+            const dateVal = document.getElementById('tDate').value;
+            if(!dateVal) return alert("Please select date.");
+
+            const dayName = getDayNameFromDate(dateVal);
+            const container = document.getElementById('tScheduleDisplay');
+            const isHoliday = (dayTypeRecords[dateVal] === 'holiday');
+
+            let html = `<div id="tPersonalPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Teacher Personal Schedule: ${currentUser.name} (Emp ID: ${currentUser.empId || '---'}) | ${dateVal} (${dayName})</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>Personal Schedule: ${currentUser.name} (Emp ID: ${currentUser.empId || '---'}) | ${dateVal} (${dayName})</h4>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('tPersonalPrintContainer')">Print My Schedule</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('tPersonalPrintContainer', 'Schedule_${currentUser.name}_${dateVal}')">Download Excel</button>
+                    </div>
+                </div>`;
+
+            if(isHoliday) {
+                html += `<p style="color: #b78103; font-weight:bold;">NOTE: Today is in Holiday / Special Duty Mode. Below is your assigned room duty schedule:</p>`;
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Assigned Room / Duty</th><th>Duty Status</th></tr></thead><tbody>`;
+
+                periods.forEach(p => {
+                    let roomDuty = holidayRoomRecords[dateVal]?.[currentUser.name]?.[p.id] || "---";
+                    let statusLabel = (roomDuty !== "---") ? `<span style="color:green; font-weight:bold;">Assigned Duty</span>` : `<span style="color:#777;">No Duty</span>`;
+                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td style="background-color:#fff9e6; font-weight:bold; font-size:13px;">${roomDuty}</td><td>${statusLabel}</td></tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+            } else {
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Status</th><th>Type</th></tr></thead><tbody>`;
+
+                periods.forEach(p => {
+                    let status = teacherStatusRecords[dateVal]?.[currentUser.name]?.[p.id] || teacherWeeklyStatus[currentUser.name]?.[dayName]?.[p.id] || "---";
+                    let type = "Free / Unassigned";
+
+                    for(let cls in masterTimetable) {
+                        const cell = masterTimetable[cls]?.[dayName]?.[p.id];
+                        if(cell && (cell.teacher === currentUser.name || cell.teacher2 === currentUser.name)) {
+                            status = `${cls} (${cell.subject})`;
+                            type = "Original Class";
+                        }
+                    }
+
+                    if(substitutionRecords[dateVal]) {
+                        const sub = substitutionRecords[dateVal].find(s => s.period === p.id && s.subTeacher === currentUser.name);
+                        if(sub) {
+                            status = `${sub.class} (Sub for ${sub.absent})`;
+                            type = `<span style="color:red;font-weight:bold;">Substitution</span>`;
+                        }
+                    }
+
+                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${status}</td><td>${type}</td></tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // ================= BOARD-SPECIFIC / X SESSION / EXAMINATION FEATURES =================
         const revisionScheduleRecords = {};
         const invigilationRecords = {};
         const studyHoursRecords = {};
@@ -2854,12 +2720,16 @@ table { max-width:100%; }
             getBoardClassOptions(orientation).forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`);
         }
 
+        function updateXSessionClassOptions() {
+            const o = document.getElementById('xSessionOrientation')?.value;
+            fillClassSelectFor('xSessionClass', o);
+            renderXSessionClassTimetable();
+        }
         function updateRevisionClassOptions() {
             const o = document.getElementById('revisionOrientation')?.value;
             fillClassSelectFor('revisionClass', o);
             renderRevisionScheduleEditor();
         }
-
         function updateStudyClassOptions() {
             const o = document.getElementById('studyOrientation')?.value;
             fillClassSelectFor('studyClass', o);
@@ -2870,6 +2740,31 @@ table { max-width:100%; }
             const c = document.getElementById(prefix + 'Class')?.value || '';
             const s = document.getElementById(prefix + 'Section')?.value || '';
             return c ? (s ? `${c} - Sec ${s}` : c) : '';
+        }
+
+        function renderXSessionClassTimetable() {
+            const key = currentSectionKey('xSession');
+            const box = document.getElementById('xSessionClassTimetableContainer');
+            if(!box) return;
+            if(!key) { box.innerHTML=''; return; }
+            box.innerHTML = buildClassWeekTable(key, 'X Session Class-Wise Timetable');
+        }
+
+        function buildClassWeekTable(fullClassKey, title) {
+            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${fullClassKey}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            periods.forEach(p => html += `<th>P-${p.id}<br><small>${p.time}</small></th>`);
+            html += `</tr></thead><tbody>`;
+            days.forEach(day => {
+                html += `<tr><td><b>${day}</b></td>`;
+                periods.forEach(p => {
+                    const cell = masterTimetable[fullClassKey]?.[day]?.[p.id];
+                    let tDesc = cell?.teacher || '---';
+                    if(cell?.teacher2) tDesc += ` / ${cell.teacher2}`;
+                    html += cell && (cell.subject || cell.teacher) ? `<td><b>${cell.subject || '---'}</b><br><span>${tDesc}</span></td>` : '<td style="color:#aaa;">---</td>';
+                });
+                html += '</tr>';
+            });
+            return html + '</tbody></table></div></div>';
         }
 
         function renderRevisionScheduleEditor() {
@@ -2925,6 +2820,16 @@ table { max-width:100%; }
             box.innerHTML = rows.length ? `<h4>Saved Revision Schedule</h4><table><thead><tr><th>Class</th><th>Day</th><th>Period</th><th>Revision Teacher(s)</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.key}</td><td>${r.day}</td><td>${r.period}</td><td>${r.names}</td></tr>`).join('')}</tbody></table>` : '<p style="color:#777;">No revision teachers selected yet.</p>';
         }
 
+        function revisionTeachersForDate(date, board, day, period) {
+            const out = [];
+            const data = revisionScheduleRecords[date]?.[board] || {};
+            Object.keys(data).forEach(key => {
+                const arr = data[key]?.[day]?.[period] || [];
+                arr.forEach(name => { if(!out.includes(name)) out.push(name); });
+            });
+            return out;
+        }
+
         function showExamTab(which) {
             document.getElementById('examRevisionPanel').style.display = which === 'revision' ? 'block' : 'none';
             document.getElementById('examInvigilationPanel').style.display = which === 'invigilation' ? 'block' : 'none';
@@ -2976,866 +2881,13 @@ table { max-width:100%; }
         }
 
         function populateXSessionAndExamControls() {
+            fillBoardOrientationSelect('xSessionOrientation');
             fillBoardOrientationSelect('revisionOrientation');
             fillBoardOrientationSelect('studyOrientation');
-            updateRevisionClassOptions(); 
-            updateStudyClassOptions();
+            updateXSessionClassOptions(); updateRevisionClassOptions(); updateStudyClassOptions();
             const ps=document.getElementById('invigilationPeriod');
             if(ps && !ps.options.length) periods.forEach(p=>ps.innerHTML+=`<option value="${p.id}">${p.id} - ${p.time}</option>`);
         }
-    
-
-        // ===== Combined project additions from OnlineTimetable1 =====
-function buildClassWeekTable(fullClassKey, title) {
-            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${fullClassKey}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
-            periods.forEach(p => html += `<th>P-${p.id}<br><small>${p.time}</small></th>`);
-            html += `</tr></thead><tbody>`;
-            days.forEach(day => {
-                html += `<tr><td><b>${day}</b></td>`;
-                periods.forEach(p => {
-                    const cell = masterTimetable[fullClassKey]?.[day]?.[p.id];
-                    let tDesc = cell?.teacher || '---';
-                    if(cell?.teacher2) tDesc += ` / ${cell.teacher2}`;
-                    html += cell && (cell.subject || cell.teacher) ? `<td><b>${cell.subject || '---'}</b><br><span>${tDesc}</span></td>` : '<td style="color:#aaa;">---</td>';
-                });
-                html += '</tr>';
-            });
-            return html + '</tbody></table></div></div>';
-        }
-
-function getSavedAbsentTeachers(dateVal) {
-            const records = savedSubstitutionsForDate(dateVal);
-            const names = [];
-            records.forEach(r => {
-                if(r.absent && !names.includes(r.absent)) names.push(r.absent);
-            });
-            return names;
-        }
-
-function isTeacherRevisionBusy(date, teacherName, period, board) {
-            const day = getDayNameFromDate(date);
-            return revisionTeachersForDate(date, board, day, period).includes(teacherName) ||
-                   revisionTeachersForDate(date, board === 'STATE' ? 'CBSE' : 'STATE', day, period).includes(teacherName);
-        }
-
-function onSubDropdownChanged(el, index) {
-            validatePeriodClash(el);
-            updateSubPrintDisplay(index);
-            updateDynamicWorkloads();
-        }
-
-function reapplyPeriodClashes() {
-            const allSelects = Array.from(document.querySelectorAll('.sub-select-dropdown'));
-            const busyInSub = {};
-            allSelects.forEach(sel => {
-                if(sel.value) {
-                    if(!busyInSub[sel.dataset.period]) busyInSub[sel.dataset.period] = [];
-                    busyInSub[sel.dataset.period].push({ teacher: sel.value, index: sel.dataset.index });
-                }
-            });
-
-            allSelects.forEach(sel => {
-                const p = sel.dataset.period;
-                const myIndex = sel.dataset.index;
-                const assignedOthers = (busyInSub[p] || []).filter(item => item.index !== myIndex).map(item => item.teacher);
-
-                Array.from(sel.options).forEach(opt => {
-                    if(opt.value && assignedOthers.includes(opt.value)) {
-                        opt.disabled = true;
-                        if(!opt.text.includes("[Allotted in Same Period]")) {
-                            opt.text += " [Allotted in Same Period]";
-                        }
-                    } else if(opt.value) {
-                        opt.disabled = false;
-                        opt.text = opt.text.replace(" [Allotted in Same Period]", "");
-                    }
-                });
-            });
-        }
-
-function renderXSessionClassTimetable() {
-            const key = currentSectionKey('xSession');
-            const box = document.getElementById('xSessionClassTimetableContainer');
-            if(!box) return;
-            if(!key) { box.innerHTML=''; return; }
-            box.innerHTML = buildClassWeekTable(key, 'X Session Class-Wise Timetable');
-        }
-
-function revisionTeachersForDate(date, board, day, period) {
-            const out = [];
-            const data = revisionScheduleRecords[date]?.[board] || {};
-            Object.keys(data).forEach(key => {
-                const arr = data[key]?.[day]?.[period] || [];
-                arr.forEach(name => { if(!out.includes(name)) out.push(name); });
-            });
-            return out;
-        }
-
-function syncSubstituteTeachersIntoAbsentList(dateVal) {
-            try {
-                const records = savedSubstitutionsForDate(dateVal) || [];
-                const selectedSubstituteNames = new Set(
-                    records.filter(r => r && r.board === currentBoard && (r.subTeacher || r.substituteTeacher))
-                        .map(r => String(r.subTeacher || r.substituteTeacher).trim()).filter(Boolean)
-                );
-
-                if (window._activeSubSessionCache) {
-                    Object.values(window._activeSubSessionCache).forEach(item => {
-                        if (item && item.subTeacher) {
-                            selectedSubstituteNames.add(String(item.subTeacher).trim());
-                        }
-                    });
-                }
-
-                document.querySelectorAll('#absentStaffCheckboxes input[type="checkbox"]').forEach(cb => {
-                    const name = String(cb.value || '').trim();
-                    if (selectedSubstituteNames.has(name)) {
-                        cb.checked = false;
-                        cb.disabled = true;
-                        const label = cb.closest('label');
-                        if (label) { 
-                            label.style.opacity = '0.55'; 
-                            label.title = 'Already selected as a substitute teacher'; 
-                        }
-                    } else {
-                        cb.disabled = false;
-                        const label = cb.closest('label');
-                        if (label) { 
-                            label.style.opacity = '1'; 
-                            label.title = ''; 
-                        }
-                    }
-                });
-            } catch (e) { 
-                console.warn('Unable to sync substitute teachers:', e); 
-            }
-        }
-
-function updateDynamicWorkloads() {
-            const allSelects = Array.from(document.querySelectorAll('.sub-select-dropdown'));
-            const subCounts = {};
-            allSelects.forEach(sel => {
-                if(sel.value) {
-                    subCounts[sel.value] = (subCounts[sel.value] || 0) + 1;
-                }
-            });
-
-            allSelects.forEach(sel => {
-                Array.from(sel.options).forEach(opt => {
-                    if(!opt.value) return;
-                    const baseLoad = parseInt(opt.dataset.baseload || '0', 10);
-                    const pLabel = opt.dataset.plabel || 'P3 (Free)';
-                    const extra = subCounts[opt.value] || 0;
-                    const isCurrent = (sel.value === opt.value);
-                    const totalLoad = baseLoad + extra;
-
-                    opt.textContent = `${opt.value} - [${pLabel} | Workload: ${totalLoad} P]`;
-                });
-            });
-        }
-
-function updateSubPrintDisplay(index) {
-            const selectEl = document.getElementById(`sub_assign_${index}`);
-            const printSpan = document.getElementById(`print_sub_${index}`);
-            if(selectEl && printSpan) {
-                printSpan.innerText = selectEl.value || '---';
-            }
-        }
-
-function updateXSessionClassOptions() {
-            const o = document.getElementById('xSessionOrientation')?.value;
-            fillClassSelectFor('xSessionClass', o);
-            renderXSessionClassTimetable();
-        }
-
-function validatePeriodClash(currentSelect) {
-            const selectedTeacher = currentSelect.value;
-            const currentPeriod = currentSelect.dataset.period;
-            const currentIndex = currentSelect.dataset.index;
-
-            if(!selectedTeacher) {
-                reapplyPeriodClashes();
-                return;
-            }
-
-            const allSelects = document.querySelectorAll('.sub-select-dropdown');
-            let hasClash = false;
-
-            allSelects.forEach(sel => {
-                if(sel.dataset.index !== currentIndex && sel.dataset.period === currentPeriod && sel.value === selectedTeacher) {
-                    hasClash = true;
-                }
-            });
-
-            if(hasClash) {
-                alert(`Conflict Warning: ${selectedTeacher} is already assigned to Period ${currentPeriod} in another class! Please choose another teacher.`);
-                currentSelect.value = "";
-                updateSubPrintDisplay(currentIndex);
-            }
-
-            reapplyPeriodClashes();
-        }
-
-/* ===== FINAL DATA-PRESERVING PATCH =====
-   These overrides intentionally preserve existing Firestore/local data structures.
-   They only merge/update records instead of replacing previous finalized entries.
-*/
-let floorSelectedClassRecords = [];
-
-function isFloorInchargeUser() {
-    const d = String(currentUser?.designation || '').toLowerCase();
-    return d.includes('floor') && d.includes('incharge');
-}
-
-function openTeacherDashboardArea(area) {
-    const floor = document.getElementById('teacherFloorDashboard');
-    const leave = document.querySelector('.leave-box');
-    const schedule = document.getElementById('tScheduleDisplay');
-    if(area === 'floor' && isFloorInchargeUser()) {
-        if(floor) floor.style.display = 'block';
-        if(leave) leave.style.display = 'none';
-        if(schedule) schedule.style.display = 'none';
-        populateFloorDashboard();
-    } else if(area === 'leave') {
-        if(floor) floor.style.display = 'none';
-        if(leave) leave.style.display = 'block';
-        if(schedule) schedule.style.display = 'none';
-        leave?.scrollIntoView({behavior:'smooth'});
-    } else {
-        if(floor) floor.style.display = 'none';
-        if(leave) leave.style.display = 'none';
-        if(schedule) schedule.style.display = 'block';
-        schedule?.scrollIntoView({behavior:'smooth'});
-    }
-}
-
-function populateFloorDashboard() {
-    if(!isFloorInchargeUser()) return;
-    const date = document.getElementById('floorDate');
-    if(date && !date.value) date.value = new Date().toISOString().slice(0,10);
-    const orient = document.getElementById('floorOrientation');
-    if(orient) {
-        fillBoardOrientationSelect('floorOrientation');
-    }
-    updateFloorClassOptions();
-    renderFloorInchargeClasses();
-}
-
-function updateFloorClassOptions() {
-    const o = document.getElementById('floorOrientation')?.value || '';
-    fillClassSelectFor('floorClass', o);
-    renderFloorInchargeClasses();
-}
-
-function floorClassKey() {
-    const c=document.getElementById('floorClass')?.value||'';
-    const s=document.getElementById('floorSection')?.value||'';
-    return c ? (s ? `${c} - Sec ${s}` : c) : '';
-}
-
-function addFloorClassSelection() {
-    const date=document.getElementById('floorDate')?.value;
-    const floor=document.getElementById('floorNo')?.value;
-    const key=floorClassKey();
-    if(!date || !floor || !key) return alert('Select Date, Floor No, Orientation, Class and Section first.');
-    const rec={date, floor, classKey:key, orientation:document.getElementById('floorOrientation')?.value||''};
-    if(!floorSelectedClassRecords.some(x=>x.date===date && x.floor===floor && x.classKey===key)) {
-        floorSelectedClassRecords.push(rec);
-    }
-    renderFloorInchargeClasses();
-}
-
-function removeFloorClassSelection(index) {
-    floorSelectedClassRecords.splice(index,1);
-    renderFloorInchargeClasses();
-}
-
-function clearFloorClassSelection() {
-    const date=document.getElementById('floorDate')?.value;
-    const floor=document.getElementById('floorNo')?.value;
-    floorSelectedClassRecords = floorSelectedClassRecords.filter(x => !(x.date===date && x.floor===floor));
-    renderFloorInchargeClasses();
-}
-
-function renderFloorInchargeClasses() {
-    const box=document.getElementById('floorSelectedClasses');
-    if(!box) return;
-    const date=document.getElementById('floorDate')?.value||'';
-    const floor=document.getElementById('floorNo')?.value||'';
-    const currentKey=floorClassKey();
-    let rows=floorSelectedClassRecords.filter(x=>x.date===date && (!floor || x.floor===floor));
-    if(currentKey && !rows.some(x=>x.classKey===currentKey)) {
-        rows=[...rows,{classKey:currentKey,orientation:document.getElementById('floorOrientation')?.value||''}];
-    }
-    if(!date || !floor || !rows.length) {
-        box.innerHTML='<p style="color:#777;">Select Date and Floor No, then add one or more classes.</p>';
-        return;
-    }
-    const day=getDayNameFromDate(date);
-    let html=`<h4>Floor ${floor} Classes - ${date} (${day})</h4>`;
-    rows.forEach((r,idx)=>{
-        const key=r.classKey;
-        html+=`<div style="border:1px solid #ccc;border-radius:6px;padding:8px;margin:8px 0;">
-            <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-              <b>${key}</b>
-              <button class="delete-btn no-print" onclick="removeFloorClassSelection(${idx})">Remove</button>
-            </div>
-            <div style="overflow-x:auto;"><table><thead><tr><th>Period</th><th>Time</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>`;
-        periods.forEach(p=>{
-            const cell=masterTimetable[key]?.[day]?.[p.id];
-            let subject=cell?.subject||'---', teacher='---';
-            if(cell?.isDual) teacher=`${cell.teacher1||'---'} / ${cell.teacher2||'---'}`;
-            else if(cell) teacher=cell.teacher||cell.teacher2||'---';
-            html+=`<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${subject}</td><td>${teacher}</td></tr>`;
-        });
-        html+=`</tbody></table></div></div>`;
-    });
-    box.innerHTML=html;
-}
-
-/* Leave teachers + revision + invigilation are always treated as unavailable/absent.
-   The function returns a de-duplicated list without changing the saved records. */
-function getAutomaticAbsentTeachersForDate(dateVal) {
-    const names = [];
-    const add=n=>{ if(n && !names.includes(n)) names.push(n); };
-    getLeaveTeachersForDate(dateVal).forEach(add);
-    const day=getDayNameFromDate(dateVal);
-    const boards=['STATE','CBSE'];
-    boards.forEach(b=>{
-        const rev=revisionScheduleRecords[dateVal]?.[b]||{};
-        Object.keys(rev).forEach(key=>Object.keys(rev[key]||{}).forEach(d=>{
-            Object.keys(rev[key][d]||{}).forEach(p=>
-                (rev[key][d][p]||[]).forEach(add)
-            );
-        }));
-        const inv=invigilationRecords[dateVal]?.[b]||{};
-        Object.values(inv).forEach(arr=>{
-            if(Array.isArray(arr)) {
-                arr.forEach(x=>{
-                    if(typeof x==='string') add(x);
-                    else if(x?.teacher) add(x.teacher);
-                    else if(Array.isArray(x?.teachers)) x.teachers.forEach(add);
-                });
-            } else if(arr && typeof arr==='object') {
-                if(Array.isArray(arr.teachers)) arr.teachers.forEach(add);
-                else if(arr.teacher) add(arr.teacher);
-            }
-        });
-    });
-    return names;
-}
-
-/* Replace only the generated substitution rows; preserve every previously finalized
-   row for this board, including rows belonging to absent teachers added later. */
-function mergeCurrentBoardSubstitutionRecords(dateVal, currentRows) {
-    const all = Array.isArray(substitutionRecords[dateVal]) ? substitutionRecords[dateVal] : [];
-    const otherBoard = all.filter(r => (r.board || 'CBSE') !== currentBoard);
-    const current = all.filter(r => !r.board || r.board === currentBoard);
-    const map = new Map();
-    current.forEach(r=>{
-        const k=`${r.period}__${r.class}__${r.absent}`;
-        map.set(k,r);
-    });
-    (currentRows||[]).forEach(r=>{
-        const k=`${r.period}__${r.class}__${r.absent}`;
-        const old=map.get(k);
-        map.set(k,{...(old||{}),...r,board:currentBoard});
-    });
-    substitutionRecords[dateVal]=otherBoard.concat(Array.from(map.values()));
-    return substitutionRecords[dateVal];
-}
-
-/* Preserve already-selected absent names when the user uses Add Absent Teacher.
-   Manual Edit can still use the existing checkbox UI, but it will not erase finalized data. */
-async function saveAbsentSelectionForDate(dateVal, selectedNames, mergeWithExisting=true) {
-    if(!dateVal) return;
-    const key=`${dateVal}__${currentBoard}`;
-    let names=Array.from(new Set(selectedNames||[]));
-    if(mergeWithExisting) {
-        const old=await loadAbsentSelectionForDateRaw(dateVal);
-        names=Array.from(new Set([...(old||[]),...names]));
-    }
-    const auto=getAutomaticAbsentTeachersForDate(dateVal);
-    names=Array.from(new Set([...names,...auto]));
-    const value={board:currentBoard, absentTeachers:names};
-    if(!window.substitutionAbsentSelections) window.substitutionAbsentSelections={};
-    window.substitutionAbsentSelections[key]=value;
-    await saveMapDoc('substitutionAbsentSelections',key,value);
-}
-
-async function loadAbsentSelectionForDateRaw(dateVal) {
-    if(!dateVal) return [];
-    try {
-        const snap=await db.collection('substitutionAbsentSelections').doc(`${dateVal}__${currentBoard}`).get();
-        if(snap.exists) return (snap.data().value||{}).absentTeachers||[];
-    } catch(e) { console.warn('Unable to read absent selection:',e); }
-    return (substitutionRecords[dateVal]||[]).filter(r=>r.board===currentBoard).map(r=>r.absent).filter(Boolean);
-}
-
-async function loadAbsentSelectionForDate(dateVal) {
-    const cached=window.substitutionAbsentSelections?.[`${dateVal}__${currentBoard}`];
-    if(cached?.absentTeachers) return cached.absentTeachers;
-    return await loadAbsentSelectionForDateRaw(dateVal);
-}
-
-async function restoreAbsentSelectionAsync(dateVal) {
-    const saved=await loadAbsentSelectionForDate(dateVal);
-    const auto=getAutomaticAbsentTeachersForDate(dateVal);
-    const names=new Set([...(saved||[]),...(auto||[])]);
-    document.querySelectorAll('.absent-check').forEach(cb=>{
-        cb.checked=names.has(cb.value);
-        cb.disabled=false;
-    });
-    syncSubstituteTeachersIntoAbsentList(dateVal);
-}
-
-function populateAbsentCheckboxes() {
-    const container=document.getElementById('absentStaffCheckboxes');
-    if(!container) return;
-    const oldChecked=new Set(Array.from(document.querySelectorAll('.absent-check:checked')).map(x=>x.value));
-    const dateVal=document.getElementById('subDate')?.value||'';
-    container.innerHTML='';
-    const names=new Set(oldChecked);
-    getLeaveTeachersForDate(dateVal).forEach(n=>names.add(n));
-    staffList.filter(st=>staffMatchesBoard(st,currentBoard)).sort((a,b)=>a.name.localeCompare(b.name)).forEach(st=>{
-        const checked=names.has(st.name)?'checked':'';
-        container.innerHTML+=`<label><input type="checkbox" value="${st.name}" class="absent-check" ${checked}> ${st.name} (${st.subject||'Staff'})</label>`;
-    });
-    if(dateVal) restoreAbsentSelectionAsync(dateVal);
-}
-
-/* Assign Timetable: first restore all saved/manual/automatic absent data, then render.
-   This makes the button work after re-login/refresh and preserves earlier finalized substitutions. */
-async function assignTimetableWithSavedData() {
-    const dateVal = document.getElementById('subDate')?.value;
-    const container = document.getElementById('substitutionMatrixContainer');
-    if(!dateVal) {
-        if(container) container.innerHTML = '<p style="color:#c00;font-weight:bold;">Please select a date first.</p>';
-        return alert('Select a date first.');
-    }
-
-    try {
-        /* Always recover saved absent names first. This includes legacy records
-           that were created before BOARD was stored on each substitution row. */
-        let savedAbsent = [];
-        try { savedAbsent = await loadAbsentSelectionForDateRaw(dateVal) || []; } catch(e) {}
-
-        const allSavedRows = Array.isArray(substitutionRecords[dateVal]) ? substitutionRecords[dateVal] : [];
-        const currentBoardRows = allSavedRows.filter(r => !r.board || r.board === currentBoard);
-
-        const names = new Set(savedAbsent);
-        currentBoardRows.forEach(r => { if(r?.absent) names.add(r.absent); });
-
-        /* Automatically include leave + Revision + X-Revision + Invigilation. */
-        try {
-            getAutomaticAbsentTeachersForDate(dateVal).forEach(n => names.add(n));
-        } catch(e) {
-            console.warn('Automatic duty recovery warning:', e);
-        }
-
-        const box = document.getElementById('absentStaffCheckboxes');
-        if(box) {
-            const allowed = staffList.filter(st => staffMatchesBoard(st,currentBoard))
-                .sort((a,b)=>String(a.name).localeCompare(String(b.name)));
-            box.innerHTML = '';
-            const autoNames = new Set();
-            try { getAutomaticAbsentTeachersForDate(dateVal).forEach(n=>autoNames.add(n)); } catch(e) {}
-            allowed.forEach(st => {
-                const checked = names.has(st.name) ? ' checked' : '';
-                const auto = autoNames.has(st.name) ? ' <b style="color:#0a7;">(Auto)</b>' : '';
-                box.innerHTML += `<label><input type="checkbox" value="${st.name}" class="absent-check"${checked}> ${st.name} (${st.subject||'Staff'})${auto}</label>`;
-            });
-        }
-
-        /* Persist the combined absent list, but never delete an older name. */
-        try { await saveAbsentSelectionForDate(dateVal,Array.from(names),true); } catch(e) {
-            console.warn('Absent selection save warning:', e);
-        }
-
-        /* The matrix renderer itself also restores previously finalized rows. */
-        generateSubstitutionMatrix();
-
-        /* If there are finalized rows but no current timetable match, explicitly
-           render the saved rows so Assign Timetable never appears blank. */
-        if(container && !container.querySelector('table') && currentBoardRows.length) {
-            renderSavedFinalizedSubstitutionsOnly(dateVal,currentBoardRows);
-        }
-    } catch(e) {
-        console.error('Assign Timetable error:',e);
-        if(container) {
-            container.innerHTML = `<div class="leave-box" style="border:2px solid #c00;">
-                <b>Saved substitution data could not be rendered automatically.</b>
-                <p>${String(e.message||e)}</p>
-                <button type="button" onclick="location.reload()">Reload Saved Data</button>
-            </div>`;
-        }
-    }
-}
-
-function renderSavedFinalizedSubstitutionsOnly(dateVal, rows) {
-    const container=document.getElementById('substitutionMatrixContainer');
-    if(!container) return;
-    const dayName=getDayNameFromDate(dateVal);
-    const unique=new Map();
-    (rows||[]).forEach(r=>{
-        const key=`${r.period}__${r.class}__${r.absent}`;
-        if(!unique.has(key)) unique.set(key,r);
-    });
-    const list=Array.from(unique.values());
-    let html=`<div id="subMatrixPrintContainer"><div class="print-header"><h2>SRI CHAITANYA SCHOOL</h2><h3>Branch : Adibatla</h3>
-      <h4>Saved Finalized Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div>
-      <table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Absent / Duty Teacher</th><th>Class</th><th>Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
-    list.forEach((r,i)=>{
-        const p=periods.find(x=>String(x.id)===String(r.period));
-        html+=`<tr><td>${i+1}</td><td><b>${r.period||''}</b></td><td>${r.time||p?.time||''}</td>
-        <td style="color:red;font-weight:bold;">${r.absent||''}</td><td><b>${r.class||''}</b></td><td>${r.subject||''}</td>
-        <td><b>${r.subTeacher||'---'}</b></td><td></td></tr>`;
-    });
-    html+=`</tbody></table>
-      <div style="margin-top:15px;display:flex;gap:8px;flex-wrap:wrap;" class="no-print">
-        <button onclick="generateSubstitutionMatrix()">Edit / Assign New Substitutions</button>
-        <button class="print-btn" onclick="printTargetElement('subMatrixPrintContainer')">Print Substitution</button>
-      </div></div>`;
-    container.innerHTML=html;
-}
-
-
-/* Generate matrix while retaining the selected teacher for every existing saved row. */
-function generateSubstitutionMatrix() {
-    const dateVal=document.getElementById('subDate')?.value;
-    if(!dateVal) return alert('Select a date first.');
-    const selectedAbsent=Array.from(document.querySelectorAll('.absent-check:checked')).map(cb=>cb.value);
-    getAutomaticAbsentTeachersForDate(dateVal).forEach(n=>{if(!selectedAbsent.includes(n))selectedAbsent.push(n);});
-    const dayName=getDayNameFromDate(dateVal);
-    const periodsToSub=[];
-    const push=(absentTeacher,p,cls,subject,rawSubject,reason)=>{
-        if(absentTeacher) periodsToSub.push({absentTeacher,period:p.id,periodIndex:periods.findIndex(x=>x.id===p.id),time:p.time,class:cls,subject,rawSubject,reason});
-    };
-    periods.forEach(p=>{
-        for(const cls in masterTimetable){
-            const cell=masterTimetable[cls]?.[dayName]?.[p.id];
-            if(!cell) continue;
-            if(cell.isDual){
-                if(selectedAbsent.includes(cell.teacher1)) push(cell.teacher1,p,cls,`${cell.subject} (${cell.lang1||'Telugu'})`,cell.lang1||'Telugu',getLeaveTeachersForDate(dateVal).includes(cell.teacher1)?'Approved Leave':'Absent');
-                if(selectedAbsent.includes(cell.teacher2)) push(cell.teacher2,p,cls,`${cell.subject} (${cell.lang2||'Hindi'})`,cell.lang2||'Hindi',getLeaveTeachersForDate(dateVal).includes(cell.teacher2)?'Approved Leave':'Absent');
-            } else if(selectedAbsent.includes(cell.teacher)){
-                push(cell.teacher,p,cls,cell.subject,cell.subject,getLeaveTeachersForDate(dateVal).includes(cell.teacher)?'Approved Leave':'Absent');
-            }
-        }
-    });
-    /* Revision duty and invigilation duty vacate the teacher's normal classes. */
-    ['STATE','CBSE'].forEach(board=>{
-        const rev=revisionScheduleRecords[dateVal]?.[board]||{};
-        Object.keys(rev).forEach(key=>Object.keys(rev[key]||{}).forEach(day=>{
-            if(day!==dayName) return;
-            Object.keys(rev[key][day]||{}).forEach(pid=>{
-                const names=rev[key][day][pid]||[];
-                names.forEach(name=>{
-                    if(!selectedAbsent.includes(name)) selectedAbsent.push(name);
-                    const p=periods.find(x=>String(x.id)===String(pid))||{id:pid,time:''};
-                    for(const cls in masterTimetable){
-                        const cell=masterTimetable[cls]?.[dayName]?.[pid];
-                        if(!cell) continue;
-                        if(cell.isDual){
-                            if(cell.teacher1===name) push(name,p,cls,`${cell.subject} (${cell.lang1||'Telugu'})`,cell.lang1||'Telugu',`Revision Schedule`);
-                            if(cell.teacher2===name) push(name,p,cls,`${cell.subject} (${cell.lang2||'Hindi'})`,cell.lang2||'Hindi',`Revision Schedule`);
-                        } else if(cell.teacher===name) push(name,p,cls,cell.subject,cell.subject,'Revision Schedule');
-                    }
-                });
-            });
-        }));
-        const inv=invigilationRecords[dateVal]?.[board]||{};
-        Object.keys(inv).forEach(pid=>{
-            const raw=inv[pid];
-            const arr=Array.isArray(raw) ? raw : (raw?.teachers || []);
-            arr.forEach(item=>{
-                const name=typeof item==='string'?item:(item?.teacher||item);
-                if(!name) return;
-                if(!selectedAbsent.includes(name)) selectedAbsent.push(name);
-                const p=periods.find(x=>String(x.id)===String(pid))||{id:pid,time:''};
-                for(const cls in masterTimetable){
-                    const cell=masterTimetable[cls]?.[dayName]?.[pid];
-                    if(!cell) continue;
-                    if(cell.isDual){
-                        if(cell.teacher1===name) push(name,p,cls,`${cell.subject} (${cell.lang1||'Telugu'})`,cell.lang1||'Telugu','Invigilation');
-                        if(cell.teacher2===name) push(name,p,cls,`${cell.subject} (${cell.lang2||'Hindi'})`,cell.lang2||'Hindi','Invigilation');
-                    } else if(cell.teacher===name) push(name,p,cls,cell.subject,cell.subject,'Invigilation');
-                }
-            });
-        });
-    });
-
-    /* Always include previously finalized rows, even when their absent checkbox is not
-       currently selected. Their existing substitute is restored in the dropdown below. */
-    const savedRowsForBoard=(substitutionRecords[dateVal]||[]).filter(r=>!r.board || r.board===currentBoard);
-    savedRowsForBoard.forEach(r=>{
-        if(!r.absent) return;
-        const p=periods.find(x=>String(x.id)===String(r.period))||{id:r.period,time:r.time||''};
-        const already=periodsToSub.some(x=>String(x.period)===String(r.period)&&x.class===r.class&&x.absentTeacher===r.absent);
-        if(!already) periodsToSub.push({
-            absentTeacher:r.absent, period:p.id, periodIndex:periods.findIndex(x=>String(x.id)===String(p.id)),
-            time:r.time||p.time||'', class:r.class||'', subject:r.subject||'', rawSubject:r.rawSubject||r.subject||'',
-            reason:r.reason||'Previously Finalized'
-        });
-    });
-
-    const unique={};
-    const rows=periodsToSub.filter(x=>{
-        const k=`${x.period}_${x.class}_${x.absentTeacher}`;
-        if(unique[k]) return false; unique[k]=1; return true;
-    }).sort((a,b)=>a.periodIndex-b.periodIndex);
-
-    const container=document.getElementById('substitutionMatrixContainer');
-    if(!rows.length){
-        container.innerHTML=`<p style="color:green;font-weight:bold;">No substitution duties required for ${dayName}.</p>`;
-        return;
-    }
-
-    const saved=savedSubstitutionsForDate(dateVal);
-    const existing={};
-    saved.filter(r=>!r.board || r.board===currentBoard).forEach(r=>existing[`${r.period}_${r.class}_${r.absent}`]=r.subTeacher||'');
-
-    const initialWlMap=getLiveWorkloadMap(dateVal);
-    let html=`<div id="subMatrixPrintContainer"><div class="print-header"><h2>SRI CHAITANYA SCHOOL</h2><h3>Branch : Adibatla</h3><h4>Final Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div>
-    <table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Original Teacher</th><th>Reason / Session</th><th>Class & Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
-
-    rows.forEach((item,index)=>{
-        const key=`${item.period}_${item.class}_${item.absentTeacher}`;
-        const current=existing[key]||'';
-        let freeStaff=staffList.filter(st=>{
-            if(!teacherCanSubstituteOnBoard(st,currentBoard)) return false;
-            if(selectedAbsent.includes(st.name)) return false;
-            if(st.name===item.absentTeacher) return false;
-            if(isTeacherAssignedAcrossBoards(dateVal,st.name,item.period)) return false;
-            if(isTeacherRevisionBusy(dateVal,st.name,item.period,currentBoard)) return false;
-            const isXBusy=xSessionsOnDate.some(xs=>xs.teacher===st.name && getXSessionDutyPeriods(xs.sessionTime).includes(item.period));
-            if(isXBusy) return false;
-            for(const cls in masterTimetable){
-                const c=masterTimetable[cls]?.[dayName]?.[item.period];
-                if(c){
-                    if(c.isDual && (c.teacher1===st.name||c.teacher2===st.name||c.teacher===st.name)) return false;
-                    if(!c.isDual && (c.teacher===st.name||c.teacher2===st.name)) return false;
-                }
-            }
-            const status=teacherStatusRecords[dateVal]?.[st.name]?.[item.period]||teacherWeeklyStatus[st.name]?.[dayName]?.[item.period];
-            if(status==='Lunch'||status==='Rest') return false;
-            return true;
-        });
-        const classTeachers=new Set();
-        for(const d of days) for(const pid of periods.map(p=>p.id)){
-            const c=masterTimetable[item.class]?.[d]?.[pid];
-            if(c){ if(c.isDual){if(c.teacher1)classTeachers.add(c.teacher1);if(c.teacher2)classTeachers.add(c.teacher2);} if(c.teacher)classTeachers.add(c.teacher); }
-        }
-        const categorized=freeStaff.map(st=>{
-            let priority='P3',pRank=3;
-            const ss=String(st.subject||'').toLowerCase().trim(), rs=String(item.rawSubject||'').toLowerCase().trim();
-            if(classTeachers.has(st.name)){priority='P1';pRank=1;}
-            else if(ss&&rs&&(ss===rs||rs.includes(ss)||ss.includes(rs))){priority='P2';pRank=2;}
-            return {...st,priority,pRank};
-        }).sort((a,b)=>{
-            if(a.pRank!==b.pRank)return a.pRank-b.pRank;
-            const wa=initialWlMap[a.name]||0,wb=initialWlMap[b.name]||0;
-            return wa-wb||a.name.localeCompare(b.name);
-        });
-        let options='<option value="">Select Substitute</option>';
-        if(current && !categorized.some(x=>x.name===current)){
-            const oldStaff=staffList.find(x=>x.name===current);
-            if(oldStaff) options+=`<option value="${oldStaff.name}" data-base-label="${oldStaff.name}" selected>${oldStaff.name} (Previously Finalized)</option>`;
-        }
-        categorized.forEach(entry=>{
-            const base=`[${entry.priority}] ${entry.name} (${entry.subject||'Staff'})`;
-            options+=`<option value="${entry.name}" data-base-label="${base}" ${entry.name===current?'selected':''}>${base} (WL: ${initialWlMap[entry.name]||0})</option>`;
-        });
-        html+=`<tr><td>${index+1}</td><td><b>${item.period}</b></td><td>${item.time}</td><td style="color:red;font-weight:bold;">${item.absentTeacher}</td><td><b>${item.reason}</b></td><td><b>${item.class}</b><br>${item.subject||''}</td><td><select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-absent="${item.absentTeacher}" onchange="onSubstitutionDropdownChange(this,${index})">${options}</select><span class="print-only-text" id="print_sub_${index}">${current||'---'}</span></td><td></td></tr>`;
-    });
-    html+=`</tbody></table><div class="signature-section"><div>___________________<br>Incharge Signature</div><div>___________________<br>Principal Signature</div></div></div>
-    <div style="margin-top:15px;display:flex;flex-wrap:wrap;gap:8px;" class="no-print">
-      <button onclick="saveSubstitutionAllotments(${rows.length})">Save / Finalize Substitutions</button>
-      <button type="button" class="edit-btn" style="background:#17a2b8;color:#fff;" onclick="openAddAbsentTeachersView()">+ Add Absent Teacher</button>
-      <button class="edit-btn" onclick="editAbsentSelection()">Edit Absent Selection</button>
-      <button class="print-btn" onclick="printTargetElement('subMatrixPrintContainer')">Print Substitution</button>
-      <button class="excel-btn" onclick="exportTableToExcel('subMatrixPrintContainer','Substitution_Allotment_${dateVal}')">Download Excel</button>
-    </div>`;
-    container.innerHTML=html;
-    updateDynamicWorkloads(); reapplyPeriodClashes(); syncSubstituteTeachersIntoAbsentList(dateVal);
-}
-
-async function saveSubstitutionAllotments(count) {
-    const dateVal=document.getElementById('subDate')?.value;
-    if(!dateVal) return alert('Select a date first.');
-    const selected=Array.from(document.querySelectorAll('.absent-check:checked')).map(cb=>cb.value);
-    await saveAbsentSelectionForDate(dateVal,selected,true);
-
-    const rows=[];
-    for(let i=0;i<count;i++){
-        const el=document.getElementById(`sub_assign_${i}`);
-        if(!el || !el.value) continue;
-        rows.push({period:el.dataset.period,class:el.dataset.class,absent:el.dataset.absent,subTeacher:el.value,board:currentBoard});
-    }
-    mergeCurrentBoardSubstitutionRecords(dateVal,rows);
-    await saveMapDoc('substitutionRecords',dateVal,substitutionRecords[dateVal]);
-    syncSubstituteTeachersIntoAbsentList(dateVal);
-    alert(`Substitutions successfully saved (${rows.length} updated) for ${currentBoard} BOARD. Previous finalized assignments are preserved.`);
-    updateAllSubstitutionDropdownLabels();
-}
-
-async function openAddAbsentTeachersView() {
-    const dateVal=document.getElementById('subDate')?.value;
-    if(!dateVal) return alert('Select a date first.');
-    await restoreAbsentSelectionAsync(dateVal);
-    const panel=document.getElementById('subSelectionPanel');
-    panel?.scrollIntoView({behavior:'smooth'});
-    const statusBox=document.getElementById('absentStaffCheckboxes');
-    if(statusBox){
-        statusBox.style.border='2px solid #28a745';
-        statusBox.dataset.addMode='true';
-        setTimeout(()=>{statusBox.style.border='1px solid #ccc';},3000);
-    }
-    alert('Add Absent Teacher mode: select additional absent teachers and click Assign Timetable. Previously finalized substitutions will remain unchanged.');
-}
-
-/* Invigilation: Date + Orientation + Class + Section, with Add Period and persistent rows. */
-function updateInvigilationClassOptions() {
-    const o=document.getElementById('invigilationOrientation')?.value||'';
-    fillClassSelectFor('invigilationClass',o);
-    renderInvigilationEditor();
-}
-function normalizeInvigilationRows(date) {
-    const raw=invigilationRecords[date]?.[currentBoard]||{};
-    const out=[];
-    Object.keys(raw).forEach(pid=>{
-        const v=raw[pid];
-        if(Array.isArray(v)) out.push({period:pid,teachers:v.map(x=>typeof x==='string'?x:x?.teacher).filter(Boolean),orientation:v?.orientation||'',classKey:v?.classKey||''});
-        else if(v && typeof v==='object') out.push({period:pid,teachers:v.teachers||[],orientation:v.orientation||'',classKey:v.classKey||''});
-    });
-    return out;
-}
-function renderInvigilationEditor() {
-    const date=document.getElementById('invigilationDate')?.value;
-    const box=document.getElementById('invigilationEditor');
-    if(!box) return;
-    if(!date){box.innerHTML='<p style="color:#777;">Select date first.</p>';return;}
-    const currentRows=normalizeInvigilationRows(date);
-    const teachers=staffList.filter(st=>staffMatchesBoard(st,currentBoard)).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
-    const opts=teachers.map(st=>`<label><input type="checkbox" class="invigilator-check" value="${st.name}"> ${st.name} (${st.subject||'Staff'})</label>`).join('');
-    let html='<div id="invigilationRows">';
-    const rows=currentRows.length?currentRows:[{period:'',teachers:[],orientation:document.getElementById('invigilationOrientation')?.value||'',classKey:currentSectionKey('invigilation')}];
-    rows.forEach((r,i)=>{
-        const [c,s]=(r.classKey||'').split(' - Sec ');
-        html+=`<div class="leave-box invigilation-row" data-row-index="${i}" style="margin-bottom:10px;">
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <div class="form-group" style="flex:1;min-width:180px;"><label>Period:</label><select class="invigilation-row-period"><option value="">Select</option>${periods.map(p=>`<option value="${p.id}" ${String(p.id)===String(r.period)?'selected':''}>${p.id} - ${p.time}</option>`).join('')}</select></div>
-            <div class="form-group" style="flex:1;min-width:180px;"><label>Orientation:</label><select class="inv-row-orientation"><option value="">Select</option>${getBoardOrientations(currentBoard).map(o=>`<option value="${o}" ${o===(r.orientation||'')?'selected':''}>${o}</option>`).join('')}</select></div>
-            <div class="form-group" style="flex:1;min-width:180px;"><label>Class:</label><select class="inv-row-class"><option value="">Select</option>${getBoardClassOptions(r.orientation||'').map(x=>`<option value="${x}" ${x===c?'selected':''}>${x}</option>`).join('')}</select></div>
-            <div class="form-group" style="flex:1;min-width:140px;"><label>Section:</label><select class="inv-row-section"><option value="">Select</option>${['A','B','C','D'].map(x=>`<option ${x===s?'selected':''}>${x}</option>`).join('')}</select></div>
-          </div>
-          <div class="multi-select-box invigilator-teacher-box">${teachers.map(st=>`<label><input type="checkbox" class="invigilator-check-row" value="${st.name}" ${r.teachers.includes(st.name)?'checked':''}> ${st.name} (${st.subject||'Staff'})</label>`).join('')}</div>
-          ${i>0?"<button class=\"delete-btn\" type=\"button\" onclick=\"this.closest(\'.invigilation-row\').remove()\">Remove Period</button>":""}
-        </div>`;
-    });
-    html+='</div><button type="button" onclick="addInvigilationPeriodRow()">+ Add Period</button> <button type="button" onclick="saveInvigilationRows()" style="margin-left:8px;">Save Invigilation</button>';
-    box.innerHTML=html;
-    document.querySelectorAll('.inv-row-orientation').forEach(sel=>sel.addEventListener('change',()=>{
-        const row=sel.closest('.invigilation-row'), c=row.querySelector('.inv-row-class'), o=sel.value;
-        c.innerHTML='<option value="">Select</option>'+getBoardClassOptions(o).map(x=>`<option value="${x}">${x}</option>`).join('');
-    }));
-}
-function addInvigilationPeriodRow() {
-    const box=document.getElementById('invigilationEditor');
-    if(!box) return;
-    const rows=box.querySelector('#invigilationRows');
-    if(!rows) return;
-    const div=document.createElement('div');
-    div.className='leave-box invigilation-row';
-    div.innerHTML=`<div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <div class="form-group" style="flex:1;min-width:180px;"><label>Period:</label><select class="invigilation-row-period"><option value="">Select</option>${periods.map(p=>`<option value="${p.id}">${p.id} - ${p.time}</option>`).join('')}</select></div>
-      <div class="form-group" style="flex:1;min-width:180px;"><label>Orientation:</label><select class="inv-row-orientation"><option value="">Select</option>${getBoardOrientations(currentBoard).map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>
-      <div class="form-group" style="flex:1;min-width:180px;"><label>Class:</label><select class="inv-row-class"><option value="">Select</option></select></div>
-      <div class="form-group" style="flex:1;min-width:140px;"><label>Section:</label><select class="inv-row-section"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-    </div>
-    <div class="multi-select-box">${staffList.filter(st=>staffMatchesBoard(st,currentBoard)).sort((a,b)=>a.name.localeCompare(b.name)).map(st=>`<label><input type="checkbox" class="invigilator-check-row" value="${st.name}"> ${st.name} (${st.subject||'Staff'})</label>`).join('')}</div>
-    <button class="delete-btn" type="button" onclick="this.closest('.invigilation-row').remove()">Remove Period</button>`;
-    rows.appendChild(div);
-    const o=div.querySelector('.inv-row-orientation'), c=div.querySelector('.inv-row-class');
-    o.addEventListener('change',()=>{c.innerHTML='<option value="">Select</option>'+getBoardClassOptions(o.value).map(x=>`<option value="${x}">${x}</option>`).join('');});
-}
-async function saveInvigilationRows() {
-    const date=document.getElementById('invigilationDate')?.value;
-    if(!date) return alert('Select date first.');
-    if(!invigilationRecords[date]) invigilationRecords[date]={};
-    if(!invigilationRecords[date][currentBoard]) invigilationRecords[date][currentBoard]={};
-    const rows=document.querySelectorAll('#invigilationRows .invigilation-row');
-    const newMap={};
-    let valid=0;
-    rows.forEach(row=>{
-        const period=row.querySelector('.invigilation-row-period')?.value;
-        const orientation=row.querySelector('.inv-row-orientation')?.value||'';
-        const cls=row.querySelector('.inv-row-class')?.value||'';
-        const sec=row.querySelector('.inv-row-section')?.value||'';
-        const teachers=Array.from(row.querySelectorAll('.invigilator-check-row:checked')).map(x=>x.value);
-        if(period && teachers.length){
-            newMap[period]={period,orientation,classKey:cls?(sec?`${cls} - Sec ${sec}`:cls):'',teachers};
-            valid++;
-        }
-    });
-    /* Merge periods instead of replacing earlier invigilation periods. */
-    Object.keys(newMap).forEach(pid=>{invigilationRecords[date][currentBoard][pid]=newMap[pid];});
-    await saveMapDoc('invigilationRecords',`${date}__${currentBoard}`,invigilationRecords[date][currentBoard]);
-    alert(`Invigilation saved (${valid} period(s)). Selected invigilators will automatically appear in substitution.`);
-    renderInvigilationEditor();
-}
-
-/* Make login open the appropriate dashboard and expose floor dashboard to floor incharges. */
-const _originalHandleLogin = handleLogin;
-handleLogin = async function() {
-    const result = await _originalHandleLogin.apply(this, arguments);
-    setTimeout(()=>{
-        const card=document.getElementById('teacherFloorCard');
-        if(card) card.style.display=isFloorInchargeUser()?'block':'none';
-        if(currentUser?.role==='teacher') populateFloorDashboard();
-    },250);
-    return result;
-};
-
-/* Teacher schedule now shows revision/invigilation assignments in addition to regular/substitution work. */
-const _originalViewTeacherSchedule = viewTeacherSchedule;
-viewTeacherSchedule = function() {
-    _originalViewTeacherSchedule.apply(this, arguments);
-    const date=document.getElementById('tDate')?.value;
-    const box=document.getElementById('tScheduleDisplay');
-    if(!date || !box || !currentUser) return;
-    const day=getDayNameFromDate(date);
-    const duties=[];
-    ['STATE','CBSE'].forEach(b=>{
-        const rev=revisionScheduleRecords[date]?.[b]||{};
-        Object.keys(rev).forEach(key=>Object.keys(rev[key]||{}).forEach(d=>{
-            if(d===day) Object.keys(rev[key][d]||{}).forEach(pid=>{
-                if((rev[key][d][pid]||[]).includes(currentUser.name)){
-                    const p=periods.find(x=>String(x.id)===String(pid))||{time:''};
-                    duties.push({period:pid,time:p.time,type:'Revision Schedule',detail:key});
-                }
-            });
-        }));
-        const inv=invigilationRecords[date]?.[b]||{};
-        Object.keys(inv).forEach(pid=>{
-            const arr=Array.isArray(inv[pid])?inv[pid]:((inv[pid]?.teachers)||[]);
-            if(arr.includes(currentUser.name)){
-                const p=periods.find(x=>String(x.id)===String(pid))||{time:''};
-                duties.push({period:pid,time:p.time,type:'Invigilation',detail:inv[pid]?.classKey||'Exam Duty'});
-            }
-        });
-    });
-    if(duties.length){
-        let h='<div style="margin-top:18px;"><h4 style="color:#0056b3;">Revision / Invigilation Duties</h4><table><thead><tr><th>Period</th><th>Time</th><th>Duty</th><th>Class / Details</th></tr></thead><tbody>';
-        duties.sort((a,b)=>(periods.findIndex(x=>String(x.id)===String(a.period)))-(periods.findIndex(x=>String(x.id)===String(b.period))));
-        duties.forEach(d=>h+=`<tr><td><b>${d.period}</b></td><td>${d.time}</td><td>${d.type}</td><td>${d.detail}</td></tr>`);
-        h+='</tbody></table></div>';
-        box.insertAdjacentHTML('beforeend',h);
-    }
-};
-
-/* ===== END FINAL DATA-PRESERVING PATCH ===== */
-
-</script>
+    </script>
 </body>
 </html>
