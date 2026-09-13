@@ -280,10 +280,17 @@ table { max-width:100%; }
                 <div class="form-group" style="flex: 1;">
                     <label>Designation:</label>
                     <select id="staffDesig">
-                        <option value="">Select</option><option>Dean</option><option>IPL Incharge</option>
-                        <option>Civils Batch Incharge</option><option>C or M Batch Incharge</option>
-                        <option>C Batch Incharge</option><option>S Batch Incharge</option>
-                        <option>HOD</option><option>10th Incharge</option><option>Teacher</option>
+                        <option value="">Select</option>
+                        <option>Dean</option>
+                        <option>IPL Incharge</option>
+                        <option>Civils Batch Incharge</option>
+                        <option>C or M Batch Incharge</option>
+                        <option>C Batch Incharge</option>
+                        <option>S Batch Incharge</option>
+                        <option>Floor Incharge</option>
+                        <option>HOD</option>
+                        <option>10th Incharge</option>
+                        <option>Teacher</option>
                     </select>
                 </div>
                 <div class="form-group" style="flex: 1;">
@@ -509,8 +516,6 @@ table { max-width:100%; }
         <!-- 5. X Session Time Table -->
         <div id="d-xsession" class="tab-content" style="display:none;">
             <h3>X Session Time Table Manager</h3>
-            <p style="color:#555;">Schedule special X Sessions by Date, Class, Subject, Session Number, and Session Time. Morning sessions cancel periods up to 11:40am - 12:20pm; afternoon sessions cancel from 1:00pm - 1:40pm to the last period. Selected teachers automatically appear in the substitution matrix.</p>
-            
             <div style="background: #eef5ff; border: 1px solid #b6d4fe; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
                 <h4 style="margin-top:0; color:#0056b3;">Schedule New X Session</h4>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -570,29 +575,6 @@ table { max-width:100%; }
             </div>
 
             <div id="xSessionScheduleTableContainer"></div>
-        
-            <hr style="margin:25px 0;">
-            <div>
-                <h3>X Session Time Table</h3>
-                <p style="color:#555;">Create and view the X Session class-wise timetable separately for the selected board.</p>
-                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
-                    <div class="form-group" style="flex:1; min-width:180px;">
-                        <label>Orientation:</label>
-                        <select id="xSessionOrientation" onchange="updateXSessionClassOptions()"></select>
-                    </div>
-                    <div class="form-group" style="flex:1; min-width:180px;">
-                        <label>Class:</label>
-                        <select id="xSessionClass" onchange="renderXSessionClassTimetable()"></select>
-                    </div>
-                    <div class="form-group" style="flex:1; min-width:180px;">
-                        <label>Section:</label>
-                        <select id="xSessionSection" onchange="renderXSessionClassTimetable()">
-                            <option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="xSessionClassTimetableContainer"></div>
-            </div>
         </div>
 
         <!-- 6. Examinations -->
@@ -605,7 +587,6 @@ table { max-width:100%; }
 
             <div id="examRevisionPanel" class="tab-content active-module">
                 <h4>Revision Schedule</h4>
-                <p style="color:#555;">Select Orientation, Class and Section like the class timetable. Teachers selected here automatically become revision-duty teachers in the substitution list; you do not need to mark them absent.</p>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <div class="form-group" style="flex:1; min-width:180px;"><label>Date:</label><input type="date" id="revisionDate" onchange="renderRevisionScheduleEditor()"></div>
                     <div class="form-group" style="flex:1; min-width:180px;"><label>Orientation:</label><select id="revisionOrientation" onchange="updateRevisionClassOptions()"></select></div>
@@ -617,15 +598,52 @@ table { max-width:100%; }
             </div>
 
             <div id="examInvigilationPanel" class="tab-content" style="display:none;">
-                <h4>Invigilation</h4>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Date:</label><input type="date" id="invigilationDate" onchange="renderInvigilationEditor()"></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Orientation:</label><select id="invigilationOrientation" onchange="updateInvigilationClassOptions()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Class:</label><select id="invigilationClass" onchange="renderInvigilationEditor()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Section:</label><select id="invigilationSection" onchange="renderInvigilationEditor()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+                <h4>Invigilation Allotment</h4>
+                <div class="leave-box" style="margin-bottom:15px;">
+                    <input type="hidden" id="invigilationEditIndex" value="-1">
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1; min-width:160px;">
+                            <label>Date:</label>
+                            <input type="date" id="invigilationDate" onchange="onInvigilationDateChange()">
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:140px;">
+                            <label>From Period:</label>
+                            <select id="invigFromPeriod"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:140px;">
+                            <label>To Period:</label>
+                            <select id="invigToPeriod"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:160px;">
+                            <label>Orientation:</label>
+                            <select id="invigOrientation" onchange="updateInvigClassOptions()"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:160px;">
+                            <label>Class:</label>
+                            <select id="invigClass"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:120px;">
+                            <label>Section:</label>
+                            <select id="invigSection">
+                                <option value="">Select</option>
+                                <option value="A">A</option><option value="B">B</option>
+                                <option value="C">C</option><option value="D">D</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:200px;">
+                            <label>Invigilator Teacher:</label>
+                            <select id="invigTeacherSelect">
+                                <option value="">Select Teacher</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <button type="button" id="invigSaveBtn" onclick="addOrUpdateInvigilation()">+ Add Invigilation</button>
+                        <button type="button" id="invigCancelEditBtn" style="display:none; background:#6c757d; margin-left:8px;" onclick="cancelInvigilationEdit()">Cancel Edit</button>
+                    </div>
                 </div>
-                <p style="color:#555;margin:5px 0 10px;">Select a period below, choose one or more invigilators, then use <b>Add Period</b> for the next period. Selected invigilators are automatically routed to substitution and their teacher schedules.</p>
-                <div id="invigilationEditor"></div>
+
+                <div id="invigilationRecordsList"></div>
             </div>
         </div>
 
@@ -649,7 +667,7 @@ table { max-width:100%; }
         </button>
         <h3 id="teacherWelcome"></h3>
 
-        <!-- Teacher Dashboard -->
+        <!-- Teacher Dashboard Cards -->
         <div id="teacherDashboardCards" class="board-card-grid" style="margin-bottom:20px;">
             <div class="board-card" onclick="openTeacherDashboardArea('schedule')">
                 <h3>MY TIMETABLE</h3><p>View your daily timetable</p>
@@ -662,36 +680,45 @@ table { max-width:100%; }
             </div>
         </div>
 
+        <!-- Floor Incharge Panel -->
         <div id="teacherFloorDashboard" class="leave-box" style="display:none;">
-            <h4 style="margin-top:0;color:#0056b3;">Floor Incharge Dashboard</h4>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <div class="form-group" style="flex:1;min-width:180px;">
+            <h4 style="margin-top:0; color:#0056b3;">Floor Incharge Class Timetable Tool</h4>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div class="form-group" style="flex:1; min-width:160px;">
                     <label>Date:</label><input type="date" id="floorDate" onchange="renderFloorInchargeClasses()">
                 </div>
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Floor No:</label>
+                <div class="form-group" style="flex:1; min-width:140px;">
+                    <label>Floor:</label>
                     <select id="floorNo" onchange="renderFloorInchargeClasses()">
-                        <option value="">Select</option><option>I</option><option>II</option><option>III</option><option>IV</option><option>V</option>
+                        <option value="">Select Floor</option>
+                        <option value="I">I</option>
+                        <option value="II">II</option>
+                        <option value="III">III</option>
+                        <option value="IV">IV</option>
                     </select>
                 </div>
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Orientation:</label><select id="floorOrientation" onchange="updateFloorClassOptions()"></select>
+                <div class="form-group" style="flex:1; min-width:160px;">
+                    <label>Orientation:</label>
+                    <select id="floorOrientation" onchange="updateFloorClassOptions()"></select>
                 </div>
-                <div class="form-group" style="flex:1;min-width:180px;">
-                    <label>Class:</label><select id="floorClass" onchange="renderFloorInchargeClasses()"></select>
+                <div class="form-group" style="flex:1; min-width:160px;">
+                    <label>Class:</label>
+                    <select id="floorClass"></select>
                 </div>
-                <div class="form-group" style="flex:1;min-width:180px;">
+                <div class="form-group" style="flex:1; min-width:120px;">
                     <label>Section:</label>
-                    <select id="floorSection" onchange="renderFloorInchargeClasses()">
-                        <option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option>
+                    <select id="floorSection">
+                        <option value="">Select</option>
+                        <option value="A">A</option><option value="B">B</option>
+                        <option value="C">C</option><option value="D">D</option>
                     </select>
                 </div>
             </div>
-            <div id="floorSelectedClasses" style="margin-top:10px;"></div>
-            <button onclick="addFloorClassSelection()" style="margin-top:10px;">+ Add More</button>
-            <button onclick="clearFloorClassSelection()" class="delete-btn" style="margin-top:10px;">Remove All</button>
+            <div style="margin-top:8px;">
+                <button type="button" onclick="addFloorClassSelection()">+ Add Class</button>
+                <button type="button" onclick="clearFloorClassSelection()" class="delete-btn">Clear Floor Classes</button>
+            </div>
+            <div id="floorSelectedClasses" style="margin-top:15px;"></div>
         </div>
 
         <!-- Apply for Leave Section -->
@@ -835,7 +862,7 @@ table { max-width:100%; }
             invSnap.forEach(doc => {
                 const [date, board] = doc.id.split('__'); 
                 if(!invigilationRecords[date]) invigilationRecords[date] = {}; 
-                invigilationRecords[date][board] = doc.data().value || {};
+                invigilationRecords[date][board] = doc.data().value || [];
             });
             
             const studySnap = await db.collection('studyHoursRecords').get(); 
@@ -1046,6 +1073,17 @@ table { max-width:100%; }
             }
         }
 
+        function isFloorInchargeUser(userObj = currentUser) {
+            const d = String(userObj?.designation || '').toLowerCase();
+            return d.includes('floor') && d.includes('incharge');
+        }
+
+        function isManagerDesignation(desig) {
+            const d = String(desig || '').trim().toLowerCase();
+            if(d.includes('floor') && d.includes('incharge')) return false; // Floor Incharges strictly routed via teacher portal
+            return d === 'dean' || d.includes('incharge') || d === 'hod' || d.includes('h.o.d');
+        }
+
         async function handleLogin() {
             const role = document.getElementById('roleSelect').value;
             const user = document.getElementById('username').value.trim();
@@ -1126,6 +1164,11 @@ table { max-width:100%; }
                     await db.collection('users').doc(uid).set(account, { merge: true });
                 }
 
+                // Guardrail: Floor Incharges must use Teacher login
+                if(isFloorInchargeUser(account) && role === 'dean') {
+                    throw new Error('Floor Incharges must log in through the Teacher portal.');
+                }
+
                 currentUser = { uid, ...account };
                 await loadDataForRole(account.role);
 
@@ -1146,8 +1189,13 @@ table { max-width:100%; }
                     await loadTimetableForBoard(currentBoard);
                     document.getElementById('teacherWelcome').innerText = `Welcome, ${account.name} (Emp ID: ${account.empId || 'N/A'} | ${account.designation} - ${account.subject})`;
                     document.getElementById('backToManagerBtn').style.display = account.teacherAccess ? 'inline-block' : 'none';
+                    
+                    const floorCard = document.getElementById('teacherFloorCard');
+                    if(floorCard) floorCard.style.display = isFloorInchargeUser(account) ? 'block' : 'none';
+
                     switchView('teacherModule');
                     recordAppPage('teacherModule');
+                    if(isFloorInchargeUser(account)) populateFloorDashboard();
                 }
             } catch(e) {
                 console.error(e);
@@ -1177,11 +1225,6 @@ table { max-width:100%; }
         
         function showTabDean(tabId) {
             showTabDeanById(tabId);
-        }
-
-        function isManagerDesignation(desig) {
-            const d = String(desig || '').trim().toLowerCase();
-            return d === 'dean' || d.includes('incharge') || d === 'hod' || d.includes('h.o.d');
         }
 
         function openDualTeacherView() {
@@ -1868,8 +1911,6 @@ table { max-width:100%; }
                 const old = await loadAbsentSelectionForDateRaw(dateVal);
                 names = Array.from(new Set([...(old || []), ...names]));
             }
-            const auto = getAutomaticAbsentTeachersForDate(dateVal);
-            names = Array.from(new Set([...names, ...auto]));
             const value = { board: currentBoard, absentTeachers: names };
             if(!window.substitutionAbsentSelections) window.substitutionAbsentSelections = {};
             window.substitutionAbsentSelections[key] = value;
@@ -1893,8 +1934,8 @@ table { max-width:100%; }
 
         async function restoreAbsentSelectionAsync(dateVal) {
             const saved = await loadAbsentSelectionForDate(dateVal);
-            const auto = getAutomaticAbsentTeachersForDate(dateVal);
-            const names = new Set([...(saved || []), ...(auto || [])]);
+            const names = new Set(saved || []);
+            getLeaveTeachersForDate(dateVal).forEach(n => names.add(n));
             document.querySelectorAll('.absent-check').forEach(cb => {
                 cb.checked = names.has(cb.value);
                 cb.disabled = false;
@@ -2000,40 +2041,92 @@ table { max-width:100%; }
             return (xSessionRecords[dateVal] || []).filter(x => x.board === currentBoard);
         }
 
-        function getLiveWorkloadMap(dateVal) {
-            const wlMap = {};
-            staffList.forEach(st => { wlMap[st.name] = 0; });
+        // Returns breakdown of Regular Periods (R) and Special Duties (S)
+        function getTeacherDetailedWorkload(dateVal, teacherName) {
+            const dayName = getDayNameFromDate(dateVal);
+            let R = 0; // Regular teaching periods assigned on that day
+            let S = 0; // Substitutions + Invigilations + Revisions + X Sessions
 
-            const saved = savedSubstitutionsForDate(dateVal);
-            saved.forEach(rec => {
-                if(rec.subTeacher && wlMap[rec.subTeacher] !== undefined) {
-                    wlMap[rec.subTeacher]++;
-                }
-            });
-
-            document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
-                const assigned = sel.value;
-                if(assigned && wlMap[assigned] !== undefined) {
-                    const originalSaved = saved.find(r => r.board === currentBoard && r.period === sel.dataset.period && r.class === sel.dataset.class);
-                    if(!originalSaved || originalSaved.subTeacher !== assigned) {
-                        wlMap[assigned]++;
+            // Calculate R (Regular teaching periods)
+            periods.forEach(p => {
+                for(let cls in masterTimetable) {
+                    const cell = masterTimetable[cls]?.[dayName]?.[p.id];
+                    if(cell) {
+                        if(cell.isDual) {
+                            if(cell.teacher1 === teacherName || cell.teacher2 === teacherName || cell.teacher === teacherName) {
+                                R++;
+                                break;
+                            }
+                        } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
+                            R++;
+                            break;
+                        }
                     }
                 }
             });
 
-            return wlMap;
+            // Calculate S - Part 1: Saved Substitutions
+            const saved = savedSubstitutionsForDate(dateVal);
+            saved.forEach(rec => {
+                if(rec.subTeacher === teacherName) S++;
+            });
+
+            // Active substitution dropdowns
+            document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
+                if(sel.value === teacherName) {
+                    const originalSaved = saved.find(r => r.board === currentBoard && r.period === sel.dataset.period && r.class === sel.dataset.class);
+                    if(!originalSaved || originalSaved.subTeacher !== teacherName) {
+                        S++;
+                    }
+                }
+            });
+
+            // Calculate S - Part 2: Invigilations
+            ['STATE', 'CBSE'].forEach(board => {
+                const invList = invigilationRecords[dateVal]?.[board] || [];
+                invList.forEach(inv => {
+                    if(inv.teacher === teacherName) {
+                        const fromIdx = periods.findIndex(p => String(p.id) === String(inv.fromPeriod));
+                        const toIdx = periods.findIndex(p => String(p.id) === String(inv.toPeriod));
+                        if(fromIdx !== -1 && toIdx !== -1 && fromIdx <= toIdx) {
+                            S += (toIdx - fromIdx + 1);
+                        }
+                    }
+                });
+            });
+
+            // Calculate S - Part 3: Revision Duties
+            ['STATE', 'CBSE'].forEach(board => {
+                const rev = revisionScheduleRecords[dateVal]?.[board] || {};
+                Object.keys(rev).forEach(clsKey => {
+                    Object.keys(rev[clsKey] || {}).forEach(d => {
+                        if(d === dayName) {
+                            Object.keys(rev[clsKey][d] || {}).forEach(pid => {
+                                if((rev[clsKey][d][pid] || []).includes(teacherName)) S++;
+                            });
+                        }
+                    });
+                });
+            });
+
+            // Calculate S - Part 4: X Session duty periods
+            const myXSessions = (xSessionRecords[dateVal] || []).filter(x => x.teacher === teacherName);
+            myXSessions.forEach(xs => {
+                S += getXSessionDutyPeriods(xs.sessionTime).length;
+            });
+
+            return { R, S, total: R + S };
         }
 
         function updateAllSubstitutionDropdownLabels() {
             const dateVal = document.getElementById('subDate')?.value;
             if(!dateVal) return;
-            const wlMap = getLiveWorkloadMap(dateVal);
 
             document.querySelectorAll('.sub-select-dropdown').forEach(sel => {
                 Array.from(sel.options).forEach(opt => {
                     if(opt.value && opt.dataset.baseLabel) {
-                        const count = wlMap[opt.value] || 0;
-                        opt.textContent = `${opt.dataset.baseLabel} (WL: ${count})`;
+                        const wl = getTeacherDetailedWorkload(dateVal, opt.value);
+                        opt.textContent = `${opt.dataset.baseLabel} (Workload: ${wl.R}R + ${wl.S}S)`;
                     }
                 });
             });
@@ -2045,16 +2138,37 @@ table { max-width:100%; }
             if(printSpan) {
                 printSpan.textContent = selElem.value || '---';
             }
-            updateDynamicWorkloads();
             updateAllSubstitutionDropdownLabels();
+        }
+
+        // Checks if teacher is assigned to invigilation during a specific period
+        function isTeacherInvigilationBusy(dateVal, teacherName, periodId) {
+            let busy = false;
+            const pIndex = periods.findIndex(p => String(p.id) === String(periodId));
+            if(pIndex === -1) return false;
+
+            ['STATE', 'CBSE'].forEach(board => {
+                const invList = invigilationRecords[dateVal]?.[board] || [];
+                invList.forEach(inv => {
+                    if(inv.teacher === teacherName) {
+                        const fromIdx = periods.findIndex(p => String(p.id) === String(inv.fromPeriod));
+                        const toIdx = periods.findIndex(p => String(p.id) === String(inv.toPeriod));
+                        if(fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx) {
+                            busy = true;
+                        }
+                    }
+                });
+            });
+            return busy;
         }
 
         function generateSubstitutionMatrix() {
             const dateVal = document.getElementById('subDate')?.value;
             if(!dateVal) return alert('Select a date first.');
             
+            // Explicit absent choices
             const selectedAbsent = Array.from(document.querySelectorAll('.absent-check:checked')).map(cb => cb.value);
-            getAutomaticAbsentTeachersForDate(dateVal).forEach(n => {
+            getLeaveTeachersForDate(dateVal).forEach(n => {
                 if(!selectedAbsent.includes(n)) selectedAbsent.push(n);
             });
             
@@ -2075,6 +2189,7 @@ table { max-width:100%; }
                 }
             };
 
+            // 1. Regular Timetable Absentees (Full day absent / leaves)
             periods.forEach(p => {
                 for(const cls in masterTimetable) {
                     const cell = masterTimetable[cls]?.[dayName]?.[p.id];
@@ -2088,69 +2203,77 @@ table { max-width:100%; }
                 }
             });
 
+            // 2. Invigilation Duties: Substitute original teaching periods ONLY during active exam periods
+            ['STATE', 'CBSE'].forEach(board => {
+                const invList = invigilationRecords[dateVal]?.[board] || [];
+                invList.forEach(inv => {
+                    const fromIdx = periods.findIndex(p => String(p.id) === String(inv.fromPeriod));
+                    const toIdx = periods.findIndex(p => String(p.id) === String(inv.toPeriod));
+                    if(fromIdx === -1 || toIdx === -1 || fromIdx > toIdx) return;
+
+                    for(let idx = fromIdx; idx <= toIdx; idx++) {
+                        const pObj = periods[idx];
+                        for(const cls in masterTimetable) {
+                            const cell = masterTimetable[cls]?.[dayName]?.[pObj.id];
+                            if(!cell) continue;
+                            if(cell.isDual) {
+                                if(cell.teacher1 === inv.teacher) push(inv.teacher, pObj, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `Invigilation Duty (${inv.classKey || 'Exam'})`);
+                                if(cell.teacher2 === inv.teacher) push(inv.teacher, pObj, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `Invigilation Duty (${inv.classKey || 'Exam'})`);
+                            } else if(cell.teacher === inv.teacher) {
+                                push(inv.teacher, pObj, cls, cell.subject, cell.subject, `Invigilation Duty (${inv.classKey || 'Exam'})`);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 3. Revision Duties: Substitute original teaching periods ONLY during specific revision periods
+            ['STATE', 'CBSE'].forEach(board => {
+                const rev = revisionScheduleRecords[dateVal]?.[board] || {};
+                Object.keys(rev).forEach(clsKey => {
+                    Object.keys(rev[clsKey] || {}).forEach(d => {
+                        if(d !== dayName) return;
+                        Object.keys(rev[clsKey][d] || {}).forEach(pid => {
+                            const names = rev[clsKey][d][pid] || [];
+                            const pObj = periods.find(p => String(p.id) === String(pid)) || { id: pid, time: '' };
+                            names.forEach(name => {
+                                for(const cls in masterTimetable) {
+                                    const cell = masterTimetable[cls]?.[dayName]?.[pid];
+                                    if(!cell) continue;
+                                    if(cell.isDual) {
+                                        if(cell.teacher1 === name) push(name, pObj, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `Revision Duty (${clsKey})`);
+                                        if(cell.teacher2 === name) push(name, pObj, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `Revision Duty (${clsKey})`);
+                                    } else if(cell.teacher === name) {
+                                        push(name, pObj, cls, cell.subject, cell.subject, `Revision Duty (${clsKey})`);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                });
+            });
+
+            // 4. X-Sessions: Substitute periods for the morning/afternoon duration
             const xSessionsOnDate = getXSessionBusyListForDate(dateVal);
             xSessionsOnDate.forEach(xs => {
                 const affectedPeriodIds = getXSessionDutyPeriods(xs.sessionTime);
                 affectedPeriodIds.forEach(pId => {
-                    const pIndex = periods.findIndex(p => p.id === pId);
-                    const pObj = periods[pIndex] || { id: pId, time: '' };
-
+                    const pObj = periods.find(p => p.id === pId) || { id: pId, time: '' };
                     for(const cls in masterTimetable) {
                         const cell = masterTimetable[cls]?.[dayName]?.[pId];
                         if(!cell) continue;
 
                         if(cell.isDual) {
                             if(cell.teacher1 === xs.teacher) {
-                                push(xs.teacher, pObj, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `X Session Duty (Session ${xs.sessionNumber})`);
+                                push(xs.teacher, pObj, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `X Session Duty (${xs.class})`);
                             }
                             if(cell.teacher2 === xs.teacher) {
-                                push(xs.teacher, pObj, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `X Session Duty (Session ${xs.sessionNumber})`);
+                                push(xs.teacher, pObj, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `X Session Duty (${xs.class})`);
                             }
                         } else if(cell.teacher === xs.teacher) {
-                            push(xs.teacher, pObj, cls, cell.subject, cell.subject, `X Session Duty (Session ${xs.sessionNumber})`);
+                            push(xs.teacher, pObj, cls, cell.subject, cell.subject, `X Session Duty (${xs.class})`);
                         }
                     }
-                });
-            });
-
-            ['STATE', 'CBSE'].forEach(board => {
-                const rev = revisionScheduleRecords[dateVal]?.[board] || {};
-                Object.keys(rev).forEach(key => Object.keys(rev[key] || {}).forEach(day => {
-                    if(day !== dayName) return;
-                    Object.keys(rev[key][day] || {}).forEach(pid => {
-                        const names = rev[key][day][pid] || [];
-                        names.forEach(name => {
-                            if(!selectedAbsent.includes(name)) selectedAbsent.push(name);
-                            const p = periods.find(x => String(x.id) === String(pid)) || { id: pid, time: '' };
-                            for(const cls in masterTimetable) {
-                                const cell = masterTimetable[cls]?.[dayName]?.[pid];
-                                if(!cell) continue;
-                                if(cell.isDual) {
-                                    if(cell.teacher1 === name) push(name, p, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `Revision Schedule`);
-                                    if(cell.teacher2 === name) push(name, p, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `Revision Schedule`);
-                                } else if(cell.teacher === name) push(name, p, cls, cell.subject, cell.subject, 'Revision Schedule');
-                            }
-                        });
-                    });
-                }));
-
-                const inv = invigilationRecords[dateVal]?.[board] || {};
-                Object.keys(inv).forEach(pid => {
-                    const arr = Array.isArray(inv[pid]) ? inv[pid] : (inv[pid]?.teachers || []);
-                    arr.forEach(item => {
-                        const name = typeof item === 'string' ? item : item?.teacher;
-                        if(!name) return;
-                        if(!selectedAbsent.includes(name)) selectedAbsent.push(name);
-                        const p = periods.find(x => String(x.id) === String(pid)) || { id: pid, time: '' };
-                        for(const cls in masterTimetable) {
-                            const cell = masterTimetable[cls]?.[dayName]?.[pid];
-                            if(!cell) continue;
-                            if(cell.isDual) {
-                                if(cell.teacher1 === name) push(name, p, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', 'Invigilation');
-                                if(cell.teacher2 === name) push(name, p, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', 'Invigilation');
-                            } else if(cell.teacher === name) push(name, p, cls, cell.subject, cell.subject, 'Invigilation');
-                        }
-                    });
                 });
             });
 
@@ -2174,21 +2297,25 @@ table { max-width:100%; }
                 existing[`${r.period}_${r.class}_${r.absent}`] = r.subTeacher || '';
             });
 
-            const initialWlMap = getLiveWorkloadMap(dateVal);
             let html = `<div id="subMatrixPrintContainer"><div class="print-header"><h2>SRI CHAITANYA SCHOOL</h2><h3>Branch : Adibatla</h3><h4>Final Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div>
-            <table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Original Teacher</th><th>Reason / Session</th><th>Class & Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
+            <table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Original Teacher</th><th>Reason / Duty Type</th><th>Class & Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
 
             rows.forEach((item, index) => {
                 const key = `${item.period}_${item.class}_${item.absentTeacher}`;
                 const current = existing[key] || '';
+                
+                // Available teachers for substitution in this period
                 let freeStaff = staffList.filter(st => {
                     if(!teacherCanSubstituteOnBoard(st, currentBoard)) return false;
                     if(selectedAbsent.includes(st.name)) return false;
                     if(st.name === item.absentTeacher) return false;
                     if(isTeacherAssignedAcrossBoards(dateVal, st.name, item.period)) return false;
                     if(isTeacherRevisionBusy(dateVal, st.name, item.period, currentBoard)) return false;
+                    if(isTeacherInvigilationBusy(dateVal, st.name, item.period)) return false;
+                    
                     const isXBusy = xSessionsOnDate.some(xs => xs.teacher === st.name && getXSessionDutyPeriods(xs.sessionTime).includes(item.period));
                     if(isXBusy) return false;
+
                     for(const cls in masterTimetable) {
                         const c = masterTimetable[cls]?.[dayName]?.[item.period];
                         if(c) {
@@ -2220,11 +2347,11 @@ table { max-width:100%; }
                     const ss = String(st.subject || '').toLowerCase().trim(), rs = String(item.rawSubject || '').toLowerCase().trim();
                     if(classTeachers.has(st.name)) { priority = 'P1'; pRank = 1; }
                     else if(ss && rs && (ss === rs || rs.includes(ss) || ss.includes(rs))) { priority = 'P2'; pRank = 2; }
-                    return { ...st, priority, pRank };
+                    const wl = getTeacherDetailedWorkload(dateVal, st.name);
+                    return { ...st, priority, pRank, wl };
                 }).sort((a,b) => {
                     if(a.pRank !== b.pRank) return a.pRank - b.pRank;
-                    const wa = initialWlMap[a.name] || 0, wb = initialWlMap[b.name] || 0;
-                    return wa - wb || a.name.localeCompare(b.name);
+                    return a.wl.total - b.wl.total || a.name.localeCompare(b.name);
                 });
 
                 let options = '<option value="">Select Substitute</option>';
@@ -2234,7 +2361,7 @@ table { max-width:100%; }
                 }
                 categorized.forEach(entry => {
                     const base = `[${entry.priority}] ${entry.name} (${entry.subject || 'Staff'})`;
-                    options += `<option value="${entry.name}" data-base-label="${base}" ${entry.name === current ? 'selected' : ''}>${base} (WL: ${initialWlMap[entry.name] || 0})</option>`;
+                    options += `<option value="${entry.name}" data-base-label="${base}" ${entry.name === current ? 'selected' : ''}>${base} (Workload: ${entry.wl.R}R + ${entry.wl.S}S)</option>`;
                 });
 
                 html += `<tr>
@@ -2264,7 +2391,6 @@ table { max-width:100%; }
             </div>`;
 
             container.innerHTML = html;
-            updateDynamicWorkloads();
             reapplyPeriodClashes();
             syncSubstituteTeachersIntoAbsentList(dateVal);
         }
@@ -2851,10 +2977,15 @@ table { max-width:100%; }
             if(!box) return;
             if(!date || !key) { box.innerHTML = '<p style="color:#777;">Select date, orientation, class and section.</p>'; return; }
             const day = getDayNameFromDate(date);
+            const leaves = getLeaveTeachersForDate(date);
+
             let html = `<h4>Revision Teachers for ${key} - ${day}</h4><table><thead><tr><th>Period</th><th>Time</th><th>Revision Teacher(s)</th></tr></thead><tbody>`;
             periods.forEach(p => {
                 const rec = revisionScheduleRecords[date]?.[currentBoard]?.[key]?.[day]?.[p.id] || [];
-                const options = staffList.filter(st => staffMatchesBoard(st, currentBoard)).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+                // Filter out teachers on leave for this date
+                const options = staffList
+                    .filter(st => staffMatchesBoard(st, currentBoard) && !leaves.includes(st.name))
+                    .sort((a,b)=>String(a.name).localeCompare(String(b.name)));
                 html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td><div class="multi-select-box">`;
                 options.forEach(st => {
                     const checked = rec.includes(st.name) ? 'checked' : '';
@@ -2880,7 +3011,7 @@ table { max-width:100%; }
                 revisionScheduleRecords[date][currentBoard][key][day][p.id] = Array.from(document.querySelectorAll(`.revision-teacher[data-period="${p.id}"]:checked`)).map(x=>x.value);
             });
             await saveMapDoc('revisionScheduleRecords', `${date}__${currentBoard}`, revisionScheduleRecords[date][currentBoard]);
-            alert('Revision Schedule saved. Selected revision teachers will automatically appear in the substitution list for this date.');
+            alert('Revision Schedule saved. Selected revision teachers will automatically appear in substitution list for their assigned periods.');
             renderRevisionScheduleList();
         }
 
@@ -2903,7 +3034,174 @@ table { max-width:100%; }
             document.getElementById('examRevisionTabBtn').classList.toggle('active', which === 'revision');
             document.getElementById('examInvigilationTabBtn').classList.toggle('active', which === 'invigilation');
             if(which === 'revision') { fillBoardOrientationSelect('revisionOrientation'); updateRevisionClassOptions(); }
-            if(which === 'invigilation') renderInvigilationEditor();
+            if(which === 'invigilation') initInvigilationControls();
+        }
+
+        function initInvigilationControls() {
+            const d = document.getElementById('invigilationDate');
+            if(d && !d.value) d.value = new Date().toISOString().slice(0,10);
+            
+            const fromP = document.getElementById('invigFromPeriod');
+            const toP = document.getElementById('invigToPeriod');
+            if(fromP && (!fromP.options.length || fromP.options.length <= 1)) {
+                fromP.innerHTML = '<option value="">Select From</option>';
+                toP.innerHTML = '<option value="">Select To</option>';
+                periods.forEach(p => {
+                    fromP.innerHTML += `<option value="${p.id}">${p.id} - ${p.time}</option>`;
+                    toP.innerHTML += `<option value="${p.id}">${p.id} - ${p.time}</option>`;
+                });
+            }
+            fillBoardOrientationSelect('invigOrientation');
+            updateInvigClassOptions();
+            populateInvigTeacherDropdown();
+            renderInvigilationRecordsList();
+        }
+
+        function onInvigilationDateChange() {
+            populateInvigTeacherDropdown();
+            renderInvigilationRecordsList();
+        }
+
+        function updateInvigClassOptions() {
+            const o = document.getElementById('invigOrientation')?.value || '';
+            fillClassSelectFor('invigClass', o);
+        }
+
+        function populateInvigTeacherDropdown() {
+            const sel = document.getElementById('invigTeacherSelect');
+            if(!sel) return;
+            const date = document.getElementById('invigilationDate')?.value;
+            const leaves = getLeaveTeachersForDate(date);
+            const prev = sel.value;
+            sel.innerHTML = '<option value="">Select Teacher</option>';
+
+            // Do not show teachers who applied for leave
+            staffList
+                .filter(st => staffMatchesBoard(st, currentBoard) && !leaves.includes(st.name))
+                .sort((a,b) => a.name.localeCompare(b.name))
+                .forEach(st => {
+                    sel.innerHTML += `<option value="${st.name}">${st.name} (${st.subject || 'Staff'})</option>`;
+                });
+            if(prev) sel.value = prev;
+        }
+
+        async function addOrUpdateInvigilation() {
+            const date = document.getElementById('invigilationDate').value;
+            const fromP = document.getElementById('invigFromPeriod').value;
+            const toP = document.getElementById('invigToPeriod').value;
+            const orient = document.getElementById('invigOrientation').value;
+            const cls = document.getElementById('invigClass').value;
+            const sec = document.getElementById('invigSection').value;
+            const teacher = document.getElementById('invigTeacherSelect').value;
+            const editIdx = parseInt(document.getElementById('invigilationEditIndex').value, 10);
+
+            if(!date || !fromP || !toP || !orient || !cls || !teacher) {
+                return alert('Please fill in Date, From Period, To Period, Orientation, Class, and Teacher.');
+            }
+
+            const fromIdx = periods.findIndex(p => String(p.id) === String(fromP));
+            const toIdx = periods.findIndex(p => String(p.id) === String(toP));
+            if(fromIdx > toIdx) {
+                return alert('From Period cannot be later than To Period.');
+            }
+
+            const classKey = sec ? `${cls} - Sec ${sec}` : cls;
+            if(!invigilationRecords[date]) invigilationRecords[date] = {};
+            if(!Array.isArray(invigilationRecords[date][currentBoard])) invigilationRecords[date][currentBoard] = [];
+
+            const record = {
+                fromPeriod: fromP,
+                toPeriod: toP,
+                orientation: orient,
+                classKey,
+                teacher
+            };
+
+            if(editIdx >= 0 && editIdx < invigilationRecords[date][currentBoard].length) {
+                invigilationRecords[date][currentBoard][editIdx] = record;
+                alert('Invigilation duty updated.');
+            } else {
+                invigilationRecords[date][currentBoard].push(record);
+                alert('Invigilation duty added.');
+            }
+
+            await saveMapDoc('invigilationRecords', `${date}__${currentBoard}`, invigilationRecords[date][currentBoard]);
+            cancelInvigilationEdit();
+            renderInvigilationRecordsList();
+        }
+
+        function editInvigilation(idx) {
+            const date = document.getElementById('invigilationDate').value;
+            const list = invigilationRecords[date]?.[currentBoard] || [];
+            const item = list[idx];
+            if(!item) return;
+
+            document.getElementById('invigFromPeriod').value = item.fromPeriod;
+            document.getElementById('invigToPeriod').value = item.toPeriod;
+            document.getElementById('invigOrientation').value = item.orientation;
+            updateInvigClassOptions();
+
+            const [c, s] = (item.classKey || '').split(' - Sec ');
+            document.getElementById('invigClass').value = c || '';
+            document.getElementById('invigSection').value = s || '';
+            document.getElementById('invigTeacherSelect').value = item.teacher;
+
+            document.getElementById('invigilationEditIndex').value = idx;
+            document.getElementById('invigSaveBtn').innerText = 'Update Invigilation';
+            document.getElementById('invigCancelEditBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+        }
+
+        function cancelInvigilationEdit() {
+            document.getElementById('invigilationEditIndex').value = '-1';
+            document.getElementById('invigSaveBtn').innerText = '+ Add Invigilation';
+            document.getElementById('invigCancelEditBtn').style.display = 'none';
+            document.getElementById('invigFromPeriod').value = '';
+            document.getElementById('invigToPeriod').value = '';
+            document.getElementById('invigTeacherSelect').value = '';
+        }
+
+        async function deleteInvigilation(idx) {
+            const date = document.getElementById('invigilationDate').value;
+            if(!confirm('Delete this invigilation record?')) return;
+            invigilationRecords[date][currentBoard].splice(idx, 1);
+            await saveMapDoc('invigilationRecords', `${date}__${currentBoard}`, invigilationRecords[date][currentBoard]);
+            renderInvigilationRecordsList();
+        }
+
+        function renderInvigilationRecordsList() {
+            const date = document.getElementById('invigilationDate')?.value;
+            const box = document.getElementById('invigilationRecordsList');
+            if(!box || !date) return;
+
+            const list = invigilationRecords[date]?.[currentBoard] || [];
+            if(!list.length) {
+                box.innerHTML = '<p style="color:#777;">No invigilation records added for this date.</p>';
+                return;
+            }
+
+            let html = `<h4>Saved Invigilations (${date} - ${currentBoard} BOARD)</h4>
+            <table><thead><tr>
+                <th>S.No</th><th>From Period</th><th>To Period</th><th>Orientation</th><th>Class & Section</th><th>Teacher</th><th>Action</th>
+            </tr></thead><tbody>`;
+
+            list.forEach((item, idx) => {
+                html += `<tr>
+                    <td>${idx + 1}</td>
+                    <td><b>${item.fromPeriod}</b></td>
+                    <td><b>${item.toPeriod}</b></td>
+                    <td>${item.orientation || ''}</td>
+                    <td><b>${item.classKey}</b></td>
+                    <td style="color:#0056b3; font-weight:bold;">${item.teacher}</td>
+                    <td>
+                        <button type="button" class="edit-btn" onclick="editInvigilation(${idx})">Edit</button>
+                        <button type="button" class="delete-btn" onclick="deleteInvigilation(${idx})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            html += `</tbody></table>`;
+            box.innerHTML = html;
         }
 
         function renderStudyHoursTimetable() {
@@ -2931,8 +3229,7 @@ table { max-width:100%; }
             fillBoardOrientationSelect('studyOrientation');
             updateRevisionClassOptions(); 
             updateStudyClassOptions();
-            const ps=document.getElementById('invigilationPeriod');
-            if(ps && !ps.options.length) periods.forEach(p=>ps.innerHTML+=`<option value="${p.id}">${p.id} - ${p.time}</option>`);
+            initInvigilationControls();
         }
 
         function buildClassWeekTable(fullClassKey, title) {
@@ -2952,25 +3249,10 @@ table { max-width:100%; }
             return html + '</tbody></table></div></div>';
         }
 
-        function getSavedAbsentTeachers(dateVal) {
-            const records = savedSubstitutionsForDate(dateVal);
-            const names = [];
-            records.forEach(r => {
-                if(r.absent && !names.includes(r.absent)) names.push(r.absent);
-            });
-            return names;
-        }
-
         function isTeacherRevisionBusy(date, teacherName, period, board) {
             const day = getDayNameFromDate(date);
             return revisionTeachersForDate(date, board, day, period).includes(teacherName) ||
                    revisionTeachersForDate(date, board === 'STATE' ? 'CBSE' : 'STATE', day, period).includes(teacherName);
-        }
-
-        function onSubDropdownChanged(el, index) {
-            validatePeriodClash(el);
-            updateSubPrintDisplay(index);
-            updateDynamicWorkloads();
         }
 
         function reapplyPeriodClashes() {
@@ -3002,14 +3284,6 @@ table { max-width:100%; }
             });
         }
 
-        function renderXSessionClassTimetable() {
-            const key = currentSectionKey('xSession');
-            const box = document.getElementById('xSessionClassTimetableContainer');
-            if(!box) return;
-            if(!key) { box.innerHTML=''; return; }
-            box.innerHTML = buildClassWeekTable(key, 'X Session Class-Wise Timetable');
-        }
-
         function revisionTeachersForDate(date, board, day, period) {
             const out = [];
             const data = revisionScheduleRecords[date]?.[board] || {};
@@ -3027,14 +3301,6 @@ table { max-width:100%; }
                     records.filter(r => r && r.board === currentBoard && (r.subTeacher || r.substituteTeacher))
                         .map(r => String(r.subTeacher || r.substituteTeacher).trim()).filter(Boolean)
                 );
-
-                if (window._activeSubSessionCache) {
-                    Object.values(window._activeSubSessionCache).forEach(item => {
-                        if (item && item.subTeacher) {
-                            selectedSubstituteNames.add(String(item.subTeacher).trim());
-                        }
-                    });
-                }
 
                 document.querySelectorAll('#absentStaffCheckboxes input[type="checkbox"]').forEach(cb => {
                     const name = String(cb.value || '').trim();
@@ -3060,40 +3326,12 @@ table { max-width:100%; }
             }
         }
 
-        function updateDynamicWorkloads() {
-            const allSelects = Array.from(document.querySelectorAll('.sub-select-dropdown'));
-            const subCounts = {};
-            allSelects.forEach(sel => {
-                if(sel.value) {
-                    subCounts[sel.value] = (subCounts[sel.value] || 0) + 1;
-                }
-            });
-
-            allSelects.forEach(sel => {
-                Array.from(sel.options).forEach(opt => {
-                    if(!opt.value) return;
-                    const baseLoad = parseInt(opt.dataset.baseload || '0', 10);
-                    const pLabel = opt.dataset.plabel || 'P3 (Free)';
-                    const extra = subCounts[opt.value] || 0;
-                    const totalLoad = baseLoad + extra;
-
-                    opt.textContent = `${opt.value} - [${pLabel} | Workload: ${totalLoad} P]`;
-                });
-            });
-        }
-
         function updateSubPrintDisplay(index) {
             const selectEl = document.getElementById(`sub_assign_${index}`);
             const printSpan = document.getElementById(`print_sub_${index}`);
             if(selectEl && printSpan) {
                 printSpan.innerText = selectEl.value || '---';
             }
-        }
-
-        function updateXSessionClassOptions() {
-            const o = document.getElementById('xSessionOrientation')?.value;
-            fillClassSelectFor('xSessionClass', o);
-            renderXSessionClassTimetable();
         }
 
         function validatePeriodClash(currentSelect) {
@@ -3126,11 +3364,6 @@ table { max-width:100%; }
 
         let floorSelectedClassRecords = [];
 
-        function isFloorInchargeUser() {
-            const d = String(currentUser?.designation || '').toLowerCase();
-            return d.includes('floor') && d.includes('incharge');
-        }
-
         function openTeacherDashboardArea(area) {
             const floor = document.getElementById('teacherFloorDashboard');
             const leave = document.querySelector('.leave-box');
@@ -3157,10 +3390,7 @@ table { max-width:100%; }
             if(!isFloorInchargeUser()) return;
             const date = document.getElementById('floorDate');
             if(date && !date.value) date.value = new Date().toISOString().slice(0,10);
-            const orient = document.getElementById('floorOrientation');
-            if(orient) {
-                fillBoardOrientationSelect('floorOrientation');
-            }
+            fillBoardOrientationSelect('floorOrientation');
             updateFloorClassOptions();
             renderFloorInchargeClasses();
         }
@@ -3168,7 +3398,6 @@ table { max-width:100%; }
         function updateFloorClassOptions() {
             const o = document.getElementById('floorOrientation')?.value || '';
             fillClassSelectFor('floorClass', o);
-            renderFloorInchargeClasses();
         }
 
         function floorClassKey() {
@@ -3181,7 +3410,7 @@ table { max-width:100%; }
             const date=document.getElementById('floorDate')?.value;
             const floor=document.getElementById('floorNo')?.value;
             const key=floorClassKey();
-            if(!date || !floor || !key) return alert('Select Date, Floor No, Orientation, Class and Section first.');
+            if(!date || !floor || !key) return alert('Select Date, Floor, Orientation, Class and Section first.');
             const rec={date, floor, classKey:key, orientation:document.getElementById('floorOrientation')?.value||''};
             if(!floorSelectedClassRecords.some(x=>x.date===date && x.floor===floor && x.classKey===key)) {
                 floorSelectedClassRecords.push(rec);
@@ -3201,28 +3430,42 @@ table { max-width:100%; }
             renderFloorInchargeClasses();
         }
 
+        function editFloorClassSelection(index) {
+            const rec = floorSelectedClassRecords[index];
+            if(!rec) return;
+            document.getElementById('floorDate').value = rec.date;
+            document.getElementById('floorNo').value = rec.floor;
+            document.getElementById('floorOrientation').value = rec.orientation;
+            updateFloorClassOptions();
+
+            const [cls, sec] = rec.classKey.split(' - Sec ');
+            document.getElementById('floorClass').value = cls || '';
+            document.getElementById('floorSection').value = sec || '';
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+        }
+
         function renderFloorInchargeClasses() {
             const box=document.getElementById('floorSelectedClasses');
             if(!box) return;
             const date=document.getElementById('floorDate')?.value||'';
             const floor=document.getElementById('floorNo')?.value||'';
-            const currentKey=floorClassKey();
             let rows=floorSelectedClassRecords.filter(x=>x.date===date && (!floor || x.floor===floor));
-            if(currentKey && !rows.some(x=>x.classKey===currentKey)) {
-                rows=[...rows,{classKey:currentKey,orientation:document.getElementById('floorOrientation')?.value||''}];
-            }
+
             if(!date || !floor || !rows.length) {
-                box.innerHTML='<p style="color:#777;">Select Date and Floor No, then add one or more classes.</p>';
+                box.innerHTML='<p style="color:#777;">Select Date, Floor (I, II, III, IV), Orientation, Class and Section, then click "+ Add Class".</p>';
                 return;
             }
             const day=getDayNameFromDate(date);
-            let html=`<h4>Floor ${floor} Classes - ${date} (${day})</h4>`;
+            let html=`<h4>Floor ${floor} Classes Timetable - ${date} (${day})</h4>`;
             rows.forEach((r,idx)=>{
                 const key=r.classKey;
-                html+=`<div style="border:1px solid #ccc;border-radius:6px;padding:8px;margin:8px 0;">
+                html+=`<div style="border:1px solid #ccc;border-radius:6px;padding:8px;margin:8px 0; background:#fff;">
                     <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-                      <b>${key}</b>
-                      <button class="delete-btn no-print" onclick="removeFloorClassSelection(${idx})">Remove</button>
+                      <b>${key} (Floor: ${r.floor})</b>
+                      <div>
+                        <button type="button" class="edit-btn no-print" onclick="editFloorClassSelection(${idx})">Edit</button>
+                        <button type="button" class="delete-btn no-print" onclick="removeFloorClassSelection(${idx})">Delete</button>
+                      </div>
                     </div>
                     <div style="overflow-x:auto;"><table><thead><tr><th>Period</th><th>Time</th><th>Subject</th><th>Teacher</th></tr></thead><tbody>`;
                 periods.forEach(p=>{
@@ -3236,169 +3479,6 @@ table { max-width:100%; }
             });
             box.innerHTML=html;
         }
-
-        function getAutomaticAbsentTeachersForDate(dateVal) {
-            const names = [];
-            const add = n => { if(n && !names.includes(n)) names.push(n); };
-            getLeaveTeachersForDate(dateVal).forEach(add);
-            const day = getDayNameFromDate(dateVal);
-            const boards = ['STATE','CBSE'];
-            boards.forEach(b => {
-                const rev = revisionScheduleRecords[dateVal]?.[b] || {};
-                Object.keys(rev).forEach(key => Object.keys(rev[key] || {}).forEach(d => {
-                    Object.keys(rev[key][d] || {}).forEach(p =>
-                        (rev[key][d][p] || []).forEach(add)
-                    );
-                }));
-                const inv = invigilationRecords[dateVal]?.[b] || {};
-                Object.values(inv).forEach(arr => {
-                    (Array.isArray(arr) ? arr : (arr?.teachers || [])).forEach(x => {
-                        if(typeof x === 'string') add(x);
-                        else if(x?.teacher) add(x.teacher);
-                    });
-                });
-            });
-            return names;
-        }
-
-        function normalizeInvigilationRows(date) {
-            const raw = invigilationRecords[date]?.[currentBoard] || {};
-            const out = [];
-            Object.keys(raw).forEach(pid => {
-                const v = raw[pid];
-                if(Array.isArray(v)) out.push({period:pid, teachers:v.map(x=>typeof x==='string'?x:x?.teacher).filter(Boolean), orientation:v?.orientation||'', classKey:v?.classKey||''});
-                else if(v && typeof v==='object') out.push({period:pid, teachers:v.teachers||[], orientation:v.orientation||'', classKey:v.classKey||''});
-            });
-            return out;
-        }
-
-        function updateInvigilationClassOptions() {
-            const o = document.getElementById('invigilationOrientation')?.value || '';
-            fillClassSelectFor('invigilationClass', o);
-            renderInvigilationEditor();
-        }
-
-        function renderInvigilationEditor() {
-            const date = document.getElementById('invigilationDate')?.value;
-            const box = document.getElementById('invigilationEditor');
-            if(!box) return;
-            if(!date){ box.innerHTML = '<p style="color:#777;">Select date first.</p>'; return; }
-            const currentRows = normalizeInvigilationRows(date);
-            const teachers = staffList.filter(st => staffMatchesBoard(st,currentBoard)).sort((a,b)=>String(a.name).localeCompare(String(b.name)));
-            let html = '<div id="invigilationRows">';
-            const rows = currentRows.length ? currentRows : [{period:'', teachers:[], orientation:document.getElementById('invigilationOrientation')?.value||'', classKey:currentSectionKey('invigilation')}];
-            rows.forEach((r,i)=>{
-                const [c,s] = (r.classKey || '').split(' - Sec ');
-                html += `<div class="leave-box invigilation-row" data-row-index="${i}" style="margin-bottom:10px;">
-                  <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                    <div class="form-group" style="flex:1;min-width:180px;"><label>Period:</label><select class="invigilation-row-period"><option value="">Select</option>${periods.map(p=>`<option value="${p.id}" ${String(p.id)===String(r.period)?'selected':''}>${p.id} - ${p.time}</option>`).join('')}</select></div>
-                    <div class="form-group" style="flex:1;min-width:180px;"><label>Orientation:</label><select class="inv-row-orientation"><option value="">Select</option>${getBoardOrientations(currentBoard).map(o=>`<option value="${o}" ${o===(r.orientation||'')?'selected':''}>${o}</option>`).join('')}</select></div>
-                    <div class="form-group" style="flex:1;min-width:180px;"><label>Class:</label><select class="inv-row-class"><option value="">Select</option>${getBoardClassOptions(r.orientation||'').map(x=>`<option value="${x}" ${x===c?'selected':''}>${x}</option>`).join('')}</select></div>
-                    <div class="form-group" style="flex:1;min-width:140px;"><label>Section:</label><select class="inv-row-section"><option value="">Select</option>${['A','B','C','D'].map(x=>`<option ${x===s?'selected':''}>${x}</option>`).join('')}</select></div>
-                  </div>
-                  <div class="multi-select-box invigilator-teacher-box">${teachers.map(st=>`<label><input type="checkbox" class="invigilator-check-row" value="${st.name}" ${r.teachers.includes(st.name)?'checked':''}> ${st.name} (${st.subject||'Staff'})</label>`).join('')}</div>
-                  ${i>0?"<button class=\"delete-btn\" type=\"button\" onclick=\"this.closest(\'.invigilation-row\').remove()\">Remove Period</button>":""}
-                </div>`;
-            });
-            html += '</div><button type="button" onclick="addInvigilationPeriodRow()">+ Add Period</button> <button type="button" onclick="saveInvigilationRows()" style="margin-left:8px;">Save Invigilation</button>';
-            box.innerHTML = html;
-            document.querySelectorAll('.inv-row-orientation').forEach(sel=>sel.addEventListener('change',()=>{
-                const row = sel.closest('.invigilation-row'), c = row.querySelector('.inv-row-class'), o = sel.value;
-                c.innerHTML = '<option value="">Select</option>' + getBoardClassOptions(o).map(x=>`<option value="${x}">${x}</option>`).join('');
-            }));
-        }
-
-        function addInvigilationPeriodRow() {
-            const box = document.getElementById('invigilationEditor');
-            if(!box) return;
-            const rows = box.querySelector('#invigilationRows');
-            if(!rows) return;
-            const div = document.createElement('div');
-            div.className = 'leave-box invigilation-row';
-            div.innerHTML = `<div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <div class="form-group" style="flex:1;min-width:180px;"><label>Period:</label><select class="invigilation-row-period"><option value="">Select</option>${periods.map(p=>`<option value="${p.id}">${p.id} - ${p.time}</option>`).join('')}</select></div>
-              <div class="form-group" style="flex:1;min-width:180px;"><label>Orientation:</label><select class="inv-row-orientation"><option value="">Select</option>${getBoardOrientations(currentBoard).map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>
-              <div class="form-group" style="flex:1;min-width:180px;"><label>Class:</label><select class="inv-row-class"><option value="">Select</option></select></div>
-              <div class="form-group" style="flex:1;min-width:140px;"><label>Section:</label><select class="inv-row-section"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-            </div>
-            <div class="multi-select-box">${staffList.filter(st=>staffMatchesBoard(st,currentBoard)).sort((a,b)=>a.name.localeCompare(b.name)).map(st=>`<label><input type="checkbox" class="invigilator-check-row" value="${st.name}"> ${st.name} (${st.subject||'Staff'})</label>`).join('')}</div>
-            <button class="delete-btn" type="button" onclick="this.closest('.invigilation-row').remove()">Remove Period</button>`;
-            rows.appendChild(div);
-            const o = div.querySelector('.inv-row-orientation'), c = div.querySelector('.inv-row-class');
-            o.addEventListener('change',()=>{ c.innerHTML = '<option value="">Select</option>' + getBoardClassOptions(o.value).map(x=>`<option value="${x}">${x}</option>`).join(''); });
-        }
-
-        async function saveInvigilationRows() {
-            const date = document.getElementById('invigilationDate')?.value;
-            if(!date) return alert('Select date first.');
-            if(!invigilationRecords[date]) invigilationRecords[date] = {};
-            if(!invigilationRecords[date][currentBoard]) invigilationRecords[date][currentBoard] = {};
-            const rows = document.querySelectorAll('#invigilationRows .invigilation-row');
-            const newMap = {};
-            let valid = 0;
-            rows.forEach(row => {
-                const period = row.querySelector('.invigilation-row-period')?.value;
-                const orientation = row.querySelector('.inv-row-orientation')?.value || '';
-                const cls = row.querySelector('.inv-row-class')?.value || '';
-                const sec = row.querySelector('.inv-row-section')?.value || '';
-                const teachers = Array.from(row.querySelectorAll('.invigilator-check-row:checked')).map(x=>x.value);
-                if(period && teachers.length){
-                    newMap[period] = { period, orientation, classKey: cls ? (sec ? `${cls} - Sec ${sec}` : cls) : '', teachers };
-                    valid++;
-                }
-            });
-            Object.keys(newMap).forEach(pid => { invigilationRecords[date][currentBoard][pid] = newMap[pid]; });
-            await saveMapDoc('invigilationRecords', `${date}__${currentBoard}`, invigilationRecords[date][currentBoard]);
-            alert(`Invigilation saved (${valid} period(s)). Selected invigilators will automatically appear in substitution.`);
-            renderInvigilationEditor();
-        }
-
-        const _originalHandleLogin = handleLogin;
-        handleLogin = async function() {
-            const result = await _originalHandleLogin.apply(this, arguments);
-            setTimeout(() => {
-                const card = document.getElementById('teacherFloorCard');
-                if(card) card.style.display = isFloorInchargeUser() ? 'block' : 'none';
-                if(currentUser?.role === 'teacher') populateFloorDashboard();
-            }, 250);
-            return result;
-        };
-
-        const _originalViewTeacherSchedule = viewTeacherSchedule;
-        viewTeacherSchedule = function() {
-            _originalViewTeacherSchedule.apply(this, arguments);
-            const date = document.getElementById('tDate')?.value;
-            const box = document.getElementById('tScheduleDisplay');
-            if(!date || !box || !currentUser) return;
-            const day = getDayNameFromDate(date);
-            const duties = [];
-            ['STATE','CBSE'].forEach(b => {
-                const rev = revisionScheduleRecords[date]?.[b] || {};
-                Object.keys(rev).forEach(key => Object.keys(rev[key] || {}).forEach(d => {
-                    if(d === day) Object.keys(rev[key][d] || {}).forEach(pid => {
-                        if((rev[key][d][pid] || []).includes(currentUser.name)){
-                            const p = periods.find(x => String(x.id) === String(pid)) || { time: '' };
-                            duties.push({ period: pid, time: p.time, type: 'Revision Schedule', detail: key });
-                        }
-                    });
-                }));
-                const inv = invigilationRecords[date]?.[b] || {};
-                Object.keys(inv).forEach(pid => {
-                    const arr = Array.isArray(inv[pid]) ? inv[pid] : ((inv[pid]?.teachers) || []);
-                    if(arr.includes(currentUser.name)){
-                        const p = periods.find(x => String(x.id) === String(pid)) || { time: '' };
-                        duties.push({ period: pid, time: p.time, type: 'Invigilation', detail: inv[pid]?.classKey || 'Exam Duty' });
-                    }
-                });
-            });
-            if(duties.length){
-                let h = '<div style="margin-top:18px;"><h4 style="color:#0056b3;">Revision / Invigilation Duties</h4><table><thead><tr><th>Period</th><th>Time</th><th>Duty</th><th>Class / Details</th></tr></thead><tbody>';
-                duties.sort((a,b) => (periods.findIndex(x => String(x.id) === String(a.period))) - (periods.findIndex(x => String(x.id) === String(b.period))));
-                duties.forEach(d => h += `<tr><td><b>${d.period}</b></td><td>${d.time}</td><td>${d.type}</td><td>${d.detail}</td></tr>`);
-                h += '</tbody></table></div>';
-                box.insertAdjacentHTML('beforeend', h);
-            }
-        };
     </script>
 </body>
 </html>
