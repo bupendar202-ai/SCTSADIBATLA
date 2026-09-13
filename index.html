@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sri Chaitanya School - Timetable & Substitution Allotment</title>
+    <title>Sri Chaitanya School - Timetable &amp; Substitution Allotment</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; }
         .header-container { text-align: center; margin-bottom: 20px; border-bottom: 3px solid #0056b3; padding-bottom: 10px; background: #fff; border-radius: 8px; }
@@ -220,7 +220,7 @@ table { max-width:100%; }
             <label>Login As:</label>
             <select id="roleSelect" onchange="updateLoginFields()">
                 <option value="principal">Principal</option>
-                <option value="dean">Deans & Incharges</option>
+                <option value="dean">Deans &amp; Incharges</option>
                 <option value="teacher">Teacher</option>
             </select>
         </div>
@@ -300,7 +300,8 @@ table { max-width:100%; }
                         <option>English</option><option>Math</option><option>Physics</option>
                         <option>Chemistry</option><option>Biology</option><option>Social</option>
                         <option>IT</option><option>Computer</option><option>Wizclub</option>
-                        <option>Art & Crafts</option><option>PET</option><option>Reasoning</option><option>Arithmetic</option>
+                        <option>Art &amp; Crafts</option><option>PET</option><option>Reasoning</option><option>Arithmetic</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div class="form-group" style="flex: 1;"><label>Mobile No:</label><input type="text" id="staffMob"></div>
@@ -381,7 +382,7 @@ table { max-width:100%; }
 
         <!-- Principal Absent Teachers (Leave Requests) View -->
         <div id="p-absent-leaves" class="tab-content" style="display:none;">
-            <h3>Absent Teachers & Leave Records</h3>
+            <h3>Absent Teachers &amp; Leave Records</h3>
             <div class="form-group" style="max-width:300px; margin-bottom:15px;">
                 <label><b>Select Date to Filter Absentees:</b></label>
                 <input type="date" id="pAbsentFilterDate" onchange="renderPrincipalAbsentLeaves()">
@@ -393,7 +394,7 @@ table { max-width:100%; }
     <!-- Dean & Incharges Landing Page -->
     <div id="deanHome" class="module-container">
         <button class="logout-btn" onclick="logout()">Logout</button>
-        <h2>Deans & Incharges Module</h2>
+        <h2>Deans &amp; Incharges Module</h2>
         <p>Select the board timetable you want to open:</p>
         <div class="board-card-grid">
             <div class="board-card" onclick="openManagerBoard('STATE')"><h3>STATE</h3><p>Open STATE BOARD timetables only</p></div>
@@ -412,7 +413,7 @@ table { max-width:100%; }
             <button onclick="openManagerBoard('CBSE')">CBSE</button>
             <span class="current-board" id="deanBoardLabel">Board: CBSE</span>
         </div>
-        <h2>Welcome Deans & Incharges <small id="deanBoardHeading" style="color:#0056b3;"></small></h2>
+        <h2>Welcome Deans &amp; Incharges <small id="deanBoardHeading" style="color:#0056b3;"></small></h2>
         <button id="dualTeacherViewBtn" onclick="openDualTeacherView()" style="margin-bottom:12px;">
             My Teacher Timetable
         </button>
@@ -793,7 +794,7 @@ table { max-width:100%; }
             { id: "0", time: "8:10am - 8:50am", session: "morning" }, 
             { id: "I", time: "8:50am - 9:30am", session: "morning" },
             { id: "II", time: "9:30am - 10:10am", session: "morning" }, 
-            { id: "III", time: "10:10am - 10:50am", session: "morning" },
+            { id: "III", time: "10:10am - 10:50am", session: "morning" }, 
             { id: "IV", time: "11:00am - 11:40am", session: "morning" }, 
             { id: "V", time: "11:40am - 12:20pm", session: "morning" },
             { id: "VI", time: "12:20pm - 1:00pm", session: "lunch" }, 
@@ -1399,7 +1400,7 @@ table { max-width:100%; }
             const day = document.getElementById('ttDay').value;
             if(!fullClassKey || !day) return alert("Select Class and Day first.");
 
-            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "IT", "WIZCLUB", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP"];
+            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "IT", "WIZCLUB", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP", "Other"];
             let html = `<h4>Assigning Timetable for ${fullClassKey} (${day}) - [${currentBoard} BOARD]</h4>`;
             html += `<table><tr><th>Period</th><th>Time</th><th>Subject</th><th>Handling Teacher(s) Selection</th></tr>`;
 
@@ -2298,7 +2299,7 @@ table { max-width:100%; }
             });
 
             let html = `<div id="subMatrixPrintContainer"><div class="print-header"><h2>SRI CHAITANYA SCHOOL</h2><h3>Branch : Adibatla</h3><h4>Final Substitution Allotment: ${dateVal} (${dayName}) - ${currentBoard} BOARD</h4></div>
-            <table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Original Teacher</th><th>Reason / Duty Type</th><th>Class & Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
+            <table><thead><tr><th>S.No</th><th>Period</th><th>Time</th><th>Original Teacher</th><th>Reason / Duty Type</th><th>Class &amp; Subject</th><th>Substitute Teacher Assigned</th><th>Sign</th></tr></thead><tbody>`;
 
             rows.forEach((item, index) => {
                 const key = `${item.period}_${item.class}_${item.absentTeacher}`;
@@ -2447,7 +2448,36 @@ table { max-width:100%; }
             const container = document.getElementById('tScheduleDisplay');
             const isHoliday = (dayTypeRecords[dateVal] === 'holiday');
 
+            // Find all special assignments for this logged-in teacher on this date
             const myXSessions = (xSessionRecords[dateVal] || []).filter(x => x.teacher === currentUser.name);
+
+            // Invigilation duties
+            const myInvigilations = [];
+            ['STATE', 'CBSE'].forEach(b => {
+                (invigilationRecords[dateVal]?.[b] || []).forEach(inv => {
+                    if(inv.teacher === currentUser.name) myInvigilations.push(inv);
+                });
+            });
+
+            // Revision duties
+            const myRevisions = [];
+            ['STATE', 'CBSE'].forEach(b => {
+                const rev = revisionScheduleRecords[dateVal]?.[b] || {};
+                Object.keys(rev).forEach(clsKey => {
+                    Object.keys(rev[clsKey] || {}).forEach(d => {
+                        if(d === dayName) {
+                            Object.keys(rev[clsKey][d] || {}).forEach(pid => {
+                                if((rev[clsKey][d][pid] || []).includes(currentUser.name)) {
+                                    myRevisions.push({ period: pid, classKey: clsKey });
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+
+            // Substitutions where this teacher is assigned as substitute
+            const mySubstitutions = (substitutionRecords[dateVal] || []).filter(s => s.subTeacher === currentUser.name);
 
             let html = `<div id="tPersonalPrintContainer">
                 <div class="print-header">
@@ -2473,17 +2503,43 @@ table { max-width:100%; }
                 });
                 html += `</tbody></table></div>`;
             } else {
-                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Status</th><th>Type</th></tr></thead><tbody>`;
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Duty Assigned</th><th>Schedule Type</th></tr></thead><tbody>`;
 
                 periods.forEach(p => {
+                    const pIndex = periods.findIndex(x => x.id === p.id);
                     let status = teacherStatusRecords[dateVal]?.[currentUser.name]?.[p.id] || teacherWeeklyStatus[currentUser.name]?.[dayName]?.[p.id] || "---";
                     let type = "Free / Unassigned";
 
-                    const xSess = myXSessions.find(xs => getXSessionDutyPeriods(xs.sessionTime).includes(p.id));
-                    if(xSess) {
-                        status = `X Session - Session ${xSess.sessionNumber} (Class: ${xSess.class}, ${xSess.subject})`;
-                        type = `<span style="color:#0056b3; font-weight:bold;">Session Class</span>`;
+                    // Check Invigilation
+                    const invMatch = myInvigilations.find(inv => {
+                        const fromIdx = periods.findIndex(x => String(x.id) === String(inv.fromPeriod));
+                        const toIdx = periods.findIndex(x => String(x.id) === String(inv.toPeriod));
+                        return fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx;
+                    });
+
+                    // Check Revision
+                    const revMatch = myRevisions.find(r => String(r.period) === String(p.id));
+
+                    // Check X-Session
+                    const xSessMatch = myXSessions.find(xs => getXSessionDutyPeriods(xs.sessionTime).includes(p.id));
+
+                    // Check Substitution
+                    const subMatch = mySubstitutions.find(s => String(s.period) === String(p.id));
+
+                    if(invMatch) {
+                        status = `Invigilation Duty (${invMatch.classKey}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
+                        type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation</span>`;
+                    } else if(revMatch) {
+                        status = `Revision Schedule Duty (${revMatch.classKey})`;
+                        type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty</span>`;
+                    } else if(xSessMatch) {
+                        status = `X Session - Session ${xSessMatch.sessionNumber} (Class: ${xSessMatch.class}, ${xSessMatch.subject})`;
+                        type = `<span style="color:#0056b3; font-weight:bold;">X-Session Duty</span>`;
+                    } else if(subMatch) {
+                        status = `${subMatch.class} (Substitution for ${subMatch.absent})`;
+                        type = `<span style="color:red; font-weight:bold;">Substitution</span>`;
                     } else {
+                        // Original Teaching Class from Timetable
                         for(let cls in masterTimetable) {
                             const cell = masterTimetable[cls]?.[dayName]?.[p.id];
                             if(cell) {
@@ -2502,14 +2558,6 @@ table { max-width:100%; }
                                     type = "Original Class";
                                     break;
                                 }
-                            }
-                        }
-
-                        if(substitutionRecords[dateVal]) {
-                            const sub = substitutionRecords[dateVal].find(s => s.period === p.id && s.subTeacher === currentUser.name);
-                            if(sub) {
-                                status = `${sub.class} (Sub for ${sub.absent})`;
-                                type = `<span style="color:red;font-weight:bold;">Substitution</span>`;
                             }
                         }
                     }
@@ -3182,7 +3230,7 @@ table { max-width:100%; }
 
             let html = `<h4>Saved Invigilations (${date} - ${currentBoard} BOARD)</h4>
             <table><thead><tr>
-                <th>S.No</th><th>From Period</th><th>To Period</th><th>Orientation</th><th>Class & Section</th><th>Teacher</th><th>Action</th>
+                <th>S.No</th><th>From Period</th><th>To Period</th><th>Orientation</th><th>Class &amp; Section</th><th>Teacher</th><th>Action</th>
             </tr></thead><tbody>`;
 
             list.forEach((item, idx) => {
