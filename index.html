@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sri Chaitanya School - Timetable &amp; Substitution Allotment</title>
+    <title id="appTitle">SCTS ADB - Timetable &amp; Substitution Allotment</title>
+    <link id="appFavicon" rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230056b3'/><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' fill='%23ffffff' font-size='32' font-family='Arial' font-weight='bold'>SCTS</text></svg>">
+    
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background-color: #f4f6f9; }
-        .header-container { text-align: center; margin-bottom: 20px; border-bottom: 3px solid #0056b3; padding-bottom: 10px; background: #fff; border-radius: 8px; }
-        .main-header { color: red; font-size: 26px; font-weight: bold; margin: 5px 0; }
-        .sub-header { color: blue; font-size: 20px; font-weight: bold; margin: 5px 0; }
-        .sec-sub-header { color: black; font-size: 16px; font-weight: bold; margin: 5px 0; }
+        .header-container { text-align: center; margin-bottom: 20px; border-bottom: 3px solid #0056b3; padding-bottom: 10px; background: #fff; border-radius: 8px; position: relative; }
+        .app-branding { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 5px; }
+        .app-icon-img { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; border: 2px solid #0056b3; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .app-name-tag { font-size: 14px; font-weight: bold; background: #0056b3; color: white; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+        .main-header { color: red; font-size: 26px; font-weight: bold; margin: 2px 0; }
+        .sub-header { color: blue; font-size: 20px; font-weight: bold; margin: 4px 0; }
+        .sec-sub-header { color: black; font-size: 16px; font-weight: bold; margin: 4px 0; }
         
         .module-container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); display: none; }
         .active-module { display: block; }
@@ -62,6 +67,8 @@
         .dual-lang-box { flex: 1; background: #f0f7ff; border: 1px dashed #0056b3; border-radius: 4px; padding: 5px; text-align: left; }
         .dual-lang-label { font-weight: bold; font-size: 11px; color: #0056b3; margin-bottom: 3px; display: block; }
         .dual-lang-box select, .dual-lang-box input { font-size: 11px; padding: 4px; }
+
+        .icon-uploader-container { display: inline-flex; align-items: center; gap: 10px; background: #f8f9fa; padding: 6px 12px; border-radius: 6px; border: 1px dashed #0056b3; }
 
         @media print {
             @page {
@@ -208,7 +215,13 @@ table { max-width:100%; }
 <body>
 
     <div class="header-container">
-        <div class="main-header">SRI CHAITANYA SCHOOL</div>
+        <div class="app-branding">
+            <img id="appIconPreview" class="app-icon-img" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230056b3'/><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' fill='%23ffffff' font-size='32' font-family='Arial' font-weight='bold'>SCTS</text></svg>" alt="SCTS ADB Icon">
+            <div>
+                <span class="app-name-tag">SCTS ADB</span>
+                <div class="main-header">SRI CHAITANYA SCHOOL</div>
+            </div>
+        </div>
         <div class="sub-header">Branch : Adibatla</div>
         <div class="sec-sub-header">Teacher’s Timetable and Substitution Allotment</div>
     </div>
@@ -264,6 +277,7 @@ table { max-width:100%; }
             <button onclick="showTab('p-teacher-tt')">Teacher Timetables</button>
             <button onclick="showTab('p-sub-tt')">Substitution Logs</button>
             <button onclick="showTab('p-absent-leaves')">Absent Teachers (Leave Requests)</button>
+            <button onclick="showTab('p-settings')">App Settings (Icon)</button>
         </div>
 
         <div id="p-staff" class="tab-content active-module">
@@ -316,6 +330,22 @@ table { max-width:100%; }
                 <thead><tr><th>S.No</th><th>Emp ID</th><th>Name</th><th>Board</th><th>Designation</th><th>Subject</th><th>Mobile No</th><th>Action</th></tr></thead>
                 <tbody></tbody>
             </table>
+        </div>
+
+        <!-- Principal Settings Tab (Upload App Icon) -->
+        <div id="p-settings" class="tab-content" style="display:none;">
+            <h3>SCTS ADB - App Icon Customization</h3>
+            <div class="leave-box" style="max-width:560px;">
+                <p>Upload a custom logo image to be used as the <b>SCTS ADB</b> application icon and browser tab favicon.</p>
+                <div style="display:flex; align-items:center; gap:15px; margin: 15px 0;">
+                    <img id="settingsIconPreview" class="app-icon-img" style="width:72px; height:72px;" src="" alt="Icon Preview">
+                    <div>
+                        <input type="file" id="appIconFileInput" accept="image/*" onchange="handleAppIconUpload(event)">
+                        <div style="font-size:11px; color:#666; margin-top:4px;">Supports PNG, JPG, SVG, WebP. Automatically synchronized across devices.</div>
+                    </div>
+                </div>
+                <button type="button" class="delete-btn" onclick="resetDefaultAppIcon()">Reset to Default Icon</button>
+            </div>
         </div>
         
         <!-- Principal Class Timetable View -->
@@ -668,15 +698,43 @@ table { max-width:100%; }
             </div>
         </div>
 
-        <!-- 7. Study Hours -->
+        <!-- 7. Study Hours (Updated with S.No, Day selection & Multi-Teacher selection) -->
         <div id="d-study" class="tab-content" style="display:none;">
-            <h3>Study Hours</h3>
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;">
-                <div class="form-group" style="flex:1; min-width:180px;"><label>Orientation:</label><select id="studyOrientation" onchange="updateStudyClassOptions()"></select></div>
-                <div class="form-group" style="flex:1; min-width:180px;"><label>Class:</label><select id="studyClass" onchange="renderStudyHoursTimetable()"></select></div>
-                <div class="form-group" style="flex:1; min-width:180px;"><label>Section:</label><select id="studySection" onchange="renderStudyHoursTimetable()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+            <h3>Study Hours Timetable Management</h3>
+            <div style="background: #eef5ff; border: 1px solid #b6d4fe; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
+                <h4 style="margin-top:0; color:#0056b3;">Configure Study Hour Schedule</h4>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <div class="form-group" style="flex:1; min-width:160px;">
+                        <label>Orientation:</label>
+                        <select id="studyOrientation" onchange="updateStudyClassOptions()"></select>
+                    </div>
+                    <div class="form-group" style="flex:1; min-width:160px;">
+                        <label>Class:</label>
+                        <select id="studyClass" onchange="onStudyClassOrDayChange()"></select>
+                    </div>
+                    <div class="form-group" style="flex:1; min-width:120px;">
+                        <label>Section:</label>
+                        <select id="studySection" onchange="onStudyClassOrDayChange()">
+                            <option value="">Select</option>
+                            <option>A</option><option>B</option><option>C</option><option>D</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1; min-width:160px;">
+                        <label>Select Day (Mon - Sat):</label>
+                        <select id="studyDaySelect" onchange="onStudyClassOrDayChange()">
+                            <option value="">Select Day</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <div id="studyHoursContainer"></div>
+            <div id="studyHoursSavedList" style="margin-top:25px;"></div>
         </div>
     </div>
 
@@ -790,7 +848,7 @@ table { max-width:100%; }
 
         let staffList = [];
         let masterTimetable = {};
-        let allTimetablesRaw = {}; // Stores timetables across BOTH boards { CBSE: {...}, STATE: {...} }
+        let allTimetablesRaw = {}; 
         let teacherWeeklyStatus = {};
         let teacherStatusRecords = {};
         let dayTypeRecords = {};
@@ -808,6 +866,8 @@ table { max-width:100%; }
         let appPageIndex = -1;
 
         const PRINCIPAL_ROLE = 'principal';
+
+        const DEFAULT_APP_ICON = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230056b3'/><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' fill='%23ffffff' font-size='32' font-family='Arial' font-weight='bold'>SCTS</text></svg>";
 
         function staffEmail(empId) { return `${String(empId).trim().toLowerCase()}@scadibatla.local`; }
 
@@ -843,6 +903,61 @@ table { max-width:100%; }
             "Room 401", "Room 402", "Room 403", "Room 404", "Room 405", "Room 406",
             "Room 407", "Room 408", "Room 409", "Room 410", "Room 411"
         ];
+
+        // Global App Icon & Branding Loader
+        async function loadAppIconSetting() {
+            try {
+                const doc = await db.collection('appSettings').doc('branding').get();
+                let iconUrl = DEFAULT_APP_ICON;
+                if (doc.exists && doc.data().iconDataUrl) {
+                    iconUrl = doc.data().iconDataUrl;
+                }
+                applyAppIcon(iconUrl);
+            } catch(e) {
+                console.warn('Using default icon:', e);
+                applyAppIcon(DEFAULT_APP_ICON);
+            }
+        }
+
+        function applyAppIcon(iconDataUrl) {
+            const preview = document.getElementById('appIconPreview');
+            const setPreview = document.getElementById('settingsIconPreview');
+            const favicon = document.getElementById('appFavicon');
+            if (preview) preview.src = iconDataUrl;
+            if (setPreview) setPreview.src = iconDataUrl;
+            if (favicon) favicon.href = iconDataUrl;
+        }
+
+        function handleAppIconUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) return alert('Please upload an image file.');
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const dataUrl = e.target.result;
+                try {
+                    await db.collection('appSettings').doc('branding').set({ iconDataUrl: dataUrl, appName: 'SCTS ADB' }, { merge: true });
+                    applyAppIcon(dataUrl);
+                    alert('SCTS ADB App Icon updated successfully!');
+                } catch(err) {
+                    console.error(err);
+                    alert('Error saving icon: ' + err.message);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function resetDefaultAppIcon() {
+            if (!confirm('Reset app icon to default?')) return;
+            try {
+                await db.collection('appSettings').doc('branding').delete();
+                applyAppIcon(DEFAULT_APP_ICON);
+                alert('Default app icon restored.');
+            } catch(e) {
+                alert('Error resetting: ' + e.message);
+            }
+        }
 
         async function loadDataForRole(role) {
             staffList = []; masterTimetable = {}; allTimetablesRaw = { CBSE: {}, STATE: {} };
@@ -984,7 +1099,7 @@ table { max-width:100%; }
             document.querySelectorAll('#principalModule .nav-tabs button').forEach(el => el.classList.remove('active'));
             const tab = document.getElementById(tabId); if(tab) tab.style.display = 'block';
             const buttons = document.querySelectorAll('#principalModule .nav-tabs button');
-            const map = {'p-staff':0,'p-class-tt':1,'p-teacher-tt':2,'p-sub-tt':3,'p-absent-leaves':4};
+            const map = {'p-staff':0,'p-class-tt':1,'p-teacher-tt':2,'p-sub-tt':3,'p-absent-leaves':4,'p-settings':5};
             if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
             if(tabId === 'p-teacher-tt') populatePrincipalWeeklyTeacherDropdown();
             if(tabId === 'p-absent-leaves') {
@@ -1071,7 +1186,7 @@ table { max-width:100%; }
                     </style>
                 </head>
                 <body>
-                    <h3 style="text-align:center;">SRI CHAITANYA SCHOOL - ADIBATLA</h3>
+                    <h3 style="text-align:center;">SRI CHAITANYA SCHOOL - ADIBATLA (SCTS ADB)</h3>
                     ${cloneTable.outerHTML}
                 </body>
                 </html>
@@ -1399,7 +1514,6 @@ table { max-width:100%; }
             return sec ? `${cls} - Sec ${sec}` : cls;
         }
 
-        // ADDITIONAL POINT 1: Check whether a subject requires dual teachers (including WIZCLUB)
         function isDualSubject(sub, board = currentBoard) {
             const s = String(sub || '').trim().toUpperCase();
             const b = String(board || '').trim().toUpperCase();
@@ -1441,7 +1555,6 @@ table { max-width:100%; }
         function getCrossClassPeriodClashes(day, periodId, currentClassKey) {
             const clashMap = {};
 
-            // Check within current board
             const currentBoardTT = masterTimetable || {};
             for (const cls in currentBoardTT) {
                 if (cls === currentClassKey) continue;
@@ -1458,7 +1571,6 @@ table { max-width:100%; }
                 }
             }
 
-            // Check across opposite board
             const otherBoard = currentBoard === 'CBSE' ? 'STATE' : 'CBSE';
             const otherBoardTT = (allTimetablesRaw && allTimetablesRaw[otherBoard]) ? allTimetablesRaw[otherBoard] : {};
             for (const cls in otherBoardTT) {
@@ -2086,7 +2198,6 @@ table { max-width:100%; }
             return savedSubstitutionsForDate(date).some((r,i) => i !== ignoreIndex && r.subTeacher === teacherName && String(r.period) === String(period));
         }
 
-        // ADDITIONAL POINT 2: Toggle single vs dual teacher dropdowns in X Session based on SL selection
         function onXSSubjectChange() {
             const sub = document.getElementById('xsSubject')?.value || '';
             const singleWrap = document.getElementById('xsSingleTeacherWrap');
@@ -2126,7 +2237,6 @@ table { max-width:100%; }
             renderXSessionScheduleList();
         }
 
-        // ADDITIONAL POINT 2: Save dual teachers when SL is selected in X Session
         async function saveXSessionSchedule() {
             const date = document.getElementById('xsDate').value;
             const cls = document.getElementById('xsClass').value;
@@ -3239,7 +3349,7 @@ table { max-width:100%; }
         function updateStudyClassOptions() {
             const o = document.getElementById('studyOrientation')?.value;
             fillClassSelectFor('studyClass', o);
-            renderStudyHoursTimetable();
+            onStudyClassOrDayChange();
         }
 
         function currentSectionKey(prefix) {
@@ -3251,12 +3361,10 @@ table { max-width:100%; }
         function getExamPeriodBlockReason(dateVal, teacherName, periodId, ignoreClassKey = null) {
             if(!dateVal || !teacherName || !periodId) return null;
 
-            // Check X Session
             const xSessions = xSessionRecords[dateVal] || [];
             const xs = xSessions.find(x => teacherMatchesXSessionRecord(x, teacherName) && getXSessionDutyPeriods(x.sessionTime).includes(String(periodId)));
             if(xs) return `X Session Duty (${xs.class})`;
 
-            // Check Invigilation
             const pIndex = periods.findIndex(p => String(p.id) === String(periodId));
             if(pIndex !== -1) {
                 for(const b of ['STATE', 'CBSE']) {
@@ -3273,7 +3381,6 @@ table { max-width:100%; }
                 }
             }
 
-            // Check Revision
             const day = getDayNameFromDate(dateVal);
             for(const b of ['STATE', 'CBSE']) {
                 const rev = revisionScheduleRecords[dateVal]?.[b] || {};
@@ -3618,24 +3725,203 @@ table { max-width:100%; }
             box.innerHTML = html;
         }
 
-        function renderStudyHoursTimetable() {
-            const key=currentSectionKey('study');
-            const box=document.getElementById('studyHoursContainer');
-            if(!box) return;
-            if(!key){box.innerHTML='';return;}
-            let html=`<div><h4>Study Hours - ${key}</h4><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
-            periods.forEach(p=>html+=`<th>P-${p.id}<br><small>${p.time}</small></th>`);
-            html+='</tr></thead><tbody>';
-            days.forEach(day=>{html+=`<tr><td><b>${day}</b></td>`;periods.forEach(p=>{const v=studyHoursRecords[currentBoard]?.[key]?.[day]?.[p.id] || '---';html+=`<td><select onchange="saveStudyHourCell('${key}','${day}','${p.id}',this.value)"><option ${v==='---'?'selected':''}>---</option><option ${v==='Study Hour'?'selected':''}>Study Hour</option><option ${v==='Self Study'?'selected':''}>Self Study</option></select></td>`});html+='</tr>';});
-            box.innerHTML=html+'</tbody></table></div></div>';
+        // ==========================================
+        // ADDITIONAL POINT 1: ENHANCED STUDY HOURS MODULE
+        // Options: S.No, Day (Mon - Sat), Multi-Teacher selection
+        // ==========================================
+        function onStudyClassOrDayChange() {
+            renderStudyHoursTimetable();
+            renderStudyHoursSavedList();
         }
 
-        async function saveStudyHourCell(key,day,p,val){
-            if(!studyHoursRecords[currentBoard])studyHoursRecords[currentBoard]={};
-            if(!studyHoursRecords[currentBoard][key])studyHoursRecords[currentBoard][key]={};
-            if(!studyHoursRecords[currentBoard][key][day])studyHoursRecords[currentBoard][key][day]={};
-            studyHoursRecords[currentBoard][key][day][p]=val;
+        function renderStudyHoursTimetable() {
+            const key = currentSectionKey('study');
+            const day = document.getElementById('studyDaySelect')?.value || '';
+            const box = document.getElementById('studyHoursContainer');
+            if(!box) return;
+
+            if(!key || !day) {
+                box.innerHTML = '<p style="color:#777;">Please select Orientation, Class, Section, and a Day (Monday to Saturday) to configure Study Hour periods and allot teachers.</p>';
+                return;
+            }
+
+            const currentStudyBoardData = studyHoursRecords[currentBoard] || {};
+            const dayRecord = (currentStudyBoardData[key] && currentStudyBoardData[key][day]) || {};
+
+            const eligibleTeachers = staffList
+                .filter(st => staffMatchesBoard(st, currentBoard))
+                .sort((a, b) => a.name.localeCompare(b.name));
+
+            let html = `<div id="studyHoursEditorTable">
+                <h4>Configure Study Hours: <b>${key}</b> - <span style="color:#0056b3;">${day}</span> [${currentBoard} BOARD]</h4>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:45px;">S.No</th>
+                                <th style="width:75px;">Period</th>
+                                <th style="width:130px;">Time</th>
+                                <th style="width:160px;">Study Hour Type</th>
+                                <th>Select Teacher(s) (Multi-Select Available)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            periods.forEach((p, idx) => {
+                const pData = dayRecord[p.id] || { type: '---', teachers: [] };
+                const curType = pData.type || (typeof pData === 'string' ? pData : '---');
+                const curTeachers = Array.isArray(pData.teachers) ? pData.teachers : [];
+
+                let teacherCheckboxes = `<div class="multi-select-box" style="max-height:100px;">`;
+                eligibleTeachers.forEach(st => {
+                    const isChecked = curTeachers.includes(st.name);
+                    teacherCheckboxes += `<label>
+                        <input type="checkbox" class="study-teach-chk" data-period="${p.id}" value="${st.name}" ${isChecked ? 'checked' : ''}>
+                        ${st.name} (${st.subject || 'Staff'})
+                    </label>`;
+                });
+                teacherCheckboxes += `</div>`;
+
+                html += `<tr>
+                    <td><b>${idx + 1}</b></td>
+                    <td><b>${p.id}</b></td>
+                    <td>${p.time}</td>
+                    <td>
+                        <select id="study_type_${p.id}" style="font-size:11px; padding:4px;">
+                            <option value="---" ${curType === '---' ? 'selected' : ''}>---</option>
+                            <option value="Study Hour" ${curType === 'Study Hour' ? 'selected' : ''}>Study Hour</option>
+                            <option value="Self Study" ${curType === 'Self Study' ? 'selected' : ''}>Self Study</option>
+                        </select>
+                    </td>
+                    <td>${teacherCheckboxes}</td>
+                </tr>`;
+            });
+
+            html += `</tbody>
+                    </table>
+                </div>
+                <button type="button" style="margin-top:12px;" onclick="saveStudyHoursForDay()">Save Study Hours Schedule</button>
+            </div>`;
+
+            box.innerHTML = html;
+        }
+
+        async function saveStudyHoursForDay() {
+            const key = currentSectionKey('study');
+            const day = document.getElementById('studyDaySelect')?.value;
+            if(!key || !day) return alert('Select Orientation, Class, Section and Day first.');
+
+            if(!studyHoursRecords[currentBoard]) studyHoursRecords[currentBoard] = {};
+            if(!studyHoursRecords[currentBoard][key]) studyHoursRecords[currentBoard][key] = {};
+            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key][day] = {};
+
+            periods.forEach(p => {
+                const typeVal = document.getElementById(`study_type_${p.id}`)?.value || '---';
+                const selectedTeachers = Array.from(document.querySelectorAll(`.study-teach-chk[data-period="${p.id}"]:checked`)).map(cb => cb.value);
+
+                studyHoursRecords[currentBoard][key][day][p.id] = {
+                    type: typeVal,
+                    teachers: selectedTeachers
+                };
+            });
+
             await saveMapDoc('studyHoursRecords', currentBoard, studyHoursRecords[currentBoard]);
+            alert(`Study Hours Schedule for ${key} on ${day} saved successfully!`);
+            renderStudyHoursSavedList();
+        }
+
+        function renderStudyHoursSavedList() {
+            const box = document.getElementById('studyHoursSavedList');
+            if(!box) return;
+
+            const currentStudyBoardData = studyHoursRecords[currentBoard] || {};
+            let rows = [];
+
+            Object.keys(currentStudyBoardData).forEach(clsKey => {
+                Object.keys(currentStudyBoardData[clsKey] || {}).forEach(dayName => {
+                    Object.keys(currentStudyBoardData[clsKey][dayName] || {}).forEach(pId => {
+                        const cell = currentStudyBoardData[clsKey][dayName][pId];
+                        const type = typeof cell === 'string' ? cell : (cell?.type || '---');
+                        const teachers = Array.isArray(cell?.teachers) ? cell.teachers : [];
+
+                        if(type !== '---' || teachers.length > 0) {
+                            rows.push({
+                                classKey: clsKey,
+                                day: dayName,
+                                period: pId,
+                                type: type,
+                                teachers: teachers.join(', ') || '---'
+                            });
+                        }
+                    });
+                });
+            });
+
+            if(!rows.length) {
+                box.innerHTML = '<p style="color:#777;">No saved study hour records found for this board.</p>';
+                return;
+            }
+
+            let html = `<h4>Saved Study Hours Records (${currentBoard} BOARD)</h4>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:45px;">S.No</th>
+                            <th>Class &amp; Section</th>
+                            <th>Day</th>
+                            <th>Period</th>
+                            <th>Study Hour Type</th>
+                            <th>Allotted Teacher(s)</th>
+                            <th class="no-print" style="width:140px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            rows.forEach((r, idx) => {
+                html += `<tr>
+                    <td><b>${idx + 1}</b></td>
+                    <td><b>${r.classKey}</b></td>
+                    <td>${r.day}</td>
+                    <td><b>${r.period}</b></td>
+                    <td>${r.type}</td>
+                    <td style="color:#0056b3; font-weight:bold;">${r.teachers}</td>
+                    <td class="no-print">
+                        <button type="button" class="edit-btn" onclick="editStudyHoursEntry('${r.classKey}', '${r.day}')">Edit Day</button>
+                        <button type="button" class="delete-btn" onclick="deleteStudyHoursEntry('${r.classKey}', '${r.day}', '${r.period}')">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            box.innerHTML = html;
+        }
+
+        function editStudyHoursEntry(classKey, day) {
+            const [cls, sec] = classKey.split(' - Sec ');
+            let matchedOrient = "";
+            for(const orient in classOpts) {
+                if(classOpts[orient].includes(cls)) { matchedOrient = orient; break; }
+            }
+            if(matchedOrient) {
+                document.getElementById('studyOrientation').value = matchedOrient;
+                updateStudyClassOptions();
+            }
+            document.getElementById('studyClass').value = cls;
+            document.getElementById('studySection').value = sec || '';
+            document.getElementById('studyDaySelect').value = day;
+            renderStudyHoursTimetable();
+            window.scrollTo({ top: 220, behavior: 'smooth' });
+        }
+
+        async function deleteStudyHoursEntry(classKey, day, period) {
+            if(!confirm(`Remove study hours assignment for ${classKey} on ${day} (Period ${period})?`)) return;
+            if(studyHoursRecords[currentBoard]?.[classKey]?.[day]?.[period]) {
+                delete studyHoursRecords[currentBoard][classKey][day][period];
+                await saveMapDoc('studyHoursRecords', currentBoard, studyHoursRecords[currentBoard]);
+                renderStudyHoursTimetable();
+                renderStudyHoursSavedList();
+            }
         }
 
         function populateXSessionAndExamControls() {
@@ -3644,6 +3930,7 @@ table { max-width:100%; }
             updateRevisionClassOptions(); 
             updateStudyClassOptions();
             initInvigilationControls();
+            renderStudyHoursSavedList();
         }
 
         function buildClassWeekTable(fullClassKey, title) {
@@ -3893,6 +4180,11 @@ table { max-width:100%; }
             });
             box.innerHTML=html;
         }
+
+        // Initialize branding on boot
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAppIconSetting();
+        });
     </script>
 </body>
 </html>
