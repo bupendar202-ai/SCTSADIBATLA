@@ -537,7 +537,7 @@ table { max-width:100%; }
                     </div>
                     <div class="form-group" style="flex:1; min-width:160px;">
                         <label>Subject:</label>
-                        <select id="xsSubject">
+                        <select id="xsSubject" onchange="onXSSubjectChange()">
                             <option value="">Select Subject</option>
                             <option value="FL">FL</option><option value="SL">SL</option><option value="TL">TL</option>
                             <option value="Math">Math</option><option value="Physics">Physics</option>
@@ -565,11 +565,31 @@ table { max-width:100%; }
                             <option value="afternoon">Afternoon (1:00pm - 1:40pm to Last Period)</option>
                         </select>
                     </div>
-                    <div class="form-group" style="flex:1; min-width:200px;">
+                    
+                    <!-- Single Teacher Wrapper (for Non-SL Subjects) -->
+                    <div class="form-group" id="xsSingleTeacherWrap" style="flex:1; min-width:200px;">
                         <label>Handling Teacher:</label>
                         <select id="xsTeacherSelect">
                             <option value="">Select Teacher</option>
                         </select>
+                    </div>
+
+                    <!-- Dual Teacher Wrapper (when SL is selected in X Session) -->
+                    <div class="form-group" id="xsDualTeacherWrap" style="flex:2; min-width:320px; display:none;">
+                        <div class="dual-lang-row">
+                            <div class="dual-lang-box">
+                                <span class="dual-lang-label">Telugu Teacher:</span>
+                                <select id="xsTeacherTeluguSelect">
+                                    <option value="">Select Telugu Teacher</option>
+                                </select>
+                            </div>
+                            <div class="dual-lang-box">
+                                <span class="dual-lang-label">Hindi Teacher:</span>
+                                <select id="xsTeacherHindiSelect">
+                                    <option value="">Select Hindi Teacher</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button onclick="saveXSessionSchedule()" style="margin-top: 10px;">Allot X Session</button>
@@ -1379,9 +1399,11 @@ table { max-width:100%; }
             return sec ? `${cls} - Sec ${sec}` : cls;
         }
 
+        // ADDITIONAL POINT 1: Check whether a subject requires dual teachers (including WIZCLUB)
         function isDualSubject(sub, board = currentBoard) {
             const s = String(sub || '').trim().toUpperCase();
             const b = String(board || '').trim().toUpperCase();
+            if (s === 'WIZCLUB') return true;
             if (b === 'STATE') {
                 return (s === 'FL' || s === 'SL');
             } else {
@@ -1389,12 +1411,25 @@ table { max-width:100%; }
             }
         }
 
+        function getDualLabels(sub) {
+            const s = String(sub || '').trim().toUpperCase();
+            if (s === 'WIZCLUB') {
+                return { label1: "Wizclub Teacher 1", label2: "Wizclub Teacher 2", defLang1: "Wizclub", defLang2: "Wizclub" };
+            }
+            return { label1: "Teacher 1 (e.g. Telugu)", label2: "Teacher 2 (e.g. Hindi / Subject)", defLang1: "Telugu", defLang2: "Hindi" };
+        }
+
         function onSubjectSelectChanged(periodId, fullClassKey, day) {
             const subVal = document.getElementById(`sub_${periodId}`).value;
             const dualWrap = document.getElementById(`dual_wrap_${periodId}`);
             const singleWrap = document.getElementById(`single_teach_wrap_${periodId}`);
+            const lbl1 = document.getElementById(`dual_lbl1_${periodId}`);
+            const lbl2 = document.getElementById(`dual_lbl2_${periodId}`);
 
             if (isDualSubject(subVal, currentBoard)) {
+                const labels = getDualLabels(subVal);
+                if (lbl1) lbl1.innerText = labels.label1;
+                if (lbl2) lbl2.innerText = labels.label2;
                 dualWrap.style.display = 'flex';
                 singleWrap.style.display = 'none';
             } else {
@@ -1403,13 +1438,8 @@ table { max-width:100%; }
             }
         }
 
-        /**
-         * REQUIREMENT 1 & 2:
-         * Returns an object mapping teacherName -> detailed conflict reason string across ANY other class 
-         * in the active board AND opposite board (if teacher is assigned there on the same day & period).
-         */
         function getCrossClassPeriodClashes(day, periodId, currentClassKey) {
-            const clashMap = {}; // teacherName: "Clashes with Class XYZ (CBSE Board)"
+            const clashMap = {};
 
             // Check within current board
             const currentBoardTT = masterTimetable || {};
@@ -1428,7 +1458,7 @@ table { max-width:100%; }
                 }
             }
 
-            // Check across opposite board (Rule 2: BOTH board teachers locked across state & cbse)
+            // Check across opposite board
             const otherBoard = currentBoard === 'CBSE' ? 'STATE' : 'CBSE';
             const otherBoardTT = (allTimetablesRaw && allTimetablesRaw[otherBoard]) ? allTimetablesRaw[otherBoard] : {};
             for (const cls in otherBoardTT) {
@@ -1465,6 +1495,7 @@ table { max-width:100%; }
                 };
                 
                 let isDual = isDualSubject(currentAssignment.subject, currentBoard);
+                const labels = getDualLabels(currentAssignment.subject);
 
                 let subjSelect = `<select id="sub_${p.id}" onchange="onSubjectSelectChanged('${p.id}', '${fullClassKey}', '${day}')"><option value="">Select</option>` + 
                     subjects.map(s => `<option value="${s}" ${currentAssignment.subject === s ? 'selected' : ''}>${s}</option>`).join('') + `</select>`;
@@ -1477,7 +1508,6 @@ table { max-width:100%; }
                         const isSelected = selectedName === st.name;
                         const clashReason = clashMap[st.name];
                         if (clashReason && !isSelected) {
-                            // Block teacher: disabled with note
                             opts += `<option value="${st.name}" disabled style="color:#aaa;">${st.name} (${st.subject}) - [Blocked: ${clashReason}]</option>`;
                         } else {
                             opts += `<option value="${st.name}" ${isSelected ? 'selected' : ''}>${st.name} (${st.subject})</option>`;
@@ -1489,14 +1519,14 @@ table { max-width:100%; }
                 let dualFields = `
                     <div id="dual_wrap_${p.id}" class="dual-lang-row" style="display:${isDual ? 'flex' : 'none'};">
                         <div class="dual-lang-box">
-                            <span class="dual-lang-label">Teacher 1 (e.g. Telugu)</span>
-                            <input type="hidden" id="lang1_${p.id}" value="Telugu">
+                            <span class="dual-lang-label" id="dual_lbl1_${p.id}">${labels.label1}</span>
+                            <input type="hidden" id="lang1_${p.id}" value="${currentAssignment.lang1 || labels.defLang1}">
                             <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Select Teacher 1:</label>
                             <select id="teach1_${p.id}">${buildTeacherOptions(currentAssignment.teacher1 || currentAssignment.teacher)}</select>
                         </div>
                         <div class="dual-lang-box">
-                            <span class="dual-lang-label">Teacher 2 (e.g. Hindi / Subject)</span>
-                            <input type="hidden" id="lang2_${p.id}" value="Hindi">
+                            <span class="dual-lang-label" id="dual_lbl2_${p.id}">${labels.label2}</span>
+                            <input type="hidden" id="lang2_${p.id}" value="${currentAssignment.lang2 || labels.defLang2}">
                             <label style="font-size:10px; font-weight:bold; color:#333; margin-top:2px;">Select Teacher 2:</label>
                             <select id="teach2_${p.id}">${buildTeacherOptions(currentAssignment.teacher2)}</select>
                         </div>
@@ -1525,7 +1555,6 @@ table { max-width:100%; }
             if(!masterTimetable[fullClassKey]) masterTimetable[fullClassKey] = {};
             if(!masterTimetable[fullClassKey][day]) masterTimetable[fullClassKey][day] = {};
 
-            // Validation guard: Ensure no period has blocked clashing teacher newly picked
             for(const p of periods) {
                 const sub = document.getElementById(`sub_${p.id}`).value;
                 const isDual = isDualSubject(sub, currentBoard);
@@ -1536,6 +1565,7 @@ table { max-width:100%; }
                     const t2 = document.getElementById(`teach2_${p.id}`)?.value || '';
                     if(t1 && clashMap[t1]) return alert(`Conflict: ${t1} is already ${clashMap[t1]} during Period ${p.id}. Choose another teacher.`);
                     if(t2 && clashMap[t2]) return alert(`Conflict: ${t2} is already ${clashMap[t2]} during Period ${p.id}. Choose another teacher.`);
+                    if(t1 && t2 && t1 === t2) return alert(`Please choose two distinct teachers for Period ${p.id}.`);
                 } else {
                     const teach = document.getElementById(`teach_${p.id}`)?.value || '';
                     if(teach && clashMap[teach]) return alert(`Conflict: ${teach} is already ${clashMap[teach]} during Period ${p.id}. Choose another teacher.`);
@@ -1545,11 +1575,12 @@ table { max-width:100%; }
             periods.forEach(p => {
                 const sub = document.getElementById(`sub_${p.id}`).value;
                 const isDual = isDualSubject(sub, currentBoard);
+                const labels = getDualLabels(sub);
 
                 if (isDual) {
-                    const l1 = document.getElementById(`lang1_${p.id}`)?.value || 'Telugu';
+                    const l1 = document.getElementById(`lang1_${p.id}`)?.value || labels.defLang1;
                     const t1 = document.getElementById(`teach1_${p.id}`)?.value || '';
-                    const l2 = document.getElementById(`lang2_${p.id}`)?.value || 'Hindi';
+                    const l2 = document.getElementById(`lang2_${p.id}`)?.value || labels.defLang2;
                     const t2 = document.getElementById(`teach2_${p.id}`)?.value || '';
                     masterTimetable[fullClassKey][day][p.id] = { 
                         subject: sub, 
@@ -1609,7 +1640,10 @@ table { max-width:100%; }
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
-                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${cell.lang1 || 'Telugu'}: ${cell.teacher1 || cell.teacher || '---'}<br>${cell.lang2 || 'Hindi'}: ${cell.teacher2 || '---'}</small></td>`;
+                            const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                            const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
+                            const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
+                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
@@ -1664,7 +1698,6 @@ table { max-width:100%; }
                 html += `<tr id="tw_row_${dIdx}"><td><b>${day}</b></td>`;
                 periods.forEach(p => {
                     let assignedClass = "";
-                    // Search across masterTimetable or across BOTH boards if teacher deals both
                     const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
                     for(const b of boardsToSearch) {
                         const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
@@ -1672,11 +1705,14 @@ table { max-width:100%; }
                             const cell = tt[cls]?.[day]?.[p.id];
                             if(cell) {
                                 if(cell.isDual) {
+                                    const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
-                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${cell.lang1 || 'Telugu'})`;
+                                        const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
-                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${cell.lang2 || 'Hindi'})`;
+                                        const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
@@ -1803,11 +1839,14 @@ table { max-width:100%; }
                                 const cell = tt[cls]?.[dayName]?.[p.id];
                                 if(cell) {
                                     if(cell.isDual) {
+                                        const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === st.name || cell.teacher === st.name) {
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${cell.lang1 || 'Telugu'})`;
+                                            const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
                                             break;
                                         } else if(cell.teacher2 === st.name) {
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${cell.lang2 || 'Hindi'})`;
+                                            const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
                                             break;
                                         }
                                     } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
@@ -2047,28 +2086,78 @@ table { max-width:100%; }
             return savedSubstitutionsForDate(date).some((r,i) => i !== ignoreIndex && r.subTeacher === teacherName && String(r.period) === String(period));
         }
 
+        // ADDITIONAL POINT 2: Toggle single vs dual teacher dropdowns in X Session based on SL selection
+        function onXSSubjectChange() {
+            const sub = document.getElementById('xsSubject')?.value || '';
+            const singleWrap = document.getElementById('xsSingleTeacherWrap');
+            const dualWrap = document.getElementById('xsDualTeacherWrap');
+            if (sub === 'SL') {
+                if (singleWrap) singleWrap.style.display = 'none';
+                if (dualWrap) dualWrap.style.display = 'block';
+            } else {
+                if (singleWrap) singleWrap.style.display = 'block';
+                if (dualWrap) dualWrap.style.display = 'none';
+            }
+        }
+
         function populateXSessionControls() {
             const sel = document.getElementById('xsTeacherSelect');
-            if(!sel) return;
-            sel.innerHTML = '<option value="">Select Teacher</option>';
-            staffList.filter(st => staffMatchesBoard(st)).sort((a,b) => a.name.localeCompare(b.name)).forEach(st => {
-                sel.innerHTML += `<option value="${st.name}">${st.name} (${st.subject})</option>`;
-            });
+            const selTelugu = document.getElementById('xsTeacherTeluguSelect');
+            const selHindi = document.getElementById('xsTeacherHindiSelect');
+
+            const optionsHTML = '<option value="">Select Teacher</option>' + 
+                staffList.filter(st => staffMatchesBoard(st)).sort((a,b) => a.name.localeCompare(b.name)).map(st => 
+                    `<option value="${st.name}">${st.name} (${st.subject})</option>`
+                ).join('');
+
+            if(sel) sel.innerHTML = optionsHTML;
+            if(selTelugu) selTelugu.innerHTML = '<option value="">Select Telugu Teacher</option>' + 
+                staffList.filter(st => staffMatchesBoard(st)).sort((a,b) => a.name.localeCompare(b.name)).map(st => 
+                    `<option value="${st.name}">${st.name} (${st.subject})</option>`
+                ).join('');
+            if(selHindi) selHindi.innerHTML = '<option value="">Select Hindi Teacher</option>' + 
+                staffList.filter(st => staffMatchesBoard(st)).sort((a,b) => a.name.localeCompare(b.name)).map(st => 
+                    `<option value="${st.name}">${st.name} (${st.subject})</option>`
+                ).join('');
+
             const dInput = document.getElementById('xsDate');
             if(dInput && !dInput.value) dInput.value = new Date().toISOString().slice(0,10);
+            onXSSubjectChange();
             renderXSessionScheduleList();
         }
 
+        // ADDITIONAL POINT 2: Save dual teachers when SL is selected in X Session
         async function saveXSessionSchedule() {
             const date = document.getElementById('xsDate').value;
             const cls = document.getElementById('xsClass').value;
             const sub = document.getElementById('xsSubject').value;
             const sNum = document.getElementById('xsSessionNum').value;
             const sTime = document.getElementById('xsSessionTime').value;
-            const teacher = document.getElementById('xsTeacherSelect').value;
 
-            if(!date || !cls || !sub || !sNum || !sTime || !teacher) {
-                return alert('Please fill in Date, Class, Subject, Session Number, Session Time, and Handling Teacher.');
+            if(!date || !cls || !sub || !sNum || !sTime) {
+                return alert('Please fill in Date, Class, Subject, Session Number, and Session Time.');
+            }
+
+            let teacher = '';
+            let isDual = (sub === 'SL');
+            let teacherTelugu = '';
+            let teacherHindi = '';
+
+            if (isDual) {
+                teacherTelugu = document.getElementById('xsTeacherTeluguSelect')?.value || '';
+                teacherHindi = document.getElementById('xsTeacherHindiSelect')?.value || '';
+                if (!teacherTelugu || !teacherHindi) {
+                    return alert('Please select both Telugu and Hindi teachers for SL X Session.');
+                }
+                if (teacherTelugu === teacherHindi) {
+                    return alert('Please select two distinct teachers for Telugu and Hindi.');
+                }
+                teacher = `${teacherTelugu} (Telugu) & ${teacherHindi} (Hindi)`;
+            } else {
+                teacher = document.getElementById('xsTeacherSelect').value;
+                if(!teacher) {
+                    return alert('Please select the Handling Teacher.');
+                }
             }
 
             if(!xSessionRecords[date]) xSessionRecords[date] = [];
@@ -2082,6 +2171,9 @@ table { max-width:100%; }
                 sessionNumber: sNum,
                 sessionTime: sTime,
                 teacher,
+                isDual,
+                teacherTelugu: isDual ? teacherTelugu : '',
+                teacherHindi: isDual ? teacherHindi : '',
                 board: currentBoard
             };
 
@@ -2103,7 +2195,7 @@ table { max-width:100%; }
             }
 
             let html = `<h4>Scheduled X Sessions for ${date} (${getDayNameFromDate(date)})</h4><table><thead><tr>
-                <th>Session #</th><th>Class</th><th>Subject</th><th>Session Time</th><th>Assigned Teacher</th><th>Action</th>
+                <th>Session #</th><th>Class</th><th>Subject</th><th>Session Time</th><th>Assigned Teacher(s)</th><th>Action</th>
             </tr></thead><tbody>`;
 
             list.forEach((item, idx) => {
@@ -2137,6 +2229,15 @@ table { max-width:100%; }
 
         function getXSessionBusyListForDate(dateVal) {
             return (xSessionRecords[dateVal] || []).filter(x => x.board === currentBoard);
+        }
+
+        function teacherMatchesXSessionRecord(xs, teacherName) {
+            if(!xs || !teacherName) return false;
+            if(xs.teacher === teacherName) return true;
+            if(xs.isDual) {
+                return (xs.teacherTelugu === teacherName || xs.teacherHindi === teacherName);
+            }
+            return false;
         }
 
         function getTeacherDetailedWorkload(dateVal, teacherName) {
@@ -2201,7 +2302,7 @@ table { max-width:100%; }
                 });
             });
 
-            const myXSessions = (xSessionRecords[dateVal] || []).filter(x => x.teacher === teacherName);
+            const myXSessions = (xSessionRecords[dateVal] || []).filter(x => teacherMatchesXSessionRecord(x, teacherName));
             myXSessions.forEach(xs => {
                 S += getXSessionDutyPeriods(xs.sessionTime).length;
             });
@@ -2284,8 +2385,11 @@ table { max-width:100%; }
                     const cell = masterTimetable[cls]?.[dayName]?.[p.id];
                     if(!cell) continue;
                     if(cell.isDual) {
-                        if(selectedAbsent.includes(cell.teacher1)) push(cell.teacher1, p, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', getLeaveTeachersForDate(dateVal).includes(cell.teacher1) ? 'Approved Leave' : 'Absent');
-                        if(selectedAbsent.includes(cell.teacher2)) push(cell.teacher2, p, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', getLeaveTeachersForDate(dateVal).includes(cell.teacher2) ? 'Approved Leave' : 'Absent');
+                        const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                        const t1Label = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                        const t2Label = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                        if(selectedAbsent.includes(cell.teacher1)) push(cell.teacher1, p, cls, `${cell.subject} (${t1Label})`, t1Label, getLeaveTeachersForDate(dateVal).includes(cell.teacher1) ? 'Approved Leave' : 'Absent');
+                        if(selectedAbsent.includes(cell.teacher2)) push(cell.teacher2, p, cls, `${cell.subject} (${t2Label})`, t2Label, getLeaveTeachersForDate(dateVal).includes(cell.teacher2) ? 'Approved Leave' : 'Absent');
                     } else if(selectedAbsent.includes(cell.teacher)) {
                         push(cell.teacher, p, cls, cell.subject, cell.subject, getLeaveTeachersForDate(dateVal).includes(cell.teacher) ? 'Approved Leave' : 'Absent');
                     }
@@ -2305,8 +2409,11 @@ table { max-width:100%; }
                             const cell = masterTimetable[cls]?.[dayName]?.[pObj.id];
                             if(!cell) continue;
                             if(cell.isDual) {
-                                if(cell.teacher1 === inv.teacher) push(inv.teacher, pObj, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `Invigilation Duty (${inv.classKey || 'Exam'})`);
-                                if(cell.teacher2 === inv.teacher) push(inv.teacher, pObj, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `Invigilation Duty (${inv.classKey || 'Exam'})`);
+                                const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                                const t1Label = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                const t2Label = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                if(cell.teacher1 === inv.teacher) push(inv.teacher, pObj, cls, `${cell.subject} (${t1Label})`, t1Label, `Invigilation Duty (${inv.classKey || 'Exam'})`);
+                                if(cell.teacher2 === inv.teacher) push(inv.teacher, pObj, cls, `${cell.subject} (${t2Label})`, t2Label, `Invigilation Duty (${inv.classKey || 'Exam'})`);
                             } else if(cell.teacher === inv.teacher) {
                                 push(inv.teacher, pObj, cls, cell.subject, cell.subject, `Invigilation Duty (${inv.classKey || 'Exam'})`);
                             }
@@ -2328,8 +2435,11 @@ table { max-width:100%; }
                                     const cell = masterTimetable[cls]?.[dayName]?.[pid];
                                     if(!cell) continue;
                                     if(cell.isDual) {
-                                        if(cell.teacher1 === name) push(name, pObj, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `Revision Duty (${clsKey})`);
-                                        if(cell.teacher2 === name) push(name, pObj, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `Revision Duty (${clsKey})`);
+                                        const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                                        const t1Label = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                        const t2Label = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                        if(cell.teacher1 === name) push(name, pObj, cls, `${cell.subject} (${t1Label})`, t1Label, `Revision Duty (${clsKey})`);
+                                        if(cell.teacher2 === name) push(name, pObj, cls, `${cell.subject} (${t2Label})`, t2Label, `Revision Duty (${clsKey})`);
                                     } else if(cell.teacher === name) {
                                         push(name, pObj, cls, cell.subject, cell.subject, `Revision Duty (${clsKey})`);
                                     }
@@ -2343,22 +2453,29 @@ table { max-width:100%; }
             const xSessionsOnDate = getXSessionBusyListForDate(dateVal);
             xSessionsOnDate.forEach(xs => {
                 const affectedPeriodIds = getXSessionDutyPeriods(xs.sessionTime);
+                const xTeachers = xs.isDual ? [xs.teacherTelugu, xs.teacherHindi].filter(Boolean) : [xs.teacher].filter(Boolean);
+
                 affectedPeriodIds.forEach(pId => {
                     const pObj = periods.find(p => p.id === pId) || { id: pId, time: '' };
                     for(const cls in masterTimetable) {
                         const cell = masterTimetable[cls]?.[dayName]?.[pId];
                         if(!cell) continue;
 
-                        if(cell.isDual) {
-                            if(cell.teacher1 === xs.teacher) {
-                                push(xs.teacher, pObj, cls, `${cell.subject} (${cell.lang1 || 'Telugu'})`, cell.lang1 || 'Telugu', `X Session Duty (${xs.class})`);
+                        xTeachers.forEach(xt => {
+                            if(cell.isDual) {
+                                const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                                const t1Label = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                const t2Label = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                if(cell.teacher1 === xt) {
+                                    push(xt, pObj, cls, `${cell.subject} (${t1Label})`, t1Label, `X Session Duty (${xs.class})`);
+                                }
+                                if(cell.teacher2 === xt) {
+                                    push(xt, pObj, cls, `${cell.subject} (${t2Label})`, t2Label, `X Session Duty (${xs.class})`);
+                                }
+                            } else if(cell.teacher === xt) {
+                                push(xt, pObj, cls, cell.subject, cell.subject, `X Session Duty (${xs.class})`);
                             }
-                            if(cell.teacher2 === xs.teacher) {
-                                push(xs.teacher, pObj, cls, `${cell.subject} (${cell.lang2 || 'Hindi'})`, cell.lang2 || 'Hindi', `X Session Duty (${xs.class})`);
-                            }
-                        } else if(cell.teacher === xs.teacher) {
-                            push(xs.teacher, pObj, cls, cell.subject, cell.subject, `X Session Duty (${xs.class})`);
-                        }
+                        });
                     }
                 });
             });
@@ -2398,7 +2515,7 @@ table { max-width:100%; }
                     if(isTeacherRevisionBusy(dateVal, st.name, item.period, currentBoard)) return false;
                     if(isTeacherInvigilationBusy(dateVal, st.name, item.period)) return false;
                     
-                    const isXBusy = xSessionsOnDate.some(xs => xs.teacher === st.name && getXSessionDutyPeriods(xs.sessionTime).includes(item.period));
+                    const isXBusy = xSessionsOnDate.some(xs => teacherMatchesXSessionRecord(xs, st.name) && getXSessionDutyPeriods(xs.sessionTime).includes(item.period));
                     if(isXBusy) return false;
 
                     for(const cls in masterTimetable) {
@@ -2523,10 +2640,6 @@ table { max-width:100%; }
             updateAllSubstitutionDropdownLabels();
         }
 
-        /**
-         * REQUIREMENT 2:
-         * Show schedule in teacher module with dealing class, sec and board for teachers who deal BOTH boards.
-         */
         function viewTeacherSchedule() {
             if(!currentUser) return;
             const dateVal = document.getElementById('tDate').value;
@@ -2539,7 +2652,7 @@ table { max-width:100%; }
             const teacherObj = staffList.find(st => st.name === currentUser.name);
             const dealsBoth = teacherObj && normalizeBoard(teacherObj.board) === 'BOTH';
 
-            const myXSessions = (xSessionRecords[dateVal] || []).filter(x => x.teacher === currentUser.name);
+            const myXSessions = (xSessionRecords[dateVal] || []).filter(x => teacherMatchesXSessionRecord(x, currentUser.name));
 
             const myInvigilations = [];
             ['STATE', 'CBSE'].forEach(b => {
@@ -2625,7 +2738,6 @@ table { max-width:100%; }
                         type = `<span style="color:red; font-weight:bold;">Substitution</span>`;
                         if(dealsBoth) assignedBoard = subMatch.board || currentBoard;
                     } else {
-                        // Original Teaching Class from Timetables across both boards if applicable
                         const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
                         let found = false;
                         for(const b of boardsToSearch) {
@@ -2634,13 +2746,16 @@ table { max-width:100%; }
                                 const cell = tt[cls]?.[dayName]?.[p.id];
                                 if(cell) {
                                     if(cell.isDual) {
+                                        const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === currentUser.name || cell.teacher === currentUser.name) {
-                                            status = `${cls} (${cell.subject} - ${cell.lang1 || 'Telugu'})`;
+                                            const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                            status = `${cls} (${cell.subject} - ${note})`;
                                             type = "Original Class";
                                             if(dealsBoth) assignedBoard = b;
                                             found = true; break;
                                         } else if(cell.teacher2 === currentUser.name) {
-                                            status = `${cls} (${cell.subject} - ${cell.lang2 || 'Hindi'})`;
+                                            const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                            status = `${cls} (${cell.subject} - ${note})`;
                                             type = "Original Class";
                                             if(dealsBoth) assignedBoard = b;
                                             found = true; break;
@@ -2827,7 +2942,10 @@ table { max-width:100%; }
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
-                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${cell.lang1 || 'Telugu'}: ${cell.teacher1 || cell.teacher || '---'}<br>${cell.lang2 || 'Hindi'}: ${cell.teacher2 || '---'}</small></td>`;
+                            const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                            const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
+                            const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
+                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
@@ -2926,11 +3044,14 @@ table { max-width:100%; }
                             const cell = tt[cls]?.[day]?.[p.id];
                             if(cell) {
                                 if(cell.isDual) {
+                                    const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
-                                        assigned = { cls: `${cls} [${b}]`, subject: `${cell.subject} (${cell.lang1 || 'Telugu'})` };
+                                        const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                        assigned = { cls: `${cls} [${b}]`, subject: `${cell.subject} (${note})` };
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
-                                        assigned = { cls: `${cls} [${b}]`, subject: `${cell.subject} (${cell.lang2 || 'Hindi'})` };
+                                        const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                        assigned = { cls: `${cls} [${b}]`, subject: `${cell.subject} (${note})` };
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
@@ -3001,11 +3122,14 @@ table { max-width:100%; }
                                 const cell = tt[cls]?.[dayName]?.[p.id];
                                 if(cell) {
                                     if(cell.isDual) {
+                                        const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === st.name || cell.teacher === st.name) {
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${cell.lang1 || 'Telugu'})`;
+                                            const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
                                             break;
                                         } else if(cell.teacher2 === st.name) {
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${cell.lang2 || 'Hindi'})`;
+                                            const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
                                             break;
                                         }
                                     } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
@@ -3124,23 +3248,15 @@ table { max-width:100%; }
             return c ? (s ? `${c} - Sec ${s}` : c) : '';
         }
 
-        /**
-         * REQUIREMENT 4:
-         * Checks whether a teacher is blocked from revision or invigilation in periodId on dateVal.
-         * Blocks if:
-         *  - Teacher is assigned to X Session during that period
-         *  - Teacher is assigned to Invigilation in that period for ANY class
-         *  - Teacher is assigned to Revision in that period for ANY class (excluding ignoreClassKey)
-         */
         function getExamPeriodBlockReason(dateVal, teacherName, periodId, ignoreClassKey = null) {
             if(!dateVal || !teacherName || !periodId) return null;
 
-            // 1. Check X Session
+            // Check X Session
             const xSessions = xSessionRecords[dateVal] || [];
-            const xs = xSessions.find(x => x.teacher === teacherName && getXSessionDutyPeriods(x.sessionTime).includes(String(periodId)));
+            const xs = xSessions.find(x => teacherMatchesXSessionRecord(x, teacherName) && getXSessionDutyPeriods(x.sessionTime).includes(String(periodId)));
             if(xs) return `X Session Duty (${xs.class})`;
 
-            // 2. Check Invigilation across all boards and classes
+            // Check Invigilation
             const pIndex = periods.findIndex(p => String(p.id) === String(periodId));
             if(pIndex !== -1) {
                 for(const b of ['STATE', 'CBSE']) {
@@ -3157,7 +3273,7 @@ table { max-width:100%; }
                 }
             }
 
-            // 3. Check Revision across all classes & boards
+            // Check Revision
             const day = getDayNameFromDate(dateVal);
             for(const b of ['STATE', 'CBSE']) {
                 const rev = revisionScheduleRecords[dateVal]?.[b] || {};
@@ -3195,7 +3311,6 @@ table { max-width:100%; }
                     const blockReason = getExamPeriodBlockReason(date, st.name, p.id, key);
 
                     if (blockReason && !isChecked) {
-                        // Blocked as per Requirement 4
                         html += `<label style="color:#aaa; cursor:not-allowed;" title="Blocked: ${blockReason}">
                             <input type="checkbox" disabled> ${st.name} (${st.subject || 'Staff'}) - [Blocked: ${blockReason}]
                         </label>`;
@@ -3220,7 +3335,6 @@ table { max-width:100%; }
             if(!revisionScheduleRecords[date][currentBoard][key]) revisionScheduleRecords[date][currentBoard][key] = {};
             if(!revisionScheduleRecords[date][currentBoard][key][day]) revisionScheduleRecords[date][currentBoard][key][day] = {};
             
-            // Validate clash before saving
             for(const p of periods) {
                 const chosen = Array.from(document.querySelectorAll(`.revision-teacher[data-period="${p.id}"]:checked`)).map(x=>x.value);
                 for(const t of chosen) {
@@ -3237,10 +3351,6 @@ table { max-width:100%; }
             renderRevisionScheduleList();
         }
 
-        /**
-         * REQUIREMENT 3:
-         * Beside each completed revision schedule entry, render Edit and Delete actions.
-         */
         function renderRevisionScheduleList() {
             const box = document.getElementById('revisionScheduleList');
             const date = document.getElementById('revisionDate')?.value;
@@ -3281,7 +3391,6 @@ table { max-width:100%; }
         function editRevisionEntry(date, classKey) {
             document.getElementById('revisionDate').value = date;
             const [cls, sec] = classKey.split(' - Sec ');
-            // Attempt to infer orientation
             let matchedOrient = "";
             for(const orient in classOpts) {
                 if(classOpts[orient].includes(cls)) { matchedOrient = orient; break; }
@@ -3345,14 +3454,6 @@ table { max-width:100%; }
             fillClassSelectFor('invigClass', o);
         }
 
-        /**
-         * REQUIREMENT 4:
-         * Block teachers from Invigilation selection if they are:
-         *  - On approved leave
-         *  - Allotted to X Session during any of the selected periods
-         *  - Allotted to Revision during any of the selected periods
-         *  - Allotted to another Invigilation during those periods
-         */
         function populateInvigTeacherDropdown() {
             const sel = document.getElementById('invigTeacherSelect');
             if(!sel) return;
@@ -3410,7 +3511,6 @@ table { max-width:100%; }
                 return alert('From Period cannot be later than To Period.');
             }
 
-            // Validation guard: Ensure teacher is not clashing with X session, revision or other invigilations
             for(let idx = fromIdx; idx <= toIdx; idx++) {
                 const pId = periods[idx].id;
                 const reason = getExamPeriodBlockReason(date, teacher, pId);
