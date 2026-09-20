@@ -456,6 +456,7 @@ table { max-width:100%; }
         </button>
         <div class="nav-tabs" id="deanNavTabs">
             <button id="btnDeanClassTab" class="active" onclick="showTabDean('d-class')">Create Class-Wise Timetable</button>
+            <button id="btnDeanClassViewTab" onclick="showTabDean('d-class-view')">Class Timetables (View)</button>
             <button onclick="showTabDean('d-teacher-weekly')">Teacher-Wise Weekly Timetable</button>
             <button onclick="showTabDean('d-teacher')">Teacher-Wise Day Timetable</button>
             <button onclick="showTabDean('d-sub')">Create Substitutions</button>
@@ -465,11 +466,11 @@ table { max-width:100%; }
             <button onclick="showTabDean('d-study')">Night Study Hours</button>
         </div>
 
-        <!-- 1. Create Class Wise Timetable (Dean Restricted) -->
+        <!-- 1. Create Class Wise Timetable (Dean Restricted Allotment) -->
         <div id="d-class" class="tab-content active-module">
             <h3>Timetable Allotment Engine</h3>
             <div id="deanClassPermissionNotice" style="display:none; color:red; font-weight:bold; margin-bottom:10px;">
-                Note: Creating Class-Wise Timetables is accessible to Deans only.
+                Note: Creating Class-Wise Timetables is accessible to Deans only. You can view schedules in the "Class Timetables (View)" tab.
             </div>
             <div id="deanClassFormWrap">
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -506,6 +507,33 @@ table { max-width:100%; }
             
             <hr style="margin: 25px 0;">
             <div id="singleClassDashboardContainer"></div>
+        </div>
+
+        <!-- Incharge & Dean Class Master Timetable Viewer (Mirroring Principal Module) -->
+        <div id="d-class-view" class="tab-content" style="display:none;">
+            <h3>Class Master Timetable Viewer (Incharges &amp; Deans)</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Orientation:</label>
+                    <select id="dTtOrientation" onchange="updateInchargeClassOptions()">
+                        <option value="">Select</option><option>IPL</option><option>MPL</option>
+                        <option>C Batch</option><option>Techno</option><option>Lead</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Class:</label>
+                    <select id="dTtClass" onchange="renderInchargeClassDashboard()"></select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Section:</label>
+                    <select id="dTtSection" onchange="renderInchargeClassDashboard()">
+                        <option value="">Select</option>
+                        <option value="A">A</option><option value="B">B</option>
+                        <option value="C">C</option><option value="D">D</option>
+                    </select>
+                </div>
+            </div>
+            <div id="dClassDashboardContainer"></div>
         </div>
 
         <!-- 2. Teacher-Wise Weekly Timetable -->
@@ -1145,7 +1173,11 @@ table { max-width:100%; }
             if(page === 'dean-STATE' || page === 'dean-CBSE') {
                 currentBoard = page.split('-')[1];
                 await loadTimetableForBoard(currentBoard);
-                switchView('deanModule'); showTabDeanById('d-class'); return;
+                switchView('deanModule');
+                checkDeanRoleTabPermissions();
+                const isActualDean = currentUser && String(currentUser.designation || '').trim().toLowerCase() === 'dean';
+                showTabDeanById(isActualDean ? 'd-class' : 'd-class-view'); 
+                return;
             }
         }
 
@@ -1156,6 +1188,7 @@ table { max-width:100%; }
             const buttons = document.querySelectorAll('#principalModule .nav-tabs button');
             const map = {'p-staff':0,'p-class-tt':1,'p-teacher-tt':2,'p-sub-tt':3,'p-absent-leaves':4,'p-settings':5};
             if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
+            if(tabId === 'p-class-tt') updatePrincipalClassOptions();
             if(tabId === 'p-teacher-tt') populatePrincipalWeeklyTeacherDropdown();
             if(tabId === 'p-absent-leaves') {
                 const f = document.getElementById('pAbsentFilterDate');
@@ -1168,8 +1201,7 @@ table { max-width:100%; }
             const isActualDean = currentUser && String(currentUser.designation || '').trim().toLowerCase() === 'dean';
 
             if (tabId === 'd-class' && !isActualDean) {
-                alert('Only Deans can configure and allot Class-Wise Timetables.');
-                tabId = 'd-teacher-weekly';
+                tabId = 'd-class-view';
             }
 
             document.querySelectorAll('#deanModule .tab-content').forEach(el => el.style.display = 'none');
@@ -1180,17 +1212,19 @@ table { max-width:100%; }
 
             const map = {
                 'd-class': 0,
-                'd-teacher-weekly': 1,
-                'd-teacher': 2,
-                'd-sub': 3,
-                'd-leaves': 4,
-                'd-xsession': 5,
-                'd-exam': 6,
-                'd-study': 7
+                'd-class-view': 1,
+                'd-teacher-weekly': 2,
+                'd-teacher': 3,
+                'd-sub': 4,
+                'd-leaves': 5,
+                'd-xsession': 6,
+                'd-exam': 7,
+                'd-study': 8
             };
             const buttons = document.querySelectorAll('#deanModule .nav-tabs button');
             if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
 
+            if(tabId === 'd-class-view') updateInchargeClassOptions();
             if(tabId === 'd-teacher-weekly') populateTeacherWeeklyDropdown();
             if(tabId === 'd-sub') {
                 const sd = document.getElementById('subDate');
@@ -1233,7 +1267,7 @@ table { max-width:100%; }
                 switchView('deanModule'); 
                 checkDeanRoleTabPermissions();
                 const isActualDean = currentUser && String(currentUser.designation || '').trim().toLowerCase() === 'dean';
-                showTabDeanById(isActualDean ? 'd-class' : 'd-teacher-weekly'); 
+                showTabDeanById(isActualDean ? 'd-class' : 'd-class-view'); 
                 recordAppPage(`dean-${currentBoard}`);
                 setTimeout(populateXSessionAndExamControls, 300);
             });
@@ -1902,6 +1936,75 @@ table { max-width:100%; }
                     <div>
                         <button class="print-btn no-print" onclick="printTargetElement('classMasterPrintContainer')">Print Master Timetable</button>
                         <button class="excel-btn no-print" onclick="exportTableToExcel('classMasterPrintContainer', 'Class_Timetable_${fullClassKey}')">Download Excel</button>
+                    </div>
+                </div>`;
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            html += `</tr></thead><tbody>`;
+
+            days.forEach(d => {
+                html += `<tr><td><b>${d}</b></td>`;
+                periods.forEach(p => {
+                    const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
+                    if(cell && cell.subject) {
+                        if(cell.isDual) {
+                            const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                            const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
+                            const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
+                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                        } else {
+                            let tDesc = cell.teacher || '---';
+                            if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
+                            html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
+                        }
+                    } else {
+                        html += `<td style="color:#aaa;">---</td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div></div>`;
+            container.innerHTML = html;
+        }
+
+        /* Incharges & Deans Class Timetable Viewer Functions */
+        function updateInchargeClassOptions() {
+            const orientationEl = document.getElementById('dTtOrientation');
+            if(orientationEl) {
+                const allowed = getBoardOrientations(currentBoard);
+                Array.from(orientationEl.options).forEach(opt => { if(opt.value) opt.hidden = !allowed.includes(opt.value); });
+                if(orientationEl.value && !allowed.includes(orientationEl.value)) orientationEl.value = '';
+            }
+            const sel = document.getElementById('dTtOrientation').value;
+            const cSelect = document.getElementById('dTtClass');
+            cSelect.innerHTML = '';
+            if(classOpts[sel]) {
+                classOpts[sel].forEach(c => {
+                    cSelect.innerHTML += `<option value="${c}">${c}</option>`;
+                });
+            }
+            renderInchargeClassDashboard();
+        }
+
+        function renderInchargeClassDashboard() {
+            const cls = document.getElementById('dTtClass')?.value;
+            const sec = document.getElementById('dTtSection')?.value;
+            const container = document.getElementById('dClassDashboardContainer');
+            if(!cls || !container) { if(container) container.innerHTML = ''; return; }
+            const fullClassKey = sec ? `${cls} - Sec ${sec}` : cls;
+
+            let html = `<div id="dClassPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Class Master Timetable (Week View): ${fullClassKey}</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
+                    <div>
+                        <button class="print-btn no-print" onclick="printTargetElement('dClassPrintContainer')">Print Master Timetable</button>
+                        <button class="excel-btn no-print" onclick="exportTableToExcel('dClassPrintContainer', 'Class_Master_${fullClassKey}')">Download Excel</button>
                     </div>
                 </div>`;
             html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
