@@ -78,10 +78,26 @@
 
         .shortcut-icon-preview { width: 110px; height: 110px; border-radius: 20px; object-fit: cover; border: 2px solid #0056b3; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: block; }
 
+        /* Print Page formatting for 4 teachers per A4 page */
+        .print-page-4grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            page-break-after: always;
+            box-sizing: border-box;
+        }
+
+        .print-card-quarter {
+            border: 1px solid #000;
+            padding: 4px;
+            page-break-inside: avoid;
+            background: #fff;
+        }
+
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 8mm 6mm 8mm 6mm;
+                margin: 6mm 6mm 6mm 6mm;
             }
             body { 
                 background-color: #fff; 
@@ -101,37 +117,79 @@
             .printable-area .print-header {
                 display: block !important;
                 text-align: center !important;
-                margin-bottom: 8px !important;
-                padding-bottom: 4px !important;
+                margin-bottom: 6px !important;
+                padding-bottom: 3px !important;
             }
-            .printable-area .print-header h2 { font-size: 16px !important; }
-            .printable-area .print-header h3 { font-size: 13px !important; }
-            .printable-area .print-header h4 { font-size: 11px !important; }
+            .printable-area .print-header h2 { font-size: 16px !important; margin: 0; }
+            .printable-area .print-header h3 { font-size: 12px !important; margin: 2px 0; }
+            .printable-area .print-header h4 { font-size: 11px !important; margin: 2px 0; }
             
             .no-print { display: none !important; }
             .sub-select-dropdown { display: none !important; }
             .print-only-text { display: inline-block !important; font-weight: bold; }
 
+            .print-page-4grid {
+                display: block !important;
+                page-break-after: always !important;
+                margin-bottom: 0 !important;
+            }
+
+            .print-card-quarter {
+                height: 238mm !important;
+                max-height: 242mm !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                margin-bottom: 0 !important;
+                page-break-after: always !important;
+            }
+
+            .print-four-wrapper {
+                page-break-after: always;
+                height: 280mm;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+
+            .single-teacher-quarter-box {
+                height: 67mm;
+                overflow: hidden;
+                border-bottom: 1.5pt dashed #444;
+                margin-bottom: 4mm;
+                padding-bottom: 2mm;
+                box-sizing: border-box;
+            }
+            .single-teacher-quarter-box:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+
+            .single-teacher-quarter-box table {
+                font-size: 8px !important;
+                margin-top: 2px !important;
+            }
+            .single-teacher-quarter-box th, .single-teacher-quarter-box td {
+                padding: 1.5px 1px !important;
+                line-height: 1.1 !important;
+            }
+
             .signature-section { 
                 display: flex !important; 
-                margin-top: 30px !important; 
+                margin-top: 20px !important; 
                 padding: 0 20px !important; 
-                font-size: 11px !important; 
+                font-size: 10px !important; 
                 page-break-inside: avoid;
             }
             table {
                 width: 100% !important; 
-                margin-top: 6px !important; 
+                margin-top: 5px !important; 
                 font-size: 9px !important; 
                 page-break-inside: auto;
             }
-            #pSubLogPrintContainer table { font-size: 13px !important; }
-            #pSubLogPrintContainer th, #pSubLogPrintContainer td {
-                padding: 5px 4px !important; 
-                line-height: 1.25 !important;
-            }
             th, td {
-                padding: 3px 2px !important; 
+                padding: 2.5px 2px !important; 
                 line-height: 1.15;
             }
             tr {
@@ -181,7 +239,8 @@ table { max-width:100%; }
 
   .table-container,.table-responsive,.responsive-table,.printable-area,
   #timetableContainer,#timetableDisplay,#d-timetable,#timetableOutput,
-  #scheduleDisplay,#tScheduleDisplay,#substitutionMatrixContainer {
+  #scheduleDisplay,#tScheduleDisplay,#substitutionMatrixContainer,
+  #pSubjectWiseContainer {
     width:100% !important; max-width:100% !important; overflow-x:auto !important;
     -webkit-overflow-scrolling:touch;
   }
@@ -281,6 +340,7 @@ table { max-width:100%; }
             <button class="active" onclick="showTab('p-staff')">Staff Directory</button>
             <button onclick="showTab('p-class-tt')">Class Timetables</button>
             <button onclick="showTab('p-teacher-tt')">Teacher Timetables</button>
+            <button onclick="showTab('p-subject-tt')">Subject-Wise Timetables</button>
             <button onclick="showTab('p-sub-tt')">Substitution Logs</button>
             <button onclick="showTab('p-absent-leaves')">Absent Teachers (Leave Requests)</button>
             <button onclick="showTab('p-settings')">Home Screen Icon Settings</button>
@@ -407,6 +467,33 @@ table { max-width:100%; }
                 <input type="date" id="pDtSelectDate" onchange="renderPrincipalTeachersByDate()">
             </div>
             <div id="pTeachersByDateView"></div>
+        </div>
+
+        <!-- Principal Subject-Wise Teachers Timetable View (4 per page on print) -->
+        <div id="p-subject-tt" class="tab-content" style="display:none;">
+            <h3>Subject-Wise Teachers Timetable (Department Master)</h3>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:15px; align-items:flex-end;">
+                <div class="form-group" style="flex:1; min-width:240px; max-width:380px; margin-bottom:0;">
+                    <label><b>Select Subject / Department:</b></label>
+                    <select id="pSubjectDeptSelect" onchange="renderPrincipalSubjectWiseTimetables()">
+                        <option value="">Select Subject</option>
+                        <option value="Telugu">Telugu</option>
+                        <option value="Hindi">Hindi</option>
+                        <option value="English">English</option>
+                        <option value="Math">Math</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Social">Social</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <button class="print-btn no-print" onclick="printTargetElement('pSubjectWiseContainer')">Print Department Timetables (4 per page)</button>
+                    <button class="excel-btn no-print" onclick="exportTableToExcel('pSubjectWiseContainer', 'Subject_Timetables')">Download Excel</button>
+                </div>
+            </div>
+            <div id="pSubjectWiseContainer"></div>
         </div>
 
         <!-- Principal Substitution Logs View -->
@@ -693,10 +780,12 @@ table { max-width:100%; }
             <div id="examRevisionPanel" class="tab-content active-module">
                 <h4>Revision Schedule</h4>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Date:</label><input type="date" id="revisionDate" onchange="renderRevisionScheduleEditor()"></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Orientation:</label><select id="revisionOrientation" onchange="updateRevisionClassOptions()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Class:</label><select id="revisionClass" onchange="renderRevisionScheduleEditor()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:180px;"><label>Section:</label><select id="revisionSection" onchange="renderRevisionScheduleEditor()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option></select></div>
+                    <div class="form-group" style="flex:1; min-width:160px;"><label>Date:</label><input type="date" id="revisionDate" onchange="renderRevisionScheduleEditor()"></div>
+                    <div class="form-group" style="flex:1; min-width:140px;"><label>From Period:</label><select id="revisionFromPeriod" onchange="renderRevisionScheduleEditor()"></select></div>
+                    <div class="form-group" style="flex:1; min-width:140px;"><label>To Period:</label><select id="revisionToPeriod" onchange="renderRevisionScheduleEditor()"></select></div>
+                    <div class="form-group" style="flex:1; min-width:160px;"><label>Orientation:</label><select id="revisionOrientation" onchange="updateRevisionClassOptions()"></select></div>
+                    <div class="form-group" style="flex:1; min-width:160px;"><label>Class:</label><select id="revisionClass" onchange="renderRevisionScheduleEditor()"></select></div>
+                    <div class="form-group" style="flex:1; min-width:120px;"><label>Section:</label><select id="revisionSection" onchange="renderRevisionScheduleEditor()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option></select></div>
                 </div>
                 <div id="revisionScheduleEditor" style="margin-top:15px;"></div>
                 <div id="revisionScheduleList" style="margin-top:20px;"></div>
@@ -1193,10 +1282,11 @@ table { max-width:100%; }
             document.querySelectorAll('#principalModule .nav-tabs button').forEach(el => el.classList.remove('active'));
             const tab = document.getElementById(tabId); if(tab) tab.style.display = 'block';
             const buttons = document.querySelectorAll('#principalModule .nav-tabs button');
-            const map = {'p-staff':0,'p-class-tt':1,'p-teacher-tt':2,'p-sub-tt':3,'p-absent-leaves':4,'p-settings':5};
+            const map = {'p-staff':0,'p-class-tt':1,'p-teacher-tt':2,'p-subject-tt':3,'p-sub-tt':4,'p-absent-leaves':5,'p-settings':6};
             if(buttons[map[tabId]]) buttons[map[tabId]].classList.add('active');
             if(tabId === 'p-class-tt') updatePrincipalClassOptions();
             if(tabId === 'p-teacher-tt') populatePrincipalWeeklyTeacherDropdown();
+            if(tabId === 'p-subject-tt') renderPrincipalSubjectWiseTimetables();
             if(tabId === 'p-absent-leaves') {
                 const f = document.getElementById('pAbsentFilterDate');
                 if(f && !f.value) f.value = new Date().toISOString().slice(0,10);
@@ -3422,7 +3512,7 @@ table { max-width:100%; }
                 <div class="print-header">
                     <h2>SRI CHAITANYA SCHOOL</h2>
                     <h3>Branch : Adibatla</h3>
-                    <h4>Class Master Timetable (Week View): ${fullClassKey}</h4>
+                    <h4>Class Master Timetable (Week View): ${fullClassKey} [${currentBoard} BOARD]</h4>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3>Master Timetable: ${fullClassKey} (Week View)</h3>
@@ -3577,6 +3667,145 @@ table { max-width:100%; }
             });
 
             html += `</tbody></table></div></div>`;
+            container.innerHTML = html;
+        }
+
+        // ==========================================
+        // 1. SUBJECT-WISE TEACHERS TIMETABLE ENGINE
+        // 4 TEACHERS PER A4 PAGE PRINT LAYOUT
+        // ==========================================
+        function buildSingleTeacherScheduleQuarterHTML(teacherObj) {
+            const teacherName = teacherObj.name;
+            const dealsBoth = normalizeBoard(teacherObj.board) === 'BOTH';
+
+            let tableHTML = `
+                <div class="single-teacher-quarter-box">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid #0056b3; padding-bottom:2px; margin-bottom:3px;">
+                        <div>
+                            <span style="font-size:12px; font-weight:bold; color:red;">${teacherName}</span>
+                            <span style="font-size:10px; color:#333; margin-left:8px;">(${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
+                        </div>
+                        <div style="font-size:10px; font-weight:bold; color:#0056b3;">
+                            Emp ID: ${teacherObj.empId || '---'} | Board: ${teacherObj.board || 'CBSE'}
+                        </div>
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; font-size:8.5px; text-align:center;">
+                        <thead>
+                            <tr style="background:#e9ecef;">
+                                <th style="padding:2px; border:1px solid #777;">Day</th>`;
+
+            periods.forEach(p => {
+                tableHTML += `<th style="padding:2px; border:1px solid #777;">P-${p.id}</th>`;
+            });
+
+            tableHTML += `</tr></thead><tbody>`;
+
+            days.forEach(day => {
+                tableHTML += `<tr><td style="padding:2px; border:1px solid #888; font-weight:bold; background:#fafafa;">${day.substring(0,3)}</td>`;
+
+                periods.forEach(p => {
+                    let assigned = null;
+                    const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
+                    for(const b of boardsToSearch) {
+                        const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
+                        for(const cls in tt) {
+                            const cell = tt[cls]?.[day]?.[p.id];
+                            if(cell) {
+                                if(cell.isDual) {
+                                    const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                                    if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
+                                        const note = isWiz ? 'Wiz' : (cell.lang1 || 'Lang1');
+                                        assigned = `${cls} (${cell.subject}-${note})`;
+                                        break;
+                                    } else if(cell.teacher2 === teacherName) {
+                                        const note = isWiz ? 'Wiz' : (cell.lang2 || 'Lang2');
+                                        assigned = `${cls} (${cell.subject}-${note})`;
+                                        break;
+                                    }
+                                } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
+                                    assigned = `${cls} (${cell.subject})`;
+                                    break;
+                                }
+                            }
+                        }
+                        if(assigned) break;
+                    }
+
+                    if(assigned) {
+                        tableHTML += `<td style="padding:2px; border:1px solid #888; background:#e8f4fd; font-weight:bold; font-size:8px;">${assigned}</td>`;
+                    } else {
+                        const status = teacherWeeklyStatus[teacherName]?.[day]?.[p.id] || '---';
+                        tableHTML += `<td style="padding:2px; border:1px solid #888; color:#777; font-size:8px;">${status}</td>`;
+                    }
+                });
+
+                tableHTML += `</tr>`;
+            });
+
+            tableHTML += `</tbody></table></div>`;
+            return tableHTML;
+        }
+
+        function renderPrincipalSubjectWiseTimetables() {
+            const selSub = document.getElementById('pSubjectDeptSelect')?.value;
+            const container = document.getElementById('pSubjectWiseContainer');
+            if(!container) return;
+
+            if(!selSub) {
+                container.innerHTML = '<p style="color:#777;">Please select a department subject from the dropdown above.</p>';
+                return;
+            }
+
+            const coreSubjects = ["Telugu", "Hindi", "English", "Math", "Physics", "Chemistry", "Biology", "Social"];
+            let matchingStaff = [];
+
+            if(selSub === 'Other') {
+                matchingStaff = staffList.filter(st => {
+                    const s = String(st.subject || '').trim();
+                    return staffMatchesBoard(st) && (!coreSubjects.includes(s) || s === 'Other');
+                });
+            } else {
+                matchingStaff = staffList.filter(st => {
+                    const s = String(st.subject || '').trim().toLowerCase();
+                    return staffMatchesBoard(st) && s === selSub.toLowerCase();
+                });
+            }
+
+            if(!matchingStaff.length) {
+                container.innerHTML = `<p style="color:red; font-weight:bold;">No staff records registered under "${selSub}" department.</p>`;
+                return;
+            }
+
+            matchingStaff.sort((a,b) => String(a.name).localeCompare(String(b.name)));
+
+            let html = `
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Department Teachers Timetable: ${selSub.toUpperCase()} [${currentBoard} BOARD]</h4>
+                </div>
+            `;
+
+            // Group into chunks of 4 teachers per print page
+            const chunkSize = 4;
+            for(let i = 0; i < matchingStaff.length; i += chunkSize) {
+                const chunk = matchingStaff.slice(i, i + chunkSize);
+                const pageNum = Math.floor(i / chunkSize) + 1;
+                const totalPages = Math.ceil(matchingStaff.length / chunkSize);
+
+                html += `<div class="print-four-wrapper">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid red; margin-bottom:5px; padding-bottom:2px;">
+                        <h4 style="margin:0; color:red; font-size:13px;">DEPARTMENT: ${selSub.toUpperCase()} - TEACHERS TIMETABLE</h4>
+                        <span style="font-size:10px; font-weight:bold; color:#0056b3;">Page ${pageNum} of ${totalPages} [${currentBoard} BOARD]</span>
+                    </div>`;
+
+                chunk.forEach(st => {
+                    html += buildSingleTeacherScheduleQuarterHTML(st);
+                });
+
+                html += `</div>`;
+            }
+
             container.innerHTML = html;
         }
 
@@ -3785,23 +4014,72 @@ table { max-width:100%; }
             return null;
         }
 
+        // ==========================================
+        // 3. REVISION SCHEDULE: FROM PERIOD & TO PERIOD RANGE
+        // FILTERS OUT X-SESSION HANDLING TEACHERS
+        // ==========================================
+        function initRevisionPeriodDropdowns() {
+            const fromP = document.getElementById('revisionFromPeriod');
+            const toP = document.getElementById('revisionToPeriod');
+            if(!fromP || !toP) return;
+
+            if(!fromP.options.length || fromP.options.length <= 1) {
+                fromP.innerHTML = '<option value="">From</option>';
+                toP.innerHTML = '<option value="">To</option>';
+                periods.forEach(p => {
+                    fromP.innerHTML += `<option value="${p.id}">P-${p.id} (${p.time})</option>`;
+                    toP.innerHTML += `<option value="${p.id}">P-${p.id} (${p.time})</option>`;
+                });
+            }
+        }
+
         function renderRevisionScheduleEditor() {
             const date = document.getElementById('revisionDate')?.value;
             const key = currentSectionKey('revision');
             const box = document.getElementById('revisionScheduleEditor');
             if(!box) return;
-            if(!date || !key) { box.innerHTML = '<p style="color:#777;">Select date, orientation, class and section.</p>'; return; }
+            initRevisionPeriodDropdowns();
+
+            const fromP = document.getElementById('revisionFromPeriod')?.value;
+            const toP = document.getElementById('revisionToPeriod')?.value;
+
+            if(!date || !key) {
+                box.innerHTML = '<p style="color:#777;">Select date, orientation, class, section, and period range.</p>';
+                return;
+            }
+
             const day = getDayNameFromDate(date);
             const leaves = getApprovedLeaveTeachersForDate(date);
+            const xSessionsOnDate = getXSessionBusyListForDate(date);
 
-            let html = `<h4>Revision Teachers for ${key} - ${day}</h4><table><thead><tr><th>Period</th><th>Time</th><th>Revision Teacher(s)</th></tr></thead><tbody>`;
-            periods.forEach(p => {
+            let fromIdx = periods.findIndex(p => String(p.id) === String(fromP));
+            let toIdx = periods.findIndex(p => String(p.id) === String(toP));
+            if(fromIdx === -1) fromIdx = 0;
+            if(toIdx === -1 || toIdx < fromIdx) toIdx = periods.length - 1;
+
+            const selectedPeriodsRange = periods.slice(fromIdx, toIdx + 1);
+
+            let html = `<h4>Revision Teachers for ${key} - ${day} (Periods: ${periods[fromIdx].id} to ${periods[toIdx].id})</h4>
+            <table><thead><tr><th>Period</th><th>Time</th><th>Revision Teacher(s) Allotment</th></tr></thead><tbody>`;
+
+            selectedPeriodsRange.forEach(p => {
                 const rec = revisionScheduleRecords[date]?.[currentBoard]?.[key]?.[day]?.[p.id] || [];
+
+                // Filter out teachers who are handling X-Sessions in this period
                 const options = staffList
-                    .filter(st => staffMatchesBoard(st, currentBoard) && !leaves.includes(st.name))
-                    .sort((a,b)=>String(a.name).localeCompare(String(b.name)));
+                    .filter(st => {
+                        if(!staffMatchesBoard(st, currentBoard)) return false;
+                        if(leaves.includes(st.name)) return false;
+                        // Check if teacher is handling X-Session during this period
+                        const isHandlingXSession = xSessionsOnDate.some(xs => 
+                            teacherMatchesXSessionRecord(xs, st.name) && 
+                            getXSessionDutyPeriods(xs.sessionTime).includes(p.id)
+                        );
+                        return !isHandlingXSession;
+                    })
+                    .sort((a,b) => String(a.name).localeCompare(String(b.name)));
                 
-                html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td><div class="multi-select-box">`;
+                html += `<tr><td><b>P-${p.id}</b></td><td>${p.time}</td><td><div class="multi-select-box" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:4px;">`;
                 options.forEach(st => {
                     const isChecked = rec.includes(st.name);
                     const blockReason = getExamPeriodBlockReason(date, st.name, p.id, key);
@@ -3831,7 +4109,16 @@ table { max-width:100%; }
             if(!revisionScheduleRecords[date][currentBoard][key]) revisionScheduleRecords[date][currentBoard][key] = {};
             if(!revisionScheduleRecords[date][currentBoard][key][day]) revisionScheduleRecords[date][currentBoard][key][day] = {};
             
-            for(const p of periods) {
+            const fromP = document.getElementById('revisionFromPeriod')?.value;
+            const toP = document.getElementById('revisionToPeriod')?.value;
+            let fromIdx = periods.findIndex(p => String(p.id) === String(fromP));
+            let toIdx = periods.findIndex(p => String(p.id) === String(toP));
+            if(fromIdx === -1) fromIdx = 0;
+            if(toIdx === -1 || toIdx < fromIdx) toIdx = periods.length - 1;
+
+            const selectedPeriodsRange = periods.slice(fromIdx, toIdx + 1);
+
+            for(const p of selectedPeriodsRange) {
                 const chosen = Array.from(document.querySelectorAll(`.revision-teacher[data-period="${p.id}"]:checked`)).map(x=>x.value);
                 for(const t of chosen) {
                     const reason = getExamPeriodBlockReason(date, t, p.id, key);
@@ -3916,7 +4203,11 @@ table { max-width:100%; }
             document.getElementById('examInvigilationPanel').style.display = which === 'invigilation' ? 'block' : 'none';
             document.getElementById('examRevisionTabBtn').classList.toggle('active', which === 'revision');
             document.getElementById('examInvigilationTabBtn').classList.toggle('active', which === 'invigilation');
-            if(which === 'revision') { fillBoardOrientationSelect('revisionOrientation'); updateRevisionClassOptions(); }
+            if(which === 'revision') { 
+                fillBoardOrientationSelect('revisionOrientation'); 
+                initRevisionPeriodDropdowns();
+                updateRevisionClassOptions(); 
+            }
             if(which === 'invigilation') initInvigilationControls();
         }
 
@@ -4313,6 +4604,7 @@ table { max-width:100%; }
         function populateXSessionAndExamControls() {
             fillBoardOrientationSelect('revisionOrientation');
             fillBoardOrientationSelect('studyOrientation');
+            initRevisionPeriodDropdowns();
             updateRevisionClassOptions(); 
             updateStudyClassOptions();
             initInvigilationControls();
