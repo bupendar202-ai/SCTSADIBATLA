@@ -12,7 +12,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0056b3">
 
-    <!-- Browser Favicon & Home Screen Shortcut Links pointing to your PNG file -->
+    <!-- Browser Favicon & Home Screen Shortcut Links -->
     <link id="appFavicon" rel="icon" type="image/png" sizes="192x192" href="icon.png">
     <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="icon.png">
     <link id="webManifestLink" rel="manifest" href="manifest.json">
@@ -79,19 +79,46 @@
         .shortcut-icon-preview { width: 110px; height: 110px; border-radius: 20px; object-fit: cover; border: 2px solid #0056b3; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: block; }
 
         /* Print Page formatting for 4 teachers per A4 page */
-        .print-page-4grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            page-break-after: always;
+        .print-four-wrapper {
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 25px;
         }
 
-        .print-card-quarter {
-            border: 1px solid #000;
-            padding: 4px;
-            page-break-inside: avoid;
-            background: #fff;
+        .single-teacher-quarter-box {
+            overflow: hidden;
+            border-bottom: 1.5pt dashed #444;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .single-teacher-quarter-box:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        /* Enhanced styles for subject-wise teacher print output */
+        .subj-print-table th, .subj-print-table td {
+            padding: 5px 3px !important;
+            font-size: 10.5px !important;
+            line-height: 1.25 !important;
+        }
+        .subj-print-table th small {
+            font-size: 8.5px !important;
+            display: block;
+            color: #333;
+        }
+
+        /* Landscape full-page print setup for class master timetable */
+        @page class-landscape {
+            size: A4 landscape;
+            margin: 8mm 6mm 8mm 6mm;
+        }
+
+        .class-landscape-print-area {
+            page: class-landscape;
         }
 
         @media print {
@@ -128,52 +155,59 @@
             .sub-select-dropdown { display: none !important; }
             .print-only-text { display: inline-block !important; font-weight: bold; }
 
-            .print-page-4grid {
-                display: block !important;
-                page-break-after: always !important;
-                margin-bottom: 0 !important;
-            }
-
-            .print-card-quarter {
-                height: 238mm !important;
-                max-height: 242mm !important;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                margin-bottom: 0 !important;
-                page-break-after: always !important;
-            }
-
             .print-four-wrapper {
-                page-break-after: always;
-                height: 280mm;
-                box-sizing: border-box;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
+                page-break-after: always !important;
+                height: 278mm !important;
+                max-height: 282mm !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                margin-bottom: 0 !important;
+                box-sizing: border-box !important;
             }
 
             .single-teacher-quarter-box {
-                height: 67mm;
-                overflow: hidden;
-                border-bottom: 1.5pt dashed #444;
-                margin-bottom: 4mm;
-                padding-bottom: 2mm;
-                box-sizing: border-box;
+                height: 66mm !important;
+                max-height: 67mm !important;
+                overflow: hidden !important;
+                border-bottom: 1.5pt dashed #333 !important;
+                margin-bottom: 2mm !important;
+                padding-bottom: 2mm !important;
+                box-sizing: border-box !important;
             }
             .single-teacher-quarter-box:last-child {
-                border-bottom: none;
-                margin-bottom: 0;
+                border-bottom: none !important;
+                margin-bottom: 0 !important;
             }
 
-            .single-teacher-quarter-box table {
-                font-size: 8px !important;
-                margin-top: 2px !important;
+            .subj-print-table th, .subj-print-table td {
+                padding: 3.5px 2px !important;
+                font-size: 9.5px !important;
+                line-height: 1.15 !important;
             }
-            .single-teacher-quarter-box th, .single-teacher-quarter-box td {
-                padding: 1.5px 1px !important;
-                line-height: 1.1 !important;
+            .subj-print-table th small {
+                font-size: 7.5px !important;
+                display: block !important;
             }
+
+            /* Dedicated class-wise landscape formatting */
+            .class-landscape-print-area {
+                width: 100% !important;
+                height: 100% !important;
+            }
+            .class-landscape-print-area table {
+                width: 100% !important;
+                height: auto !important;
+                font-size: 11.5px !important;
+                margin-top: 10px !important;
+            }
+            .class-landscape-print-area th, .class-landscape-print-area td {
+                padding: 7px 4px !important;
+                line-height: 1.3 !important;
+            }
+            .class-landscape-print-area .print-header h2 { font-size: 20px !important; }
+            .class-landscape-print-area .print-header h3 { font-size: 15px !important; }
+            .class-landscape-print-area .print-header h4 { font-size: 13px !important; }
 
             .signature-section { 
                 display: flex !important; 
@@ -599,7 +633,7 @@ table { max-width:100%; }
             <div id="singleClassDashboardContainer"></div>
         </div>
 
-        <!-- Incharge & Dean Class Master Timetable Viewer (Mirroring Principal Module) -->
+        <!-- Incharge & Dean Class Master Timetable Viewer -->
         <div id="d-class-view" class="tab-content" style="display:none;">
             <h3>Class Master Timetable Viewer (Incharges &amp; Deans)</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
@@ -777,20 +811,58 @@ table { max-width:100%; }
                 <button id="examInvigilationTabBtn" onclick="showExamTab('invigilation')">Invigilation</button>
             </div>
 
+            <!-- Revision Panel (Structured Identically to Invigilation with From/To Period and Teachers excluding X-Session) -->
             <div id="examRevisionPanel" class="tab-content active-module">
-                <h4>Revision Schedule</h4>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <div class="form-group" style="flex:1; min-width:160px;"><label>Date:</label><input type="date" id="revisionDate" onchange="renderRevisionScheduleEditor()"></div>
-                    <div class="form-group" style="flex:1; min-width:140px;"><label>From Period:</label><select id="revisionFromPeriod" onchange="renderRevisionScheduleEditor()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:140px;"><label>To Period:</label><select id="revisionToPeriod" onchange="renderRevisionScheduleEditor()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:160px;"><label>Orientation:</label><select id="revisionOrientation" onchange="updateRevisionClassOptions()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:160px;"><label>Class:</label><select id="revisionClass" onchange="renderRevisionScheduleEditor()"></select></div>
-                    <div class="form-group" style="flex:1; min-width:120px;"><label>Section:</label><select id="revisionSection" onchange="renderRevisionScheduleEditor()"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option></select></div>
+                <h4>Revision Schedule Allotment</h4>
+                <div class="leave-box" style="margin-bottom:15px;">
+                    <input type="hidden" id="revisionEditIndex" value="-1">
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <div class="form-group" style="flex:1; min-width:160px;">
+                            <label>Date:</label>
+                            <input type="date" id="revisionDate" onchange="onRevisionDateOrPeriodChange()">
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:140px;">
+                            <label>From Period:</label>
+                            <select id="revisionFromPeriod" onchange="populateRevisionTeacherDropdown()"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:140px;">
+                            <label>To Period:</label>
+                            <select id="revisionToPeriod" onchange="populateRevisionTeacherDropdown()"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:160px;">
+                            <label>Orientation:</label>
+                            <select id="revisionOrientation" onchange="updateRevisionClassOptions()"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:160px;">
+                            <label>Class:</label>
+                            <select id="revisionClass"></select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:120px;">
+                            <label>Section:</label>
+                            <select id="revisionSection">
+                                <option value="">Select</option>
+                                <option value="A">A</option><option value="B">B</option>
+                                <option value="C">C</option><option value="D">D</option>
+                                <option value="E">E</option><option value="F">F</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:200px;">
+                            <label>Revision Teacher (Excludes X-Session Staff):</label>
+                            <select id="revisionTeacherSelect">
+                                <option value="">Select Teacher</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <button type="button" id="revisionSaveBtn" onclick="addOrUpdateRevisionEntry()">+ Add Revision Entry</button>
+                        <button type="button" id="revisionCancelEditBtn" style="display:none; background:#6c757d; margin-left:8px;" onclick="cancelRevisionEdit()">Cancel Edit</button>
+                    </div>
                 </div>
-                <div id="revisionScheduleEditor" style="margin-top:15px;"></div>
-                <div id="revisionScheduleList" style="margin-top:20px;"></div>
+
+                <div id="revisionScheduleList"></div>
             </div>
 
+            <!-- Invigilation Panel -->
             <div id="examInvigilationPanel" class="tab-content" style="display:none;">
                 <h4>Invigilation Allotment</h4>
                 <div class="leave-box" style="margin-bottom:15px;">
@@ -946,7 +1018,7 @@ table { max-width:100%; }
             <div id="floorSelectedClasses" style="margin-top:15px;"></div>
         </div>
 
-        <!-- Apply for Leave Section (Isolated view) -->
+        <!-- Apply for Leave Section -->
         <div id="teacherLeaveApplicationCard" class="leave-box" style="display:none;">
             <h4 style="margin-top:0; color:#0056b3;">Apply For Leave</h4>
             <div style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-end;">
@@ -966,7 +1038,7 @@ table { max-width:100%; }
             <span id="leaveStatusMsg" style="font-weight:bold; margin-left:10px;"></span>
         </div>
 
-        <!-- My Schedule View (Isolated view) -->
+        <!-- My Schedule View -->
         <div id="teacherScheduleCard" style="display:block;">
             <div class="form-group" style="max-width: 300px;">
                 <label>Select Date:</label>
@@ -1172,7 +1244,7 @@ table { max-width:100%; }
             revSnap.forEach(doc => {
                 const [date, board] = doc.id.split('__'); 
                 if(!revisionScheduleRecords[date]) revisionScheduleRecords[date] = {}; 
-                revisionScheduleRecords[date][board] = doc.data().value || {};
+                revisionScheduleRecords[date][board] = doc.data().value || [];
             });
             
             const invSnap = await db.collection('invigilationRecords').get(); 
@@ -1378,11 +1450,22 @@ table { max-width:100%; }
             await db.collection(collectionName).doc(docId).set({ value });
         }
 
+        // Standard Print Trigger
         function printTargetElement(elemId) {
             document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area'));
             const elem = document.getElementById(elemId);
             if(elem) {
                 elem.classList.add('printable-area');
+                window.print();
+            }
+        }
+
+        // Full Page Landscape Print Trigger (Class Master Timetable)
+        function printClassMasterLandscape(containerId) {
+            document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area'));
+            const elem = document.getElementById(containerId);
+            if(elem) {
+                elem.classList.add('printable-area', 'class-landscape-print-area');
                 window.print();
             }
         }
@@ -1631,13 +1714,11 @@ table { max-width:100%; }
             try {
                 const email = staffEmail(empId);
 
-                // If ID is being renamed/updated, remove previous Firestore employee document
                 if(oldEmpId && oldEmpId !== empId) {
                     await db.collection('staff').doc(oldEmpId).delete();
                 }
                 await saveStaffToFirestore(staff);
 
-                // Update users record collection matching this Emp ID or UID
                 const userQuery = await db.collection('users').where('empId', '==', oldEmpId || empId).get();
                 userQuery.forEach(async (uDoc) => {
                     await db.collection('users').doc(uDoc.id).set({
@@ -1645,7 +1726,6 @@ table { max-width:100%; }
                     }, { merge: true });
                 });
 
-                // Update teacher names in timetable data if name changed
                 if(oldTeacherName && oldTeacherName !== name) {
                     await renameTeacherInAllSchedules(oldTeacherName, name);
                 }
@@ -1678,13 +1758,11 @@ table { max-width:100%; }
 
         async function renameTeacherInAllSchedules(oldName, newName) {
             try {
-                // Update weekly status doc
                 if(teacherWeeklyStatus[oldName]) {
                     await db.collection('teacherWeeklyStatus').doc(newName).set({ value: teacherWeeklyStatus[oldName] });
                     await db.collection('teacherWeeklyStatus').doc(oldName).delete();
                 }
 
-                // Update Master Timetables
                 const ttSnap = await db.collection('timetables').get();
                 const batch = db.batch();
                 ttSnap.forEach(doc => {
@@ -1749,8 +1827,6 @@ table { max-width:100%; }
 
             try {
                 await db.collection('staff').doc(employeeId).delete();
-                
-                // Also remove corresponding user document
                 const userDocs = await db.collection('users').where('empId', '==', employeeId).get();
                 userDocs.forEach(async (d) => {
                     await db.collection('users').doc(d.id).delete();
@@ -2017,6 +2093,7 @@ table { max-width:100%; }
             renderSingleClassFullDashboard();
         }
 
+        // Full Page Landscape Class Master Viewer Render
         function renderSingleClassFullDashboard() {
             const fullClassKey = getSelectedClassKey();
             const container = document.getElementById('singleClassDashboardContainer');
@@ -2026,12 +2103,12 @@ table { max-width:100%; }
                 <div class="print-header">
                     <h2>SRI CHAITANYA SCHOOL</h2>
                     <h3>Branch : Adibatla</h3>
-                    <h4>Class Master Timetable (Week View): ${fullClassKey}</h4>
+                    <h4>Class Master Timetable (Week View): ${fullClassKey} [${currentBoard} BOARD]</h4>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3>Master View: ${fullClassKey} (Complete Week)</h3>
                     <div>
-                        <button class="print-btn no-print" onclick="printTargetElement('classMasterPrintContainer')">Print Master Timetable</button>
+                        <button class="print-btn no-print" onclick="printClassMasterLandscape('classMasterPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                         <button class="excel-btn no-print" onclick="exportTableToExcel('classMasterPrintContainer', 'Class_Timetable_${fullClassKey}')">Download Excel</button>
                     </div>
                 </div>`;
@@ -2065,7 +2142,7 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        /* Incharges & Deans Class Timetable Viewer Functions */
+        /* Incharges & Deans Class Timetable Viewer */
         function updateInchargeClassOptions() {
             const orientationEl = document.getElementById('dTtOrientation');
             if(orientationEl) {
@@ -2095,12 +2172,12 @@ table { max-width:100%; }
                 <div class="print-header">
                     <h2>SRI CHAITANYA SCHOOL</h2>
                     <h3>Branch : Adibatla</h3>
-                    <h4>Class Master Timetable (Week View): ${fullClassKey}</h4>
+                    <h4>Class Master Timetable (Week View): ${fullClassKey} [${currentBoard} BOARD]</h4>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
                     <div>
-                        <button class="print-btn no-print" onclick="printTargetElement('dClassPrintContainer')">Print Master Timetable</button>
+                        <button class="print-btn no-print" onclick="printClassMasterLandscape('dClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                         <button class="excel-btn no-print" onclick="exportTableToExcel('dClassPrintContainer', 'Class_Master_${fullClassKey}')">Download Excel</button>
                     </div>
                 </div>`;
@@ -2465,7 +2542,6 @@ table { max-width:100%; }
             return map[d.getDay()] || "Monday";
         }
 
-        // Returns ONLY APPROVED leaves for date to automatically route into substitution matrix
         function getApprovedLeaveTeachersForDate(dateStr) {
             if(!dateStr) return [];
             const result = [];
@@ -2779,15 +2855,15 @@ table { max-width:100%; }
             });
 
             ['STATE', 'CBSE'].forEach(board => {
-                const rev = revisionScheduleRecords[dateVal]?.[board] || {};
-                Object.keys(rev).forEach(clsKey => {
-                    Object.keys(rev[clsKey] || {}).forEach(d => {
-                        if(d === dayName) {
-                            Object.keys(rev[clsKey][d] || {}).forEach(pid => {
-                                if((rev[clsKey][d][pid] || []).includes(teacherName)) S++;
-                            });
+                const revList = revisionScheduleRecords[dateVal]?.[board] || [];
+                revList.forEach(rev => {
+                    if(rev.teacher === teacherName) {
+                        const fromIdx = periods.findIndex(p => String(p.id) === String(rev.fromPeriod));
+                        const toIdx = periods.findIndex(p => String(p.id) === String(rev.toPeriod));
+                        if(fromIdx !== -1 && toIdx !== -1 && fromIdx <= toIdx) {
+                            S += (toIdx - fromIdx + 1);
                         }
-                    });
+                    }
                 });
             });
 
@@ -2843,6 +2919,27 @@ table { max-width:100%; }
             return busy;
         }
 
+        function isTeacherRevisionScheduleBusy(dateVal, teacherName, periodId, boardFilter = null) {
+            let busy = false;
+            const pIndex = periods.findIndex(p => String(p.id) === String(periodId));
+            if(pIndex === -1) return false;
+
+            const boards = boardFilter ? [boardFilter] : ['STATE', 'CBSE'];
+            boards.forEach(board => {
+                const revList = revisionScheduleRecords[dateVal]?.[board] || [];
+                revList.forEach(rev => {
+                    if(rev.teacher === teacherName) {
+                        const fromIdx = periods.findIndex(p => String(p.id) === String(rev.fromPeriod));
+                        const toIdx = periods.findIndex(p => String(p.id) === String(rev.toPeriod));
+                        if(fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx) {
+                            busy = true;
+                        }
+                    }
+                });
+            });
+            return busy;
+        }
+
         function generateSubstitutionMatrix() {
             const dateVal = document.getElementById('subDate')?.value;
             if(!dateVal) return alert('Select a date first.');
@@ -2885,6 +2982,7 @@ table { max-width:100%; }
                 }
             });
 
+            // Invigilation Duty Absences
             ['STATE', 'CBSE'].forEach(board => {
                 const invList = invigilationRecords[dateVal]?.[board] || [];
                 invList.forEach(inv => {
@@ -2911,31 +3009,30 @@ table { max-width:100%; }
                 });
             });
 
+            // Revision Duty Absences
             ['STATE', 'CBSE'].forEach(board => {
-                const rev = revisionScheduleRecords[dateVal]?.[board] || {};
-                Object.keys(rev).forEach(clsKey => {
-                    Object.keys(rev[clsKey] || {}).forEach(d => {
-                        if(d !== dayName) return;
-                        Object.keys(rev[clsKey][d] || {}).forEach(pid => {
-                            const names = rev[clsKey][d][pid] || [];
-                            const pObj = periods.find(p => String(p.id) === String(pid)) || { id: pid, time: '' };
-                            names.forEach(name => {
-                                for(const cls in masterTimetable) {
-                                    const cell = masterTimetable[cls]?.[dayName]?.[pid];
-                                    if(!cell) continue;
-                                    if(cell.isDual) {
-                                        const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
-                                        const t1Label = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                        const t2Label = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                        if(cell.teacher1 === name) push(name, pObj, cls, `${cell.subject} (${t1Label})`, t1Label, `Revision Duty (${clsKey})`);
-                                        if(cell.teacher2 === name) push(name, pObj, cls, `${cell.subject} (${t2Label})`, t2Label, `Revision Duty (${clsKey})`);
-                                    } else if(cell.teacher === name) {
-                                        push(name, pObj, cls, cell.subject, cell.subject, `Revision Duty (${clsKey})`);
-                                    }
-                                }
-                            });
-                        });
-                    });
+                const revList = revisionScheduleRecords[dateVal]?.[board] || [];
+                revList.forEach(rev => {
+                    const fromIdx = periods.findIndex(p => String(p.id) === String(rev.fromPeriod));
+                    const toIdx = periods.findIndex(p => String(p.id) === String(rev.toPeriod));
+                    if(fromIdx === -1 || toIdx === -1 || fromIdx > toIdx) return;
+
+                    for(let idx = fromIdx; idx <= toIdx; idx++) {
+                        const pObj = periods[idx];
+                        for(const cls in masterTimetable) {
+                            const cell = masterTimetable[cls]?.[dayName]?.[pObj.id];
+                            if(!cell) continue;
+                            if(cell.isDual) {
+                                const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                                const t1Label = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                const t2Label = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                if(cell.teacher1 === rev.teacher) push(rev.teacher, pObj, cls, `${cell.subject} (${t1Label})`, t1Label, `Revision Duty (${rev.classKey || 'Revision'})`);
+                                if(cell.teacher2 === rev.teacher) push(rev.teacher, pObj, cls, `${cell.subject} (${t2Label})`, t2Label, `Revision Duty (${rev.classKey || 'Revision'})`);
+                            } else if(cell.teacher === rev.teacher) {
+                                push(rev.teacher, pObj, cls, cell.subject, cell.subject, `Revision Duty (${rev.classKey || 'Revision'})`);
+                            }
+                        }
+                    }
                 });
             });
 
@@ -3001,7 +3098,7 @@ table { max-width:100%; }
                     if(selectedAbsent.includes(st.name)) return false;
                     if(st.name === item.absentTeacher) return false;
                     if(isTeacherAssignedAcrossBoards(dateVal, st.name, item.period)) return false;
-                    if(isTeacherRevisionBusy(dateVal, st.name, item.period, currentBoard)) return false;
+                    if(isTeacherRevisionScheduleBusy(dateVal, st.name, item.period)) return false;
                     if(isTeacherInvigilationBusy(dateVal, st.name, item.period)) return false;
                     
                     const isXBusy = xSessionsOnDate.some(xs => teacherMatchesXSessionRecord(xs, st.name) && getXSessionDutyPeriods(xs.sessionTime).includes(item.period));
@@ -3211,17 +3308,8 @@ table { max-width:100%; }
 
             const myRevisions = [];
             ['STATE', 'CBSE'].forEach(b => {
-                const rev = revisionScheduleRecords[dateVal]?.[b] || {};
-                Object.keys(rev).forEach(clsKey => {
-                    Object.keys(rev[clsKey] || {}).forEach(d => {
-                        if(d === dayName) {
-                            Object.keys(rev[clsKey][d] || {}).forEach(pid => {
-                                if((rev[clsKey][d][pid] || []).includes(currentUser.name)) {
-                                    myRevisions.push({ period: pid, classKey: clsKey, boardName: b });
-                                }
-                            });
-                        }
-                    });
+                (revisionScheduleRecords[dateVal]?.[b] || []).forEach(rev => {
+                    if(rev.teacher === currentUser.name) myRevisions.push({ ...rev, boardName: b });
                 });
             });
 
@@ -3286,7 +3374,12 @@ table { max-width:100%; }
                         return fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx;
                     });
 
-                    const revMatch = myRevisions.find(r => String(r.period) === String(p.id));
+                    const revMatch = myRevisions.find(rev => {
+                        const fromIdx = periods.findIndex(x => String(x.id) === String(rev.fromPeriod));
+                        const toIdx = periods.findIndex(x => String(x.id) === String(rev.toPeriod));
+                        return fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx;
+                    });
+
                     const xSessMatch = myXSessions.find(xs => getXSessionDutyPeriods(xs.sessionTime).includes(p.id));
                     const subMatch = mySubstitutions.find(s => String(s.period) === String(p.id));
 
@@ -3295,7 +3388,7 @@ table { max-width:100%; }
                         type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation</span>`;
                         if(dealsBoth) assignedBoard = invMatch.boardName;
                     } else if(revMatch) {
-                        status = `Revision Schedule Duty (${revMatch.classKey})`;
+                        status = `Revision Schedule Duty (${revMatch.classKey}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
                         type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty</span>`;
                         if(dealsBoth) assignedBoard = revMatch.boardName;
                     } else if(xSessMatch) {
@@ -3515,9 +3608,9 @@ table { max-width:100%; }
                     <h4>Class Master Timetable (Week View): ${fullClassKey} [${currentBoard} BOARD]</h4>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h3>Master Timetable: ${fullClassKey} (Week View)</h3>
+                    <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
                     <div>
-                        <button class="print-btn no-print" onclick="printTargetElement('pClassPrintContainer')">Print Master Timetable</button>
+                        <button class="print-btn no-print" onclick="printClassMasterLandscape('pClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                         <button class="excel-btn no-print" onclick="exportTableToExcel('pClassPrintContainer', 'Class_Master_${fullClassKey}')">Download Excel</button>
                     </div>
                 </div>`;
@@ -3673,6 +3766,7 @@ table { max-width:100%; }
         // ==========================================
         // 1. SUBJECT-WISE TEACHERS TIMETABLE ENGINE
         // 4 TEACHERS PER A4 PAGE PRINT LAYOUT
+        // Period timings in headers, increased row height & font size
         // ==========================================
         function buildSingleTeacherScheduleQuarterHTML(teacherObj) {
             const teacherName = teacherObj.name;
@@ -3680,28 +3774,31 @@ table { max-width:100%; }
 
             let tableHTML = `
                 <div class="single-teacher-quarter-box">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid #0056b3; padding-bottom:2px; margin-bottom:3px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid #0056b3; padding-bottom:3px; margin-bottom:4px;">
                         <div>
-                            <span style="font-size:12px; font-weight:bold; color:red;">${teacherName}</span>
-                            <span style="font-size:10px; color:#333; margin-left:8px;">(${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
+                            <span style="font-size:13px; font-weight:bold; color:red;">${teacherName}</span>
+                            <span style="font-size:11px; color:#333; margin-left:8px; font-weight:bold;">(${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
                         </div>
-                        <div style="font-size:10px; font-weight:bold; color:#0056b3;">
+                        <div style="font-size:11px; font-weight:bold; color:#0056b3;">
                             Emp ID: ${teacherObj.empId || '---'} | Board: ${teacherObj.board || 'CBSE'}
                         </div>
                     </div>
-                    <table style="width:100%; border-collapse:collapse; font-size:8.5px; text-align:center;">
+                    <table class="subj-print-table" style="width:100%; border-collapse:collapse; text-align:center;">
                         <thead>
                             <tr style="background:#e9ecef;">
-                                <th style="padding:2px; border:1px solid #777;">Day</th>`;
+                                <th style="border:1px solid #777; width:45px;">Day</th>`;
 
             periods.forEach(p => {
-                tableHTML += `<th style="padding:2px; border:1px solid #777;">P-${p.id}</th>`;
+                tableHTML += `<th style="border:1px solid #777;">
+                    <b>P-${p.id}</b>
+                    <small>${p.time}</small>
+                </th>`;
             });
 
             tableHTML += `</tr></thead><tbody>`;
 
             days.forEach(day => {
-                tableHTML += `<tr><td style="padding:2px; border:1px solid #888; font-weight:bold; background:#fafafa;">${day.substring(0,3)}</td>`;
+                tableHTML += `<tr><td style="border:1px solid #888; font-weight:bold; background:#fafafa;">${day.substring(0,3)}</td>`;
 
                 periods.forEach(p => {
                     let assigned = null;
@@ -3732,10 +3829,10 @@ table { max-width:100%; }
                     }
 
                     if(assigned) {
-                        tableHTML += `<td style="padding:2px; border:1px solid #888; background:#e8f4fd; font-weight:bold; font-size:8px;">${assigned}</td>`;
+                        tableHTML += `<td style="border:1px solid #888; background:#e8f4fd; font-weight:bold;">${assigned}</td>`;
                     } else {
                         const status = teacherWeeklyStatus[teacherName]?.[day]?.[p.id] || '---';
-                        tableHTML += `<td style="padding:2px; border:1px solid #888; color:#777; font-size:8px;">${status}</td>`;
+                        tableHTML += `<td style="border:1px solid #888; color:#777;">${status}</td>`;
                     }
                 });
 
@@ -3786,7 +3883,7 @@ table { max-width:100%; }
                 </div>
             `;
 
-            // Group into chunks of 4 teachers per print page
+            // Group into chunks of exactly 4 teachers per printed A4 page
             const chunkSize = 4;
             for(let i = 0; i < matchingStaff.length; i += chunkSize) {
                 const chunk = matchingStaff.slice(i, i + chunkSize);
@@ -3961,7 +4058,6 @@ table { max-width:100%; }
         function updateRevisionClassOptions() {
             const o = document.getElementById('revisionOrientation')?.value;
             fillClassSelectFor('revisionClass', o);
-            renderRevisionScheduleEditor();
         }
 
         function updateStudyClassOptions() {
@@ -3999,14 +4095,15 @@ table { max-width:100%; }
                 }
             }
 
-            const day = getDayNameFromDate(dateVal);
             for(const b of ['STATE', 'CBSE']) {
-                const rev = revisionScheduleRecords[dateVal]?.[b] || {};
-                for(const cKey in rev) {
-                    if(ignoreClassKey && cKey === ignoreClassKey) continue;
-                    const revTeachers = rev[cKey]?.[day]?.[periodId] || [];
-                    if(revTeachers.includes(teacherName)) {
-                        return `Revision in ${cKey} (${b})`;
+                const revList = revisionScheduleRecords[dateVal]?.[b] || [];
+                for(const rev of revList) {
+                    if(rev.teacher === teacherName) {
+                        const fromIdx = periods.findIndex(p => String(p.id) === String(rev.fromPeriod));
+                        const toIdx = periods.findIndex(p => String(p.id) === String(rev.toPeriod));
+                        if(fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx) {
+                            return `Revision in ${rev.classKey || 'Revision'} (${b})`;
+                        }
                     }
                 }
             }
@@ -4015,187 +4112,215 @@ table { max-width:100%; }
         }
 
         // ==========================================
-        // 3. REVISION SCHEDULE: FROM PERIOD & TO PERIOD RANGE
-        // FILTERS OUT X-SESSION HANDLING TEACHERS
+        // 3. REVISION SCHEDULE MODULE (STRUCTURED IDENTICALLY TO INVIGILATION)
+        // Select Date, From Period, To Period, Orientation, Class, Section, Revision Teacher
+        // Excludes teachers handling X-Sessions
         // ==========================================
-        function initRevisionPeriodDropdowns() {
+        function initRevisionControls() {
+            const d = document.getElementById('revisionDate');
+            if(d && !d.value) d.value = new Date().toISOString().slice(0,10);
+            
             const fromP = document.getElementById('revisionFromPeriod');
             const toP = document.getElementById('revisionToPeriod');
-            if(!fromP || !toP) return;
-
-            if(!fromP.options.length || fromP.options.length <= 1) {
-                fromP.innerHTML = '<option value="">From</option>';
-                toP.innerHTML = '<option value="">To</option>';
+            if(fromP && (!fromP.options.length || fromP.options.length <= 1)) {
+                fromP.innerHTML = '<option value="">Select From</option>';
+                toP.innerHTML = '<option value="">Select To</option>';
                 periods.forEach(p => {
-                    fromP.innerHTML += `<option value="${p.id}">P-${p.id} (${p.time})</option>`;
-                    toP.innerHTML += `<option value="${p.id}">P-${p.id} (${p.time})</option>`;
+                    fromP.innerHTML += `<option value="${p.id}">${p.id} - ${p.time}</option>`;
+                    toP.innerHTML += `<option value="${p.id}">${p.id} - ${p.time}</option>`;
                 });
             }
+            fillBoardOrientationSelect('revisionOrientation');
+            updateRevisionClassOptions();
+            populateRevisionTeacherDropdown();
+            renderRevisionRecordsList();
         }
 
-        function renderRevisionScheduleEditor() {
-            const date = document.getElementById('revisionDate')?.value;
-            const key = currentSectionKey('revision');
-            const box = document.getElementById('revisionScheduleEditor');
-            if(!box) return;
-            initRevisionPeriodDropdowns();
+        function onRevisionDateOrPeriodChange() {
+            populateRevisionTeacherDropdown();
+            renderRevisionRecordsList();
+        }
 
+        function populateRevisionTeacherDropdown() {
+            const sel = document.getElementById('revisionTeacherSelect');
+            if(!sel) return;
+            const date = document.getElementById('revisionDate')?.value;
             const fromP = document.getElementById('revisionFromPeriod')?.value;
             const toP = document.getElementById('revisionToPeriod')?.value;
-
-            if(!date || !key) {
-                box.innerHTML = '<p style="color:#777;">Select date, orientation, class, section, and period range.</p>';
-                return;
-            }
-
-            const day = getDayNameFromDate(date);
             const leaves = getApprovedLeaveTeachersForDate(date);
             const xSessionsOnDate = getXSessionBusyListForDate(date);
+            const prev = sel.value;
+            sel.innerHTML = '<option value="">Select Teacher</option>';
 
             let fromIdx = periods.findIndex(p => String(p.id) === String(fromP));
             let toIdx = periods.findIndex(p => String(p.id) === String(toP));
             if(fromIdx === -1) fromIdx = 0;
-            if(toIdx === -1 || toIdx < fromIdx) toIdx = periods.length - 1;
+            if(toIdx === -1 || toIdx < fromIdx) toIdx = fromIdx;
 
-            const selectedPeriodsRange = periods.slice(fromIdx, toIdx + 1);
+            staffList
+                .filter(st => {
+                    if(!staffMatchesBoard(st, currentBoard)) return false;
+                    if(leaves.includes(st.name)) return false;
+                    
+                    // Exclude any teachers handling X-Session during the selected period range
+                    if(fromP && toP) {
+                        for(let idx = fromIdx; idx <= toIdx; idx++) {
+                            const pId = periods[idx].id;
+                            const isXBusy = xSessionsOnDate.some(xs => 
+                                teacherMatchesXSessionRecord(xs, st.name) && 
+                                getXSessionDutyPeriods(xs.sessionTime).includes(pId)
+                            );
+                            if(isXBusy) return false;
+                        }
+                    }
+                    return true;
+                })
+                .sort((a,b) => a.name.localeCompare(b.name))
+                .forEach(st => {
+                    let blockReason = null;
+                    if(fromP && toP) {
+                        for(let idx = fromIdx; idx <= toIdx; idx++) {
+                            const pId = periods[idx].id;
+                            const reason = getExamPeriodBlockReason(date, st.name, pId);
+                            if(reason) { blockReason = `Period ${pId}: ${reason}`; break; }
+                        }
+                    }
 
-            let html = `<h4>Revision Teachers for ${key} - ${day} (Periods: ${periods[fromIdx].id} to ${periods[toIdx].id})</h4>
-            <table><thead><tr><th>Period</th><th>Time</th><th>Revision Teacher(s) Allotment</th></tr></thead><tbody>`;
-
-            selectedPeriodsRange.forEach(p => {
-                const rec = revisionScheduleRecords[date]?.[currentBoard]?.[key]?.[day]?.[p.id] || [];
-
-                // Filter out teachers who are handling X-Sessions in this period
-                const options = staffList
-                    .filter(st => {
-                        if(!staffMatchesBoard(st, currentBoard)) return false;
-                        if(leaves.includes(st.name)) return false;
-                        // Check if teacher is handling X-Session during this period
-                        const isHandlingXSession = xSessionsOnDate.some(xs => 
-                            teacherMatchesXSessionRecord(xs, st.name) && 
-                            getXSessionDutyPeriods(xs.sessionTime).includes(p.id)
-                        );
-                        return !isHandlingXSession;
-                    })
-                    .sort((a,b) => String(a.name).localeCompare(String(b.name)));
-                
-                html += `<tr><td><b>P-${p.id}</b></td><td>${p.time}</td><td><div class="multi-select-box" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:4px;">`;
-                options.forEach(st => {
-                    const isChecked = rec.includes(st.name);
-                    const blockReason = getExamPeriodBlockReason(date, st.name, p.id, key);
-
-                    if (blockReason && !isChecked) {
-                        html += `<label style="color:#aaa; cursor:not-allowed;" title="Blocked: ${blockReason}">
-                            <input type="checkbox" disabled> ${st.name} (${st.subject || 'Staff'}) - [Blocked: ${blockReason}]
-                        </label>`;
+                    if(blockReason && st.name !== prev) {
+                        sel.innerHTML += `<option value="${st.name}" disabled style="color:#aaa;">${st.name} (${st.subject || 'Staff'}) - [Blocked: ${blockReason}]</option>`;
                     } else {
-                        html += `<label><input type="checkbox" class="revision-teacher" data-period="${p.id}" value="${st.name}" ${isChecked ? 'checked' : ''}> ${st.name} (${st.subject || 'Staff'})</label>`;
+                        sel.innerHTML += `<option value="${st.name}">${st.name} (${st.subject || 'Staff'})</option>`;
                     }
                 });
-                html += `</div></td></tr>`;
-            });
-            html += `</tbody></table><button onclick="saveRevisionSchedule()" style="margin-top:12px;">Save Revision Schedule</button>`;
-            box.innerHTML = html;
-            renderRevisionScheduleList();
+            if(prev) sel.value = prev;
         }
 
-        async function saveRevisionSchedule() {
-            const date = document.getElementById('revisionDate')?.value;
-            const key = currentSectionKey('revision');
-            if(!date || !key) return alert('Select date, orientation, class and section first.');
-            const day = getDayNameFromDate(date);
-            if(!revisionScheduleRecords[date]) revisionScheduleRecords[date] = {};
-            if(!revisionScheduleRecords[date][currentBoard]) revisionScheduleRecords[date][currentBoard] = {};
-            if(!revisionScheduleRecords[date][currentBoard][key]) revisionScheduleRecords[date][currentBoard][key] = {};
-            if(!revisionScheduleRecords[date][currentBoard][key][day]) revisionScheduleRecords[date][currentBoard][key][day] = {};
-            
-            const fromP = document.getElementById('revisionFromPeriod')?.value;
-            const toP = document.getElementById('revisionToPeriod')?.value;
-            let fromIdx = periods.findIndex(p => String(p.id) === String(fromP));
-            let toIdx = periods.findIndex(p => String(p.id) === String(toP));
-            if(fromIdx === -1) fromIdx = 0;
-            if(toIdx === -1 || toIdx < fromIdx) toIdx = periods.length - 1;
+        async function addOrUpdateRevisionEntry() {
+            const date = document.getElementById('revisionDate').value;
+            const fromP = document.getElementById('revisionFromPeriod').value;
+            const toP = document.getElementById('revisionToPeriod').value;
+            const orient = document.getElementById('revisionOrientation').value;
+            const cls = document.getElementById('revisionClass').value;
+            const sec = document.getElementById('revisionSection').value;
+            const teacher = document.getElementById('revisionTeacherSelect').value;
+            const editIdx = parseInt(document.getElementById('revisionEditIndex').value, 10);
 
-            const selectedPeriodsRange = periods.slice(fromIdx, toIdx + 1);
+            if(!date || !fromP || !toP || !orient || !cls || !teacher) {
+                return alert('Please fill in Date, From Period, To Period, Orientation, Class, and Revision Teacher.');
+            }
 
-            for(const p of selectedPeriodsRange) {
-                const chosen = Array.from(document.querySelectorAll(`.revision-teacher[data-period="${p.id}"]:checked`)).map(x=>x.value);
-                for(const t of chosen) {
-                    const reason = getExamPeriodBlockReason(date, t, p.id, key);
-                    if(reason) {
-                        return alert(`Cannot allot ${t} in Period ${p.id}: Teacher is already engaged with ${reason}.`);
-                    }
+            const fromIdx = periods.findIndex(p => String(p.id) === String(fromP));
+            const toIdx = periods.findIndex(p => String(p.id) === String(toP));
+            if(fromIdx > toIdx) {
+                return alert('From Period cannot be later than To Period.');
+            }
+
+            for(let idx = fromIdx; idx <= toIdx; idx++) {
+                const pId = periods[idx].id;
+                const reason = getExamPeriodBlockReason(date, teacher, pId);
+                if(reason) {
+                    return alert(`Cannot allot ${teacher} as Revision Teacher in Period ${pId}: Teacher is already engaged with ${reason}.`);
                 }
-                revisionScheduleRecords[date][currentBoard][key][day][p.id] = chosen;
+            }
+
+            const classKey = sec ? `${cls} - Sec ${sec}` : cls;
+            if(!revisionScheduleRecords[date]) revisionScheduleRecords[date] = {};
+            if(!Array.isArray(revisionScheduleRecords[date][currentBoard])) revisionScheduleRecords[date][currentBoard] = [];
+
+            const record = {
+                fromPeriod: fromP,
+                toPeriod: toP,
+                orientation: orient,
+                classKey,
+                teacher
+            };
+
+            if(editIdx >= 0 && editIdx < revisionScheduleRecords[date][currentBoard].length) {
+                revisionScheduleRecords[date][currentBoard][editIdx] = record;
+                alert('Revision duty updated.');
+            } else {
+                revisionScheduleRecords[date][currentBoard].push(record);
+                alert('Revision duty added.');
             }
 
             await saveMapDoc('revisionScheduleRecords', `${date}__${currentBoard}`, revisionScheduleRecords[date][currentBoard]);
-            alert('Revision Schedule saved. Selected revision teachers will automatically appear in substitution list for their assigned periods.');
-            renderRevisionScheduleList();
+            cancelRevisionEdit();
+            renderRevisionRecordsList();
         }
 
-        function renderRevisionScheduleList() {
-            const box = document.getElementById('revisionScheduleList');
-            const date = document.getElementById('revisionDate')?.value;
-            if(!box || !date) return;
-            const data = revisionScheduleRecords[date]?.[currentBoard] || {};
-            let rows = [];
-            Object.keys(data).forEach(key => Object.keys(data[key] || {}).forEach(day => Object.keys(data[key][day] || {}).forEach(period => {
-                const names = data[key][day][period] || [];
-                if(names.length) rows.push({key, day, period, names: names.join(', ')});
-            })));
+        function editRevisionEntry(idx) {
+            const date = document.getElementById('revisionDate').value;
+            const list = revisionScheduleRecords[date]?.[currentBoard] || [];
+            const item = list[idx];
+            if(!item) return;
 
-            if (!rows.length) {
-                box.innerHTML = '<p style="color:#777;">No revision teachers selected yet.</p>';
+            document.getElementById('revisionFromPeriod').value = item.fromPeriod;
+            document.getElementById('revisionToPeriod').value = item.toPeriod;
+            document.getElementById('revisionOrientation').value = item.orientation;
+            updateRevisionClassOptions();
+
+            const [c, s] = (item.classKey || '').split(' - Sec ');
+            document.getElementById('revisionClass').value = c || '';
+            document.getElementById('revisionSection').value = s || '';
+            populateRevisionTeacherDropdown();
+            document.getElementById('revisionTeacherSelect').value = item.teacher;
+
+            document.getElementById('revisionEditIndex').value = idx;
+            document.getElementById('revisionSaveBtn').innerText = 'Update Revision Entry';
+            document.getElementById('revisionCancelEditBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+        }
+
+        function cancelRevisionEdit() {
+            document.getElementById('revisionEditIndex').value = '-1';
+            document.getElementById('revisionSaveBtn').innerText = '+ Add Revision Entry';
+            document.getElementById('revisionCancelEditBtn').style.display = 'none';
+            document.getElementById('revisionFromPeriod').value = '';
+            document.getElementById('revisionToPeriod').value = '';
+            document.getElementById('revisionTeacherSelect').value = '';
+        }
+
+        async function deleteRevisionEntry(idx) {
+            const date = document.getElementById('revisionDate').value;
+            if(!confirm('Delete this revision record?')) return;
+            revisionScheduleRecords[date][currentBoard].splice(idx, 1);
+            await saveMapDoc('revisionScheduleRecords', `${date}__${currentBoard}`, revisionScheduleRecords[date][currentBoard]);
+            renderRevisionRecordsList();
+        }
+
+        function renderRevisionRecordsList() {
+            const date = document.getElementById('revisionDate')?.value;
+            const box = document.getElementById('revisionScheduleList');
+            if(!box || !date) return;
+
+            const list = revisionScheduleRecords[date]?.[currentBoard] || [];
+            if(!list.length) {
+                box.innerHTML = '<p style="color:#777;">No revision records added for this date.</p>';
                 return;
             }
 
             let html = `<h4>Saved Revision Schedule (${date} - ${currentBoard} BOARD)</h4>
             <table><thead><tr>
-                <th>Class</th><th>Day</th><th>Period</th><th>Revision Teacher(s)</th><th>Action</th>
+                <th>S.No</th><th>From Period</th><th>To Period</th><th>Orientation</th><th>Class &amp; Section</th><th>Revision Teacher</th><th>Action</th>
             </tr></thead><tbody>`;
 
-            rows.forEach((r) => {
+            list.forEach((item, idx) => {
                 html += `<tr>
-                    <td><b>${r.key}</b></td>
-                    <td>${r.day}</td>
-                    <td><b>${r.period}</b></td>
-                    <td>${r.names}</td>
+                    <td>${idx + 1}</td>
+                    <td><b>${item.fromPeriod}</b></td>
+                    <td><b>${item.toPeriod}</b></td>
+                    <td>${item.orientation || ''}</td>
+                    <td><b>${item.classKey}</b></td>
+                    <td style="color:#0056b3; font-weight:bold;">${item.teacher}</td>
                     <td>
-                        <button type="button" class="edit-btn" onclick="editRevisionEntry('${date}', '${r.key}')">Edit</button>
-                        <button type="button" class="delete-btn" onclick="deleteRevisionEntry('${date}', '${r.key}', '${r.day}', '${r.period}')">Delete</button>
+                        <button type="button" class="edit-btn" onclick="editRevisionEntry(${idx})">Edit</button>
+                        <button type="button" class="delete-btn" onclick="deleteRevisionEntry(${idx})">Delete</button>
                     </td>
                 </tr>`;
             });
+
             html += `</tbody></table>`;
             box.innerHTML = html;
-        }
-
-        function editRevisionEntry(date, classKey) {
-            document.getElementById('revisionDate').value = date;
-            const [cls, sec] = classKey.split(' - Sec ');
-            let matchedOrient = "";
-            for(const orient in classOpts) {
-                if(classOpts[orient].includes(cls)) { matchedOrient = orient; break; }
-            }
-            if(matchedOrient) {
-                document.getElementById('revisionOrientation').value = matchedOrient;
-                updateRevisionClassOptions();
-            }
-            document.getElementById('revisionClass').value = cls;
-            document.getElementById('revisionSection').value = sec || '';
-            renderRevisionScheduleEditor();
-            window.scrollTo({ top: 180, behavior: 'smooth' });
-        }
-
-        async function deleteRevisionEntry(date, classKey, day, period) {
-            if(!confirm(`Delete revision schedule entry for ${classKey} on ${day} (Period ${period})?`)) return;
-            if(revisionScheduleRecords[date]?.[currentBoard]?.[classKey]?.[day]?.[period]) {
-                delete revisionScheduleRecords[date][currentBoard][classKey][day][period];
-                await saveMapDoc('revisionScheduleRecords', `${date}__${currentBoard}`, revisionScheduleRecords[date][currentBoard]);
-                renderRevisionScheduleEditor();
-                renderRevisionScheduleList();
-            }
         }
 
         function showExamTab(which) {
@@ -4203,11 +4328,7 @@ table { max-width:100%; }
             document.getElementById('examInvigilationPanel').style.display = which === 'invigilation' ? 'block' : 'none';
             document.getElementById('examRevisionTabBtn').classList.toggle('active', which === 'revision');
             document.getElementById('examInvigilationTabBtn').classList.toggle('active', which === 'invigilation');
-            if(which === 'revision') { 
-                fillBoardOrientationSelect('revisionOrientation'); 
-                initRevisionPeriodDropdowns();
-                updateRevisionClassOptions(); 
-            }
+            if(which === 'revision') initRevisionControls();
             if(which === 'invigilation') initInvigilationControls();
         }
 
@@ -4602,11 +4723,9 @@ table { max-width:100%; }
         }
 
         function populateXSessionAndExamControls() {
-            fillBoardOrientationSelect('revisionOrientation');
             fillBoardOrientationSelect('studyOrientation');
-            initRevisionPeriodDropdowns();
-            updateRevisionClassOptions(); 
             updateStudyClassOptions();
+            initRevisionControls();
             initInvigilationControls();
             renderStudyHoursSavedList();
         }
@@ -4626,12 +4745,6 @@ table { max-width:100%; }
                 html += '</tr>';
             });
             return html + '</tbody></table></div></div>';
-        }
-
-        function isTeacherRevisionBusy(date, teacherName, period, board) {
-            const day = getDayNameFromDate(date);
-            return revisionTeachersForDate(date, board, day, period).includes(teacherName) ||
-                   revisionTeachersForDate(date, board === 'STATE' ? 'CBSE' : 'STATE', day, period).includes(teacherName);
         }
 
         function reapplyPeriodClashes() {
@@ -4661,16 +4774,6 @@ table { max-width:100%; }
                     }
                 });
             });
-        }
-
-        function revisionTeachersForDate(date, board, day, period) {
-            const out = [];
-            const data = revisionScheduleRecords[date]?.[board] || {};
-            Object.keys(data).forEach(key => {
-                const arr = data[key]?.[day]?.[period] || [];
-                arr.forEach(name => { if(!out.includes(name)) out.push(name); });
-            });
-            return out;
         }
 
         function syncSubstituteTeachersIntoAbsentList(dateVal) {
@@ -4743,7 +4846,6 @@ table { max-width:100%; }
 
         let floorSelectedClassRecords = [];
 
-        // Isolated dashboard display for Teacher Module:
         function openTeacherDashboardArea(area) {
             const floor = document.getElementById('teacherFloorDashboard');
             const leave = document.getElementById('teacherLeaveApplicationCard');
@@ -4760,7 +4862,6 @@ table { max-width:100%; }
                 if(schedule) schedule.style.display = 'none';
                 leave?.scrollIntoView({behavior:'smooth'});
             } else {
-                // MY TIMETABLE selected - show only schedule
                 if(floor) floor.style.display = 'none';
                 if(leave) leave.style.display = 'none';
                 if(schedule) schedule.style.display = 'block';
