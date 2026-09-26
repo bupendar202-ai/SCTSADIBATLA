@@ -194,7 +194,7 @@
                 font-size: 9px !important; 
                 page-break-inside: auto;
             }
-            th, td {
+            th, td { 
                 padding: 2.5px 2px !important; 
                 line-height: 1.15;
             }
@@ -218,27 +218,63 @@
             body.print-landscape-mode @page, 
             @page class-landscape-page {
                 size: A4 landscape !important;
-                margin: 8mm 6mm 8mm 6mm !important;
+                margin: 6mm 6mm 6mm 6mm !important;
             }
             .class-landscape-print-area {
                 width: 100% !important;
-                height: 100% !important;
+                height: 98vh !important;
                 page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: flex-start !important;
+                box-sizing: border-box !important;
             }
+            .class-landscape-print-area .print-header {
+                display: block !important;
+                text-align: center !important;
+                margin-bottom: 4px !important;
+                padding-bottom: 2px !important;
+                border-bottom: 2px solid #0056b3 !important;
+            }
+            .class-landscape-print-area .print-header h2 { font-size: 20px !important; margin: 0 !important; color: red !important; }
+            .class-landscape-print-area .print-header h3 { font-size: 15px !important; margin: 2px 0 !important; color: blue !important; }
+            .class-landscape-print-area .print-header h4 { font-size: 14px !important; margin: 2px 0 !important; color: black !important; font-weight: bold !important; }
+            
             .class-landscape-print-area table {
                 width: 100% !important;
-                height: auto !important;
-                font-size: 11.5px !important;
-                margin-top: 10px !important;
+                height: 86vh !important;
+                font-size: 11px !important;
+                margin-top: 4px !important;
+                border: 1.5pt solid #000 !important;
+                border-collapse: collapse !important;
+                table-layout: fixed !important;
             }
             .class-landscape-print-area th, 
             .class-landscape-print-area td {
-                padding: 8px 4px !important;
-                line-height: 1.3 !important;
+                padding: 3px 2px !important;
+                line-height: 1.2 !important;
+                border: 1pt solid #444 !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+                overflow: hidden !important;
+                word-wrap: break-word !important;
             }
-            .class-landscape-print-area .print-header h2 { font-size: 22px !important; }
-            .class-landscape-print-area .print-header h3 { font-size: 16px !important; }
-            .class-landscape-print-area .print-header h4 { font-size: 14px !important; }
+            .class-landscape-print-area th {
+                background-color: #f0f0f0 !important;
+                color: #000 !important;
+                font-size: 12px !important;
+                font-weight: bold !important;
+            }
+            .class-landscape-print-area td.period-label-cell {
+                width: 14% !important;
+                background-color: #f8f9fa !important;
+                font-weight: bold !important;
+                font-size: 11px !important;
+            }
+            .class-landscape-print-area td.day-content-cell {
+                width: 14.33% !important;
+            }
         }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -2108,35 +2144,37 @@ table { max-width:100%; }
                 <div class="print-header">
                     <h2>SRI CHAITANYA SCHOOL</h2>
                     <h3>Branch : Adibatla</h3>
-                    <h4>Class Master Timetable (Week View): ${fullClassKey} [${currentBoard} BOARD]</h4>
+                    <h4>Class: ${fullClassKey}</h4>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
                     <h3>Master View: ${fullClassKey} (Complete Week)</h3>
                     <div>
                         <button class="print-btn no-print" onclick="printClassMasterLandscape('classMasterPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                     </div>
                 </div>`;
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
-            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            
+            // Transposed Layout: Width side = Days, Length side = Periods
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:14%;">Period / Time</th>`;
+            days.forEach(d => { html += `<th style="width:14.33%;">${d}</th>`; });
             html += `</tr></thead><tbody>`;
 
-            days.forEach(d => {
-                html += `<tr><td><b>${d}</b></td>`;
-                periods.forEach(p => {
+            periods.forEach(p => {
+                html += `<tr><td class="period-label-cell"><b>P-${p.id}</b><br><small>${p.time}</small></td>`;
+                days.forEach(d => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
-                        html += `<td style="color:#aaa;">---</td>`;
+                        html += `<td class="day-content-cell" style="color:#aaa;">---</td>`;
                     }
                 });
                 html += `</tr>`;
@@ -2176,35 +2214,37 @@ table { max-width:100%; }
                 <div class="print-header">
                     <h2>SRI CHAITANYA SCHOOL</h2>
                     <h3>Branch : Adibatla</h3>
-                    <h4>Class Master Timetable (Week View): ${fullClassKey} [${currentBoard} BOARD]</h4>
+                    <h4>Class: ${fullClassKey}</h4>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
                     <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
                     <div>
                         <button class="print-btn no-print" onclick="printClassMasterLandscape('dClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                     </div>
                 </div>`;
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
-            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            
+            // Transposed Layout: Width side = Days, Length side = Periods
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:14%;">Period / Time</th>`;
+            days.forEach(d => { html += `<th style="width:14.33%;">${d}</th>`; });
             html += `</tr></thead><tbody>`;
 
-            days.forEach(d => {
-                html += `<tr><td><b>${d}</b></td>`;
-                periods.forEach(p => {
+            periods.forEach(p => {
+                html += `<tr><td class="period-label-cell"><b>P-${p.id}</b><br><small>${p.time}</small></td>`;
+                days.forEach(d => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
-                        html += `<td style="color:#aaa;">---</td>`;
+                        html += `<td class="day-content-cell" style="color:#aaa;">---</td>`;
                     }
                 });
                 html += `</tr>`;
@@ -3601,36 +3641,38 @@ table { max-width:100%; }
                 <div class="print-header">
                     <h2>SRI CHAITANYA SCHOOL</h2>
                     <h3>Branch : Adibatla</h3>
-                    <h4>Class Master Timetable (Week View): ${fullClassKey} [${currentBoard} BOARD]</h4>
+                    <h4>Class: ${fullClassKey}</h4>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
                     <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
                     <div>
                         <button class="print-btn no-print" onclick="printClassMasterLandscape('pClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                         <button class="excel-btn no-print" onclick="exportTableToExcel('pClassPrintContainer', 'Class_Master_${fullClassKey}')">Download Excel</button>
                     </div>
                 </div>`;
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
-            periods.forEach(p => { html += `<th>P-${p.id}<br><small>${p.time}</small></th>`; });
+            
+            // Transposed Layout: Width side = Days, Length side = Periods
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:14%;">Period / Time</th>`;
+            days.forEach(d => { html += `<th style="width:14.33%;">${d}</th>`; });
             html += `</tr></thead><tbody>`;
 
-            days.forEach(d => {
-                html += `<tr><td><b>${d}</b></td>`;
-                periods.forEach(p => {
+            periods.forEach(p => {
+                html += `<tr><td class="period-label-cell"><b>P-${p.id}</b><br><small>${p.time}</small></td>`;
+                days.forEach(d => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
-                        html += `<td style="color:#aaa;">---</td>`;
+                        html += `<td class="day-content-cell" style="color:#aaa;">---</td>`;
                     }
                 });
                 html += `</tr>`;
