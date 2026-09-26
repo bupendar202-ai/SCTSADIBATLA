@@ -252,7 +252,7 @@
             }
             .class-landscape-print-area th, 
             .class-landscape-print-area td {
-                padding: 3px 2px !important;
+                padding: 4px 2px !important;
                 line-height: 1.2 !important;
                 border: 1pt solid #444 !important;
                 text-align: center !important;
@@ -263,17 +263,18 @@
             .class-landscape-print-area th {
                 background-color: #f0f0f0 !important;
                 color: #000 !important;
-                font-size: 12px !important;
+                font-size: 10.5px !important;
                 font-weight: bold !important;
             }
-            .class-landscape-print-area td.period-label-cell {
-                width: 14% !important;
+            .class-landscape-print-area td.day-label-cell {
+                width: 7% !important;
                 background-color: #f8f9fa !important;
                 font-weight: bold !important;
-                font-size: 11px !important;
+                font-size: 12px !important;
             }
-            .class-landscape-print-area td.day-content-cell {
-                width: 14.33% !important;
+            .class-landscape-print-area td.period-content-cell {
+                width: 6.64% !important;
+                font-size: 10.5px !important;
             }
         }
     </style>
@@ -2153,28 +2154,30 @@ table { max-width:100%; }
                     </div>
                 </div>`;
             
-            // Transposed Layout: Width side = Days, Length side = Periods
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:14%;">Period / Time</th>`;
-            days.forEach(d => { html += `<th style="width:14.33%;">${d}</th>`; });
+            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
+            periods.forEach(p => { 
+                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
+            });
             html += `</tr></thead><tbody>`;
 
-            periods.forEach(p => {
-                html += `<tr><td class="period-label-cell"><b>P-${p.id}</b><br><small>${p.time}</small></td>`;
-                days.forEach(d => {
+            days.forEach(d => {
+                html += `<tr><td class="day-label-cell"><b>${d}</b></td>`;
+                periods.forEach(p => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
-                        html += `<td class="day-content-cell" style="color:#aaa;">---</td>`;
+                        html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
                     }
                 });
                 html += `</tr>`;
@@ -2223,28 +2226,30 @@ table { max-width:100%; }
                     </div>
                 </div>`;
             
-            // Transposed Layout: Width side = Days, Length side = Periods
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:14%;">Period / Time</th>`;
-            days.forEach(d => { html += `<th style="width:14.33%;">${d}</th>`; });
+            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
+            periods.forEach(p => { 
+                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
+            });
             html += `</tr></thead><tbody>`;
 
-            periods.forEach(p => {
-                html += `<tr><td class="period-label-cell"><b>P-${p.id}</b><br><small>${p.time}</small></td>`;
-                days.forEach(d => {
+            days.forEach(d => {
+                html += `<tr><td class="day-label-cell"><b>${d}</b></td>`;
+                periods.forEach(p => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
-                        html += `<td class="day-content-cell" style="color:#aaa;">---</td>`;
+                        html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
                     }
                 });
                 html += `</tr>`;
@@ -3651,28 +3656,30 @@ table { max-width:100%; }
                     </div>
                 </div>`;
             
-            // Transposed Layout: Width side = Days, Length side = Periods
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:14%;">Period / Time</th>`;
-            days.forEach(d => { html += `<th style="width:14.33%;">${d}</th>`; });
+            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
+            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
+            periods.forEach(p => { 
+                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
+            });
             html += `</tr></thead><tbody>`;
 
-            periods.forEach(p => {
-                html += `<tr><td class="period-label-cell"><b>P-${p.id}</b><br><small>${p.time}</small></td>`;
-                days.forEach(d => {
+            days.forEach(d => {
+                html += `<tr><td class="day-label-cell"><b>${d}</b></td>`;
+                periods.forEach(p => {
                     const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
                     if(cell && cell.subject) {
                         if(cell.isDual) {
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="day-content-cell"><b>${cell.subject}</b><br><span style="font-size:11px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
-                        html += `<td class="day-content-cell" style="color:#aaa;">---</td>`;
+                        html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
                     }
                 });
                 html += `</tr>`;
