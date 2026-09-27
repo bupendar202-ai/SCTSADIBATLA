@@ -111,6 +111,100 @@
             color: #333;
         }
 
+        /* Custom Document-Matched Timetable Sheet Styling */
+        .sc-sheet-wrap {
+            background: #fff;
+            padding: 10px;
+            color: #000;
+            font-family: Arial, Helvetica, sans-serif;
+            box-sizing: border-box;
+        }
+        .sc-sheet-school-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            margin: 0 0 6px 0;
+            color: #000;
+        }
+        .sc-sheet-meta-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0 0 4px 0;
+            padding: 0 4px;
+        }
+        .sc-sheet-assembly-row {
+            text-align: center;
+            font-size: 15px;
+            font-weight: 900;
+            margin: 0 0 6px 0;
+            letter-spacing: 1px;
+        }
+        .sc-doc-table {
+            width: 100%;
+            border: 2px solid #000 !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            margin: 0 !important;
+            background: #fff;
+        }
+        .sc-doc-table th, .sc-doc-table td {
+            border: 1.5px solid #000 !important;
+            text-align: center !important;
+            vertical-align: middle !important;
+            padding: 4px 1px !important;
+            word-wrap: break-word !important;
+            color: #000 !important;
+        }
+        .sc-doc-table th {
+            font-weight: bold;
+            font-size: 11px;
+            background: #fff !important;
+        }
+        .sc-doc-table td.day-hdr {
+            font-weight: bold;
+            font-size: 12px;
+            width: 5.5%;
+            letter-spacing: 0.5px;
+        }
+        .sc-doc-table td.break-col {
+            font-weight: bold;
+            font-size: 10px;
+            width: 2.8%;
+            background: #fff !important;
+            padding: 2px 0 !important;
+            white-space: nowrap;
+        }
+        .sc-doc-table td.break-col .v-text {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            display: inline-block;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+        .sc-doc-table td.cell-period {
+            width: 6.8%;
+            height: 48px;
+            font-size: 10px;
+            line-height: 1.15;
+        }
+        .sc-doc-table .cell-sub {
+            font-weight: bold;
+            font-size: 10.5px;
+            display: block;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+        .sc-doc-table .cell-teacher {
+            font-size: 9px;
+            font-weight: normal;
+            display: block;
+            color: #111;
+            line-height: 1.1;
+        }
+
         /* Default Print Settings */
         @media print {
             @page {
@@ -210,71 +304,65 @@
             }
         }
 
-        /* Dedicated Landscape Print Rules for Class Master Timetable */
+        /* Dedicated Exact-Match Landscape Print Rules for Class Timetable */
         @media print {
             body.print-landscape-mode {
                 font-size: 11px !important;
+                background-color: #fff !important;
             }
             body.print-landscape-mode @page, 
             @page class-landscape-page {
                 size: A4 landscape !important;
-                margin: 6mm 6mm 6mm 6mm !important;
+                margin: 5mm 5mm 5mm 5mm !important;
             }
             .class-landscape-print-area {
                 width: 100% !important;
-                height: 98vh !important;
+                height: 195mm !important;
+                max-height: 200mm !important;
                 page-break-inside: avoid !important;
                 page-break-after: avoid !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: flex-start !important;
                 box-sizing: border-box !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
-            .class-landscape-print-area .print-header {
-                display: block !important;
-                text-align: center !important;
-                margin-bottom: 4px !important;
-                padding-bottom: 2px !important;
-                border-bottom: 2px solid #0056b3 !important;
+            .class-landscape-print-area .sc-sheet-school-title {
+                font-size: 21px !important;
+                margin: 0 0 4px 0 !important;
             }
-            .class-landscape-print-area .print-header h2 { font-size: 20px !important; margin: 0 !important; color: red !important; }
-            .class-landscape-print-area .print-header h3 { font-size: 15px !important; margin: 2px 0 !important; color: blue !important; }
-            .class-landscape-print-area .print-header h4 { font-size: 14px !important; margin: 2px 0 !important; color: black !important; font-weight: bold !important; }
-            
-            .class-landscape-print-area table {
+            .class-landscape-print-area .sc-sheet-meta-row {
+                font-size: 14px !important;
+                margin: 0 0 3px 0 !important;
+            }
+            .class-landscape-print-area .sc-sheet-assembly-row {
+                font-size: 14px !important;
+                margin: 0 0 4px 0 !important;
+            }
+            .class-landscape-print-area .sc-doc-table {
                 width: 100% !important;
-                height: 86vh !important;
-                font-size: 11px !important;
-                margin-top: 4px !important;
-                border: 1.5pt solid #000 !important;
+                height: 165mm !important;
+                border: 2pt solid #000 !important;
                 border-collapse: collapse !important;
                 table-layout: fixed !important;
             }
-            .class-landscape-print-area th, 
-            .class-landscape-print-area td {
-                padding: 4px 2px !important;
-                line-height: 1.2 !important;
-                border: 1pt solid #444 !important;
-                text-align: center !important;
-                vertical-align: middle !important;
-                overflow: hidden !important;
-                word-wrap: break-word !important;
+            .class-landscape-print-area .sc-doc-table th,
+            .class-landscape-print-area .sc-doc-table td {
+                border: 1.5pt solid #000 !important;
+                padding: 2px 1px !important;
             }
-            .class-landscape-print-area th {
-                background-color: #f0f0f0 !important;
-                color: #000 !important;
-                font-size: 10.5px !important;
-                font-weight: bold !important;
+            .class-landscape-print-area .sc-doc-table td.cell-period {
+                height: 23mm !important;
             }
-            .class-landscape-print-area td.day-label-cell {
-                width: 7% !important;
-                background-color: #f8f9fa !important;
-                font-weight: bold !important;
-                font-size: 12px !important;
+            .class-landscape-print-area .sc-doc-table .cell-sub {
+                font-size: 10px !important;
             }
-            .class-landscape-print-area td.period-content-cell {
-                width: 6.64% !important;
-                font-size: 10.5px !important;
+            .class-landscape-print-area .sc-doc-table .cell-teacher {
+                font-size: 8.5px !important;
+            }
+            .class-landscape-print-area .sc-doc-table td.break-col .v-text {
+                font-size: 9.5px !important;
             }
         }
     </style>
@@ -1129,21 +1217,28 @@ table { max-width:100%; }
 
         function staffEmail(empId) { return `${String(empId).trim().toLowerCase()}@scadibatla.local`; }
 
+        // Core 13 Periods matching school schedule with 3 designated break sessions
         const periods = [
-            { id: "0", time: "8:10am - 8:50am", session: "morning" }, 
-            { id: "I", time: "8:50am - 9:30am", session: "morning" },
-            { id: "II", time: "9:30am - 10:10am", session: "morning" }, 
-            { id: "III", time: "10:10am - 10:50am", session: "morning" }, 
-            { id: "IV", time: "11:00am - 11:40am", session: "morning" }, 
-            { id: "V", time: "11:40am - 12:20pm", session: "morning" },
-            { id: "VI", time: "12:20pm - 1:00pm", session: "lunch" }, 
-            { id: "VII", time: "1:00pm - 1:40pm", session: "afternoon" },
-            { id: "VIII", time: "1:40pm - 2:20pm", session: "afternoon" }, 
-            { id: "IX", time: "2:20pm - 3:00pm", session: "afternoon" },
-            { id: "X", time: "3:10pm - 3:50pm", session: "afternoon" }, 
-            { id: "XI", time: "3:50pm - 4:30pm", session: "afternoon" },
-            { id: "XII", time: "4:30pm - 5:10pm", session: "afternoon" }, 
-            { id: "XIII", time: "5:10pm - 5:50pm", session: "afternoon" }
+            { id: "I", time: "8:10 - 8:50", session: "morning" },
+            { id: "II", time: "8:50 - 9:30", session: "morning" }, 
+            { id: "III", time: "9:30 - 10:10", session: "morning" }, 
+            { id: "IV", time: "10:10 - 10:50", session: "morning" }, 
+            { id: "V", time: "11:00 - 11:40", session: "morning" }, 
+            { id: "VI", time: "11:40 - 12:20", session: "morning" },
+            { id: "VII", time: "1:00 - 1:40", session: "afternoon" },
+            { id: "VIII", time: "1:40 - 2:20", session: "afternoon" }, 
+            { id: "IX", time: "2:20 - 3:00", session: "afternoon" },
+            { id: "X", time: "3:10 - 3:50", session: "afternoon" }, 
+            { id: "XI", time: "3:50 - 4:30", session: "afternoon" },
+            { id: "XII", time: "4:30 - 5:10", session: "afternoon" }, 
+            { id: "XIII", time: "5:10 - 5:50", session: "afternoon" }
+        ];
+
+        // Break definitions matching the document
+        const breakSlots = [
+            { afterPeriod: "IV", name: "BREAK (10:50-11:00)" },
+            { afterPeriod: "VI", name: "LUNCH BREAK (12:20-1:00)" },
+            { afterPeriod: "IX", name: "BREAK (3:00-3:10)" }
         ];
 
         // Night Study Hours (6:00pm to 8:00pm)
@@ -1153,6 +1248,15 @@ table { max-width:100%; }
         ];
 
         const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const dayAbbreviations = {
+            "Monday": "MON",
+            "Tuesday": "TUE",
+            "Wednesday": "WED",
+            "Thursday": "THU",
+            "Friday": "FRI",
+            "Saturday": "SAT"
+        };
+
         const classOpts = {
             "IPL": ["C1 IPL", "C2 IPL", "C3 IPL", "C4 IPL", "C5 IPL"],
             "MPL": ["M1 MPL", "M2 MPL", "M3 MPL"],
@@ -2006,7 +2110,7 @@ table { max-width:100%; }
             const day = document.getElementById('ttDay').value;
             if(!fullClassKey || !day) return alert("Select Class and Day first.");
 
-            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "Math A", "Math B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "GK", "IT", "WIZCLUB", "OLY MAT", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP", "Other"];
+            const subjects = ["FL", "SL", "TL", "Telugu", "Hindi", "English", "Math", "M-A", "M-B", "Physics", "Chemistry", "Biology", "Botany", "Zoology", "Social", "GK", "IT", "WIZCLUB", "OLY MAT", "PET", "Computer", "Reasoning", "Arithmetic", "Activity", "CBP", "SDP", "Other"];
             let html = `<h4>Assigning Timetable for ${fullClassKey} (${day}) - [${currentBoard} BOARD]</h4>`;
             html += `<table><tr><th>Period</th><th>Time</th><th>Subject</th><th>Handling Teacher(s) Selection</th></tr>`;
 
@@ -2135,55 +2239,136 @@ table { max-width:100%; }
             renderSingleClassFullDashboard();
         }
 
+        // Dedicated helper: detects Class Teacher for a class section if any
+        function getClassTeacherName(fullClassKey) {
+            const inchargeStaff = staffList.find(st => {
+                const d = String(st.designation || '').toLowerCase();
+                return d.includes('incharge') && st.subject && fullClassKey.toLowerCase().includes(st.subject.toLowerCase());
+            });
+            return inchargeStaff ? inchargeStaff.name : '';
+        }
+
+        // Build exact table matching uploaded document format[cite: 1]
+        function buildDocumentMatchedClassTimetableHTML(fullClassKey, containerId) {
+            const classTeacher = getClassTeacherName(fullClassKey);
+
+            let html = `
+            <div id="${containerId}" class="sc-sheet-wrap">
+                <div class="sc-sheet-school-title">SRI CHAITANYA SCHOOL - ADIBATLA</div>
+                <div class="sc-sheet-meta-row">
+                    <span>CLASS: ${fullClassKey}</span>
+                    <span>CLASS TEACHER : ${classTeacher}</span>
+                </div>
+                <div class="sc-sheet-assembly-row">ASSEMBLY</div>
+                
+                <table class="sc-doc-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5.5%;">PERIOD</th>
+                            <th style="width: 6.8%;">I</th>
+                            <th style="width: 6.8%;">II</th>
+                            <th style="width: 6.8%;">III</th>
+                            <th style="width: 6.8%;">IV</th>
+                            <th class="break-col" style="width: 2.8%;"></th>
+                            <th style="width: 6.8%;">V</th>
+                            <th style="width: 6.8%;">VI</th>
+                            <th class="break-col" style="width: 2.8%;"></th>
+                            <th style="width: 6.8%;">VII</th>
+                            <th style="width: 6.8%;">VIII</th>
+                            <th style="width: 6.8%;">IX</th>
+                            <th class="break-col" style="width: 2.8%;"></th>
+                            <th style="width: 6.8%;">X</th>
+                            <th style="width: 6.8%;">XI</th>
+                            <th style="width: 6.8%;">XII</th>
+                            <th style="width: 6.8%;">XIII</th>
+                        </tr>
+                        <tr>
+                            <th>DAY</th>
+                            <th>8:10 - 8:50</th>
+                            <th>8:50 - 9:30</th>
+                            <th>9:30 -10:10</th>
+                            <th>10:10-10:50</th>
+                            <th class="break-col"></th>
+                            <th>11:00-11:40</th>
+                            <th>11:40-12:20</th>
+                            <th class="break-col"></th>
+                            <th>1:00 -1:40</th>
+                            <th>1:40 -2:20</th>
+                            <th>2:20 -3:00</th>
+                            <th class="break-col"></th>
+                            <th>3:10-3:50</th>
+                            <th>3:50-4:30</th>
+                            <th>4:30-5:10</th>
+                            <th>5:10- 5:50</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            days.forEach((dayName, dIdx) => {
+                const dayAbbr = dayAbbreviations[dayName] || dayName.substring(0, 3).toUpperCase();
+                html += `<tr>`;
+                html += `<td class="day-hdr">${dayAbbr}</td>`;
+
+                // Render Periods with integrated vertical Break cells on the first row (rowspan=6)[cite: 1]
+                periods.forEach((p) => {
+                    const cell = masterTimetable[fullClassKey]?.[dayName]?.[p.id];
+                    let subText = '';
+                    let teachText = '';
+
+                    if (cell && cell.subject) {
+                        subText = cell.subject;
+                        if (cell.isDual) {
+                            teachText = `${cell.teacher1 || cell.teacher || ''}/${cell.teacher2 || ''}`.replace(/^\/|\/$/g, '');
+                        } else {
+                            teachText = cell.teacher || '';
+                            if (cell.teacher2) teachText += `/${cell.teacher2}`;
+                        }
+                    }
+
+                    html += `<td class="cell-period">`;
+                    if (subText) {
+                        html += `<span class="cell-sub">${subText}</span>`;
+                        if (teachText) html += `<span class="cell-teacher">${teachText}</span>`;
+                    }
+                    html += `</td>`;
+
+                    // Check for break column after specific periods[cite: 1]
+                    const brk = breakSlots.find(b => b.afterPeriod === p.id);
+                    if (brk) {
+                        if (dIdx === 0) {
+                            html += `<td class="break-col" rowspan="6"><span class="v-text">${brk.name}</span></td>`;
+                        }
+                    }
+                });
+
+                html += `</tr>`;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            </div>
+            `;
+            return html;
+        }
+
         // Full Page Landscape Class Master Viewer Render
         function renderSingleClassFullDashboard() {
             const fullClassKey = getSelectedClassKey();
             const container = document.getElementById('singleClassDashboardContainer');
             if(!fullClassKey) { container.innerHTML = ''; return; }
 
-            let html = `<div id="classMasterPrintContainer">
-                <div class="print-header">
-                    <h2>SRI CHAITANYA SCHOOL</h2>
-                    <h3>Branch : Adibatla</h3>
-                    <h4>Class: ${fullClassKey}</h4>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
-                    <h3>Master View: ${fullClassKey} (Complete Week)</h3>
+            let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;" class="no-print">
+                    <h3 style="margin:0;">Class View: ${fullClassKey} (Official Landscape Grid)</h3>
                     <div>
                         <button class="print-btn no-print" onclick="printClassMasterLandscape('classMasterPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                     </div>
-                </div>`;
-            
-            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
-            periods.forEach(p => { 
-                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
-            });
-            html += `</tr></thead><tbody>`;
+                </div>
+            `;
 
-            days.forEach(d => {
-                html += `<tr><td class="day-label-cell"><b>${d}</b></td>`;
-                periods.forEach(p => {
-                    const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
-                    if(cell && cell.subject) {
-                        if(cell.isDual) {
-                            const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
-                            const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
-                            const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
-                        } else {
-                            let tDesc = cell.teacher || '---';
-                            if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
-                        }
-                    } else {
-                        html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
-                    }
-                });
-                html += `</tr>`;
-            });
-
-            html += `</tbody></table></div></div>`;
+            html += buildDocumentMatchedClassTimetableHTML(fullClassKey, 'classMasterPrintContainer');
             container.innerHTML = html;
         }
 
@@ -2213,49 +2398,16 @@ table { max-width:100%; }
             if(!cls || !container) { if(container) container.innerHTML = ''; return; }
             const fullClassKey = sec ? `${cls} - Sec ${sec}` : cls;
 
-            let html = `<div id="dClassPrintContainer">
-                <div class="print-header">
-                    <h2>SRI CHAITANYA SCHOOL</h2>
-                    <h3>Branch : Adibatla</h3>
-                    <h4>Class: ${fullClassKey}</h4>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
-                    <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
+            let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;" class="no-print">
+                    <h3 style="margin:0;">Class View: ${fullClassKey} (Official Landscape Grid)</h3>
                     <div>
                         <button class="print-btn no-print" onclick="printClassMasterLandscape('dClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                     </div>
-                </div>`;
-            
-            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
-            periods.forEach(p => { 
-                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
-            });
-            html += `</tr></thead><tbody>`;
+                </div>
+            `;
 
-            days.forEach(d => {
-                html += `<tr><td class="day-label-cell"><b>${d}</b></td>`;
-                periods.forEach(p => {
-                    const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
-                    if(cell && cell.subject) {
-                        if(cell.isDual) {
-                            const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
-                            const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
-                            const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
-                        } else {
-                            let tDesc = cell.teacher || '---';
-                            if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
-                        }
-                    } else {
-                        html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
-                    }
-                });
-                html += `</tr>`;
-            });
-
-            html += `</tbody></table></div></div>`;
+            html += buildDocumentMatchedClassTimetableHTML(fullClassKey, 'dClassPrintContainer');
             container.innerHTML = html;
         }
 
@@ -3642,50 +3794,16 @@ table { max-width:100%; }
             if(!cls) { container.innerHTML = ''; return; }
             const fullClassKey = sec ? `${cls} - Sec ${sec}` : cls;
 
-            let html = `<div id="pClassPrintContainer">
-                <div class="print-header">
-                    <h2>SRI CHAITANYA SCHOOL</h2>
-                    <h3>Branch : Adibatla</h3>
-                    <h4>Class: ${fullClassKey}</h4>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
-                    <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
+            let html = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;" class="no-print">
+                    <h3 style="margin:0;">Class View: ${fullClassKey} (Official Landscape Grid)</h3>
                     <div>
                         <button class="print-btn no-print" onclick="printClassMasterLandscape('pClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
                         <button class="excel-btn no-print" onclick="exportTableToExcel('pClassPrintContainer', 'Class_Master_${fullClassKey}')">Download Excel</button>
                     </div>
-                </div>`;
-            
-            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
-            html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
-            periods.forEach(p => { 
-                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
-            });
-            html += `</tr></thead><tbody>`;
-
-            days.forEach(d => {
-                html += `<tr><td class="day-label-cell"><b>${d}</b></td>`;
-                periods.forEach(p => {
-                    const cell = masterTimetable[fullClassKey]?.[d]?.[p.id];
-                    if(cell && cell.subject) {
-                        if(cell.isDual) {
-                            const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
-                            const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
-                            const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
-                        } else {
-                            let tDesc = cell.teacher || '---';
-                            if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
-                        }
-                    } else {
-                        html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
-                    }
-                });
-                html += `</tr>`;
-            });
-
-            html += `</tbody></table></div></div>`;
+                </div>
+            `;
+            html += buildDocumentMatchedClassTimetableHTML(fullClassKey, 'pClassPrintContainer');
             container.innerHTML = html;
         }
 
