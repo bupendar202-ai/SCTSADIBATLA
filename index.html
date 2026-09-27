@@ -310,15 +310,14 @@
                 font-size: 11px !important;
                 background-color: #fff !important;
             }
-            body.print-landscape-mode @page, 
-            @page class-landscape-page {
+            body.print-landscape-mode @page {
                 size: A4 landscape !important;
-                margin: 5mm 5mm 5mm 5mm !important;
+                margin: 4mm 4mm 4mm 4mm !important;
             }
             .class-landscape-print-area {
                 width: 100% !important;
-                height: 195mm !important;
-                max-height: 200mm !important;
+                height: 198mm !important;
+                max-height: 202mm !important;
                 page-break-inside: avoid !important;
                 page-break-after: avoid !important;
                 display: flex !important;
@@ -342,7 +341,7 @@
             }
             .class-landscape-print-area .sc-doc-table {
                 width: 100% !important;
-                height: 165mm !important;
+                height: 168mm !important;
                 border: 2pt solid #000 !important;
                 border-collapse: collapse !important;
                 table-layout: fixed !important;
@@ -366,6 +365,7 @@
             }
         }
     </style>
+    <style id="dynamic-print-orientation"></style>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -1241,12 +1241,6 @@ table { max-width:100%; }
             { afterPeriod: "IX", name: "BREAK (3:00-3:10)" }
         ];
 
-        // Night Study Hours (6:00pm to 8:00pm)
-        const nightStudyPeriods = [
-            { id: "NS-I", time: "6:00pm - 7:00pm" },
-            { id: "NS-II", time: "7:00pm - 8:00pm" }
-        ];
-
         const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const dayAbbreviations = {
             "Monday": "MON",
@@ -1596,6 +1590,10 @@ table { max-width:100%; }
 
         // Standard Portrait Print Trigger
         function printTargetElement(elemId) {
+            const dynamicStyle = document.getElementById('dynamic-print-orientation');
+            if(dynamicStyle) {
+                dynamicStyle.innerHTML = '@page { size: A4 portrait !important; margin: 6mm !important; }';
+            }
             document.body.classList.remove('print-landscape-mode');
             document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area'));
             const elem = document.getElementById(elemId);
@@ -1607,6 +1605,10 @@ table { max-width:100%; }
 
         // Full Page Landscape Print Trigger (Class Master Timetable)
         function printClassMasterLandscape(containerId) {
+            const dynamicStyle = document.getElementById('dynamic-print-orientation');
+            if(dynamicStyle) {
+                dynamicStyle.innerHTML = '@page { size: A4 landscape !important; margin: 4mm !important; }';
+            }
             document.body.classList.add('print-landscape-mode');
             document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area'));
             const elem = document.getElementById(containerId);
@@ -2248,7 +2250,7 @@ table { max-width:100%; }
             return inchargeStaff ? inchargeStaff.name : '';
         }
 
-        // Build exact table matching uploaded document format[cite: 1]
+        // Build exact table matching uploaded document format
         function buildDocumentMatchedClassTimetableHTML(fullClassKey, containerId) {
             const classTeacher = getClassTeacherName(fullClassKey);
 
@@ -2310,7 +2312,7 @@ table { max-width:100%; }
                 html += `<tr>`;
                 html += `<td class="day-hdr">${dayAbbr}</td>`;
 
-                // Render Periods with integrated vertical Break cells on the first row (rowspan=6)[cite: 1]
+                // Render Periods with integrated vertical Break cells on the first row (rowspan=6)
                 periods.forEach((p) => {
                     const cell = masterTimetable[fullClassKey]?.[dayName]?.[p.id];
                     let subText = '';
@@ -2333,7 +2335,7 @@ table { max-width:100%; }
                     }
                     html += `</td>`;
 
-                    // Check for break column after specific periods[cite: 1]
+                    // Check for break column after specific periods
                     const brk = breakSlots.find(b => b.afterPeriod === p.id);
                     if (brk) {
                         if (dIdx === 0) {
