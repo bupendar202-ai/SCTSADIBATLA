@@ -36,10 +36,12 @@
         button:hover { background: #004494; }
         .logout-btn { background: #dc3545; float: right; }
         .logout-btn:hover { background: #bd2130; }
-        .print-btn { background: #28a745; margin-left: 10px; }
+        .print-btn { background: #28a745; margin-left: 6px; }
         .print-btn:hover { background: #218838; }
-        .excel-btn { background: #17a2b8; color: white; margin-left: 8px; font-weight: bold; }
-        .excel-btn:hover { background: #138496; }
+        .print-btn-secondary { background: #17a2b8; margin-left: 6px; }
+        .print-btn-secondary:hover { background: #138496; }
+        .excel-btn { background: #6c757d; color: white; margin-left: 6px; font-weight: bold; }
+        .excel-btn:hover { background: #5a6268; }
         .edit-btn { background: #ffc107; color: #000; margin-left: 10px; font-weight: bold; }
         .edit-btn:hover { background: #e0a800; }
         
@@ -78,8 +80,8 @@
 
         .shortcut-icon-preview { width: 110px; height: 110px; border-radius: 20px; object-fit: cover; border: 2px solid #0056b3; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: block; }
 
-        /* Print Page formatting for 4 teachers per A4 page */
-        .print-four-wrapper {
+        /* Print Page formatting for 3 teachers per A4 page */
+        .print-three-wrapper {
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -87,26 +89,54 @@
             margin-bottom: 25px;
         }
 
-        .single-teacher-quarter-box {
+        .single-teacher-third-box {
             overflow: hidden;
             border-bottom: 1.5pt dashed #444;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             box-sizing: border-box;
         }
-        .single-teacher-quarter-box:last-child {
+        .single-teacher-third-box:last-child {
             border-bottom: none;
             margin-bottom: 0;
         }
 
+        .teacher-single-header {
+            text-align: center;
+            border-bottom: 1.5px solid #0056b3;
+            margin-bottom: 4px;
+            padding-bottom: 2px;
+        }
+        .teacher-single-header .t-school-name {
+            color: red;
+            font-size: 15px;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.15;
+        }
+        .teacher-single-header .t-branch-name {
+            color: blue;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 1px 0;
+            line-height: 1.15;
+        }
+        .teacher-single-header .t-info-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
         /* Enhanced styles for subject-wise teacher print output */
         .subj-print-table th, .subj-print-table td {
-            padding: 5px 3px !important;
-            font-size: 10.5px !important;
-            line-height: 1.25 !important;
+            padding: 4px 2px !important;
+            font-size: 10px !important;
+            line-height: 1.2 !important;
         }
         .subj-print-table th small {
-            font-size: 8.5px !important;
+            font-size: 8px !important;
             display: block;
             color: #333;
         }
@@ -115,7 +145,7 @@
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 6mm 6mm 6mm 6mm;
+                margin: 5mm 5mm 5mm 5mm;
             }
             body { 
                 background-color: #fff; 
@@ -146,7 +176,8 @@
             .sub-select-dropdown { display: none !important; }
             .print-only-text { display: inline-block !important; font-weight: bold; }
 
-            .print-four-wrapper {
+            /* Three teachers per A4 Portrait page */
+            .print-three-wrapper {
                 page-break-after: always !important;
                 height: 278mm !important;
                 max-height: 282mm !important;
@@ -157,27 +188,31 @@
                 box-sizing: border-box !important;
             }
 
-            .single-teacher-quarter-box {
-                height: 66mm !important;
-                max-height: 67mm !important;
+            .single-teacher-third-box {
+                height: 88mm !important;
+                max-height: 90mm !important;
                 overflow: hidden !important;
                 border-bottom: 1.5pt dashed #333 !important;
                 margin-bottom: 2mm !important;
                 padding-bottom: 2mm !important;
                 box-sizing: border-box !important;
             }
-            .single-teacher-quarter-box:last-child {
+            .single-teacher-third-box:last-child {
                 border-bottom: none !important;
                 margin-bottom: 0 !important;
             }
 
+            .teacher-single-header .t-school-name { font-size: 13.5px !important; }
+            .teacher-single-header .t-branch-name { font-size: 11px !important; }
+            .teacher-single-header .t-info-line { font-size: 9.5px !important; }
+
             .subj-print-table th, .subj-print-table td {
-                padding: 3.5px 2px !important;
-                font-size: 9.5px !important;
+                padding: 2.5px 1.5px !important;
+                font-size: 9px !important;
                 line-height: 1.15 !important;
             }
             .subj-print-table th small {
-                font-size: 7.5px !important;
+                font-size: 7px !important;
                 display: block !important;
             }
 
@@ -188,9 +223,9 @@
                 font-size: 10px !important; 
                 page-break-inside: avoid;
             }
-            table {
+            table { 
                 width: 100% !important; 
-                margin-top: 5px !important; 
+                margin-top: 4px !important; 
                 font-size: 9px !important; 
                 page-break-inside: auto;
             }
@@ -198,27 +233,26 @@
                 padding: 2.5px 2px !important; 
                 line-height: 1.15;
             }
-            tr {
+            tr { 
                 page-break-inside: avoid; 
                 page-break-after: auto;
             }
-            thead {
-                display: table-header-group;
+            thead { 
+                display: table-header-group; 
             }
-            tfoot {
-                display: table-footer-group;
+            tfoot { 
+                display: table-footer-group; 
             }
         }
 
-        /* Dedicated Landscape Print Rules for Class Master Timetable */
+        /* Dedicated Landscape Mode for Class Master Timetable */
         @media print {
             body.print-landscape-mode {
                 font-size: 11px !important;
             }
-            body.print-landscape-mode @page, 
-            @page class-landscape-page {
+            body.print-landscape-mode @page {
                 size: A4 landscape !important;
-                margin: 6mm 6mm 6mm 6mm !important;
+                margin: 5mm 5mm 5mm 5mm !important;
             }
             .class-landscape-print-area {
                 width: 100% !important;
@@ -233,26 +267,26 @@
             .class-landscape-print-area .print-header {
                 display: block !important;
                 text-align: center !important;
-                margin-bottom: 4px !important;
+                margin-bottom: 3px !important;
                 padding-bottom: 2px !important;
                 border-bottom: 2px solid #0056b3 !important;
             }
-            .class-landscape-print-area .print-header h2 { font-size: 20px !important; margin: 0 !important; color: red !important; }
-            .class-landscape-print-area .print-header h3 { font-size: 15px !important; margin: 2px 0 !important; color: blue !important; }
-            .class-landscape-print-area .print-header h4 { font-size: 14px !important; margin: 2px 0 !important; color: black !important; font-weight: bold !important; }
+            .class-landscape-print-area .print-header h2 { font-size: 18px !important; margin: 0 !important; color: red !important; }
+            .class-landscape-print-area .print-header h3 { font-size: 14px !important; margin: 1px 0 !important; color: blue !important; }
+            .class-landscape-print-area .print-header h4 { font-size: 13px !important; margin: 1px 0 !important; color: black !important; font-weight: bold !important; }
             
             .class-landscape-print-area table {
                 width: 100% !important;
-                height: 86vh !important;
-                font-size: 11px !important;
-                margin-top: 4px !important;
+                height: 87vh !important;
+                font-size: 10.5px !important;
+                margin-top: 3px !important;
                 border: 1.5pt solid #000 !important;
                 border-collapse: collapse !important;
                 table-layout: fixed !important;
             }
             .class-landscape-print-area th, 
             .class-landscape-print-area td {
-                padding: 4px 2px !important;
+                padding: 3px 2px !important;
                 line-height: 1.2 !important;
                 border: 1pt solid #444 !important;
                 text-align: center !important;
@@ -263,18 +297,54 @@
             .class-landscape-print-area th {
                 background-color: #f0f0f0 !important;
                 color: #000 !important;
-                font-size: 10.5px !important;
+                font-size: 10px !important;
                 font-weight: bold !important;
             }
             .class-landscape-print-area td.day-label-cell {
                 width: 7% !important;
                 background-color: #f8f9fa !important;
                 font-weight: bold !important;
-                font-size: 12px !important;
+                font-size: 11.5px !important;
             }
             .class-landscape-print-area td.period-content-cell {
                 width: 6.64% !important;
-                font-size: 10.5px !important;
+                font-size: 10px !important;
+            }
+        }
+
+        /* Dedicated Portrait Mode for Class Master Timetable */
+        @media print {
+            body.print-portrait-mode {
+                font-size: 9px !important;
+            }
+            body.print-portrait-mode @page {
+                size: A4 portrait !important;
+                margin: 5mm 5mm 5mm 5mm !important;
+            }
+            .class-portrait-print-area {
+                width: 100% !important;
+                page-break-inside: avoid !important;
+                box-sizing: border-box !important;
+            }
+            .class-portrait-print-area table {
+                width: 100% !important;
+                font-size: 8.5px !important;
+                table-layout: fixed !important;
+            }
+            .class-portrait-print-area th,
+            .class-portrait-print-area td {
+                padding: 2px 1px !important;
+                font-size: 8px !important;
+                line-height: 1.1 !important;
+                word-break: break-word;
+            }
+            .class-portrait-print-area td.day-label-cell {
+                width: 8% !important;
+                font-size: 9px !important;
+            }
+            .class-portrait-print-area td.period-content-cell {
+                width: 6.57% !important;
+                font-size: 7.5px !important;
             }
         }
     </style>
@@ -543,7 +613,7 @@ table { max-width:100%; }
             <div id="pTeachersByDateView"></div>
         </div>
 
-        <!-- Principal Subject-Wise Teachers Timetable View (4 per page on print) -->
+        <!-- Principal Subject-Wise Teachers Timetable View (3 per page on print with header for each teacher) -->
         <div id="p-subject-tt" class="tab-content" style="display:none;">
             <h3>Subject-Wise Teachers Timetable (Department Master)</h3>
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:15px; align-items:flex-end;">
@@ -563,7 +633,7 @@ table { max-width:100%; }
                     </select>
                 </div>
                 <div>
-                    <button class="print-btn no-print" onclick="printTargetElement('pSubjectWiseContainer')">Print Department Timetables (4 per page)</button>
+                    <button class="print-btn no-print" onclick="printTargetElement('pSubjectWiseContainer')">Print Department Timetables (3 per page)</button>
                     <button class="excel-btn no-print" onclick="exportTableToExcel('pSubjectWiseContainer', 'Subject_Timetables')">Download Excel</button>
                 </div>
             </div>
@@ -1492,8 +1562,8 @@ table { max-width:100%; }
 
         // Standard Portrait Print Trigger
         function printTargetElement(elemId) {
-            document.body.classList.remove('print-landscape-mode');
-            document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area'));
+            document.body.classList.remove('print-landscape-mode', 'print-portrait-mode');
+            document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area', 'class-portrait-print-area'));
             const elem = document.getElementById(elemId);
             if(elem) {
                 elem.classList.add('printable-area');
@@ -1503,11 +1573,24 @@ table { max-width:100%; }
 
         // Full Page Landscape Print Trigger (Class Master Timetable)
         function printClassMasterLandscape(containerId) {
+            document.body.classList.remove('print-portrait-mode');
             document.body.classList.add('print-landscape-mode');
-            document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area'));
+            document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area', 'class-portrait-print-area'));
             const elem = document.getElementById(containerId);
             if(elem) {
                 elem.classList.add('printable-area', 'class-landscape-print-area');
+                window.print();
+            }
+        }
+
+        // Full Page Portrait Print Trigger (Class Master Timetable)
+        function printClassMasterPortrait(containerId) {
+            document.body.classList.remove('print-landscape-mode');
+            document.body.classList.add('print-portrait-mode');
+            document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area', 'class-landscape-print-area', 'class-portrait-print-area'));
+            const elem = document.getElementById(containerId);
+            if(elem) {
+                elem.classList.add('printable-area', 'class-portrait-print-area');
                 window.print();
             }
         }
@@ -2135,7 +2218,7 @@ table { max-width:100%; }
             renderSingleClassFullDashboard();
         }
 
-        // Full Page Landscape Class Master Viewer Render
+        // Full Page Landscape/Portrait Class Master Viewer Render
         function renderSingleClassFullDashboard() {
             const fullClassKey = getSelectedClassKey();
             const container = document.getElementById('singleClassDashboardContainer');
@@ -2150,7 +2233,8 @@ table { max-width:100%; }
                 <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
                     <h3>Master View: ${fullClassKey} (Complete Week)</h3>
                     <div>
-                        <button class="print-btn no-print" onclick="printClassMasterLandscape('classMasterPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
+                        <button class="print-btn no-print" onclick="printClassMasterLandscape('classMasterPrintContainer')">Print Landscape (Auto)</button>
+                        <button class="print-btn-secondary no-print" onclick="printClassMasterPortrait('classMasterPrintContainer')">Print Portrait (Auto)</button>
                     </div>
                 </div>`;
             
@@ -2222,7 +2306,8 @@ table { max-width:100%; }
                 <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
                     <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
                     <div>
-                        <button class="print-btn no-print" onclick="printClassMasterLandscape('dClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
+                        <button class="print-btn no-print" onclick="printClassMasterLandscape('dClassPrintContainer')">Print Landscape (Auto)</button>
+                        <button class="print-btn-secondary no-print" onclick="printClassMasterPortrait('dClassPrintContainer')">Print Portrait (Auto)</button>
                     </div>
                 </div>`;
             
@@ -3651,7 +3736,8 @@ table { max-width:100%; }
                 <div style="display:flex; justify-content:space-between; align-items:center;" class="no-print">
                     <h3>Master Timetable: ${fullClassKey} (Week View) [${currentBoard} BOARD]</h3>
                     <div>
-                        <button class="print-btn no-print" onclick="printClassMasterLandscape('pClassPrintContainer')">Print Landscape Timetable (Full A4 Page)</button>
+                        <button class="print-btn no-print" onclick="printClassMasterLandscape('pClassPrintContainer')">Print Landscape (Auto)</button>
+                        <button class="print-btn-secondary no-print" onclick="printClassMasterPortrait('pClassPrintContainer')">Print Portrait (Auto)</button>
                         <button class="excel-btn no-print" onclick="exportTableToExcel('pClassPrintContainer', 'Class_Master_${fullClassKey}')">Download Excel</button>
                     </div>
                 </div>`;
@@ -3808,23 +3894,22 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        // ==========================================
+        // ============================================================
         // 1. SUBJECT-WISE TEACHERS TIMETABLE ENGINE
-        // 4 TEACHERS PER A4 PAGE PRINT LAYOUT
-        // ==========================================
-        function buildSingleTeacherScheduleQuarterHTML(teacherObj) {
+        // 3 TEACHERS PER A4 PAGE PRINT LAYOUT WITH FULL SCHOOL HEADERS
+        // ============================================================
+        function buildSingleTeacherScheduleThirdHTML(teacherObj) {
             const teacherName = teacherObj.name;
             const dealsBoth = normalizeBoard(teacherObj.board) === 'BOTH';
 
             let tableHTML = `
-                <div class="single-teacher-quarter-box">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid #0056b3; padding-bottom:3px; margin-bottom:4px;">
-                        <div>
-                            <span style="font-size:13px; font-weight:bold; color:red;">${teacherName}</span>
-                            <span style="font-size:11px; color:#333; margin-left:8px; font-weight:bold;">(${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
-                        </div>
-                        <div style="font-size:11px; font-weight:bold; color:#0056b3;">
-                            Emp ID: ${teacherObj.empId || '---'} | Board: ${teacherObj.board || 'CBSE'}
+                <div class="single-teacher-third-box">
+                    <div class="teacher-single-header">
+                        <div class="t-school-name">SRI CHAITANYA SCHOOL</div>
+                        <div class="t-branch-name">Branch : Adibatla</div>
+                        <div class="t-info-line">
+                            <span><b>Teacher:</b> <span style="color:red; font-size:12px;">${teacherName}</span> (${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
+                            <span style="color:#0056b3;"><b>Emp ID:</b> ${teacherObj.empId || '---'} | <b>Board:</b> ${teacherObj.board || 'CBSE'}</span>
                         </div>
                     </div>
                     <table class="subj-print-table" style="width:100%; border-collapse:collapse; text-align:center;">
@@ -3927,21 +4012,21 @@ table { max-width:100%; }
                 </div>
             `;
 
-            // Group into chunks of exactly 4 teachers per printed A4 page
-            const chunkSize = 4;
+            // Group into chunks of exactly 3 teachers per printed A4 page
+            const chunkSize = 3;
             for(let i = 0; i < matchingStaff.length; i += chunkSize) {
                 const chunk = matchingStaff.slice(i, i + chunkSize);
                 const pageNum = Math.floor(i / chunkSize) + 1;
                 const totalPages = Math.ceil(matchingStaff.length / chunkSize);
 
-                html += `<div class="print-four-wrapper">
+                html += `<div class="print-three-wrapper">
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid red; margin-bottom:5px; padding-bottom:2px;">
                         <h4 style="margin:0; color:red; font-size:13px;">DEPARTMENT: ${selSub.toUpperCase()} - TEACHERS TIMETABLE</h4>
                         <span style="font-size:10px; font-weight:bold; color:#0056b3;">Page ${pageNum} of ${totalPages} [${currentBoard} BOARD]</span>
                     </div>`;
 
                 chunk.forEach(st => {
-                    html += buildSingleTeacherScheduleQuarterHTML(st);
+                    html += buildSingleTeacherScheduleThirdHTML(st);
                 });
 
                 html += `</div>`;
