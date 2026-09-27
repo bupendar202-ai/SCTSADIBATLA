@@ -255,9 +255,9 @@
                 border: 1.5pt solid #000 !important;
             }
             .class-table-print-area tr {
-                height: 2.1cm !important;
-                min-height: 2.1cm !important;
-                max-height: 2.1cm !important;
+                height: 2.3cm !important;
+                min-height: 2.3cm !important;
+                max-height: 2.3cm !important;
                 box-sizing: border-box !important;
             }
             .class-table-print-area thead tr {
@@ -275,28 +275,41 @@
             .class-table-print-area th {
                 background-color: #f0f0f0 !important;
                 color: #000 !important;
-                font-size: 9.5px !important;
+                font-size: 11.5px !important;
                 font-weight: bold !important;
                 padding: 4px 2px !important;
+            }
+            .class-table-print-area th small {
+                font-size: 9px !important;
+                line-height: 1.15 !important;
             }
             .class-table-print-area td.day-label-cell {
                 width: 7% !important;
                 background-color: #f8f9fa !important;
                 font-weight: bold !important;
-                font-size: 11px !important;
-                height: 2.1cm !important;
-                min-height: 2.1cm !important;
-                max-height: 2.1cm !important;
+                font-size: 13px !important;
+                height: 2.3cm !important;
+                min-height: 2.3cm !important;
+                max-height: 2.3cm !important;
                 box-sizing: border-box !important;
             }
             .class-table-print-area td.period-content-cell {
                 width: 6.64% !important;
-                font-size: 9px !important;
+                font-size: 11px !important;
+                line-height: 1.25 !important;
                 padding: 3px 1px !important;
-                height: 2.1cm !important;
-                min-height: 2.1cm !important;
-                max-height: 2.1cm !important;
+                height: 2.3cm !important;
+                min-height: 2.3cm !important;
+                max-height: 2.3cm !important;
                 box-sizing: border-box !important;
+            }
+            .class-table-print-area td.period-content-cell b {
+                font-size: 11.5px !important;
+            }
+            .class-table-print-area td.period-content-cell small,
+            .class-table-print-area td.period-content-cell span {
+                font-size: 10px !important;
+                line-height: 1.15 !important;
             }
         }
     </style>
@@ -4661,7 +4674,7 @@ table { max-width:100%; }
 
             if(!studyHoursRecords[currentBoard]) studyHoursRecords[currentBoard] = {};
             if(!studyHoursRecords[currentBoard][key]) studyHoursRecords[currentBoard][key] = {};
-            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key][day] = {};
+            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key] = {};
 
             nightStudyPeriods.forEach(p => {
                 const typeVal = document.getElementById(`study_type_${p.id}`)?.value || 'Night Study Hour';
