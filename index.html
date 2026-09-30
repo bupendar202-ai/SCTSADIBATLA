@@ -127,11 +127,14 @@
             margin-top: 2px;
         }
 
-        /* Enhanced styles for subject-wise teacher print output */
+        /* Enhanced styles for subject-wise teacher print output - Point 1 Increased cell height */
         .subj-print-table th, .subj-print-table td {
-            padding: 4px 2px !important;
+            padding: 7px 3px !important;
             font-size: 10px !important;
-            line-height: 1.2 !important;
+            line-height: 1.25 !important;
+            height: 9.5mm !important;
+            min-height: 9.5mm !important;
+            vertical-align: middle !important;
         }
         .subj-print-table th small {
             font-size: 8px !important;
@@ -177,8 +180,8 @@
             /* Three teachers per A4 page */
             .print-three-wrapper {
                 page-break-after: always !important;
-                height: 275mm !important;
-                max-height: 280mm !important;
+                height: 280mm !important;
+                max-height: 285mm !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: space-between !important;
@@ -187,13 +190,16 @@
             }
 
             .single-teacher-third-box {
-                height: 88mm !important;
-                max-height: 90mm !important;
+                height: 91mm !important;
+                max-height: 93mm !important;
                 overflow: hidden !important;
                 border-bottom: 1.5pt dashed #333 !important;
-                margin-bottom: 2mm !important;
-                padding-bottom: 2mm !important;
+                margin-bottom: 1.5mm !important;
+                padding-bottom: 1.5mm !important;
                 box-sizing: border-box !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: flex-start !important;
             }
             .single-teacher-third-box:last-child {
                 border-bottom: none !important;
@@ -204,14 +210,20 @@
             .teacher-single-header .t-branch-name { font-size: 11px !important; }
             .teacher-single-header .t-info-line { font-size: 9.5px !important; }
 
+            .subj-print-table {
+                height: 72mm !important;
+            }
             .subj-print-table th, .subj-print-table td {
-                padding: 2.5px 1.5px !important;
-                font-size: 9px !important;
-                line-height: 1.15 !important;
+                padding: 4px 2px !important;
+                font-size: 9.5px !important;
+                line-height: 1.2 !important;
+                height: 9.2mm !important;
+                min-height: 9.2mm !important;
             }
             .subj-print-table th small {
-                font-size: 7px !important;
+                font-size: 7.5px !important;
                 display: block !important;
+                color: #333;
             }
 
             .signature-section { 
@@ -579,7 +591,7 @@ table { max-width:100%; }
             <div id="pTeachersByDateView"></div>
         </div>
 
-        <!-- Principal Subject-Wise Teachers Timetable View (3 per page on print with individual header) -->
+        <!-- Principal Subject-Wise Teachers Timetable View (Point 1: 3 per page on print with individual header & maximized cell heights) -->
         <div id="p-subject-tt" class="tab-content" style="display:none;">
             <h3>Subject-Wise Teachers Timetable (Department Master)</h3>
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:15px; align-items:flex-end;">
@@ -990,7 +1002,7 @@ table { max-width:100%; }
             </div>
         </div>
 
-        <!-- 7. Night Study Hours (6:00pm - 8:00pm) -->
+        <!-- 7. Night Study Hours (6:00pm - 8:00pm) - Point 2 enhanced with Edit/Delete & Cross-syncing -->
         <div id="d-study" class="tab-content" style="display:none;">
             <h3>Night Study Hours Timetable Management (6:00pm – 8:00pm)</h3>
             <div style="background: #eef5ff; border: 1px solid #b6d4fe; border-radius: 6px; padding: 15px; margin-bottom: 20px;">
@@ -1114,10 +1126,10 @@ table { max-width:100%; }
             <span id="leaveStatusMsg" style="font-weight:bold; margin-left:10px;"></span>
         </div>
 
-        <!-- My Schedule View -->
+        <!-- My Schedule View - Point 3: Requires explicit Date selection and confirmation to render -->
         <div id="teacherScheduleCard" style="display:block;">
             <div class="form-group" style="max-width: 300px;">
-                <label>Select Date:</label>
+                <label>Select Date to View Timetable:</label>
                 <input type="date" id="tDate">
                 <button onclick="viewTeacherSchedule()" style="margin-top: 5px;">Proceed</button>
             </div>
@@ -1753,7 +1765,6 @@ table { max-width:100%; }
             document.getElementById('teacherWelcome').innerText =
                 `Welcome, ${currentUser.name} (Emp ID: ${currentUser.empId || 'N/A'} | ${currentUser.designation} - ${currentUser.subject})`;
             document.getElementById('backToManagerBtn').style.display = 'inline-block';
-            document.getElementById('tDate').value = new Date().toISOString().slice(0,10);
             switchView('teacherModule');
             openTeacherDashboardArea('schedule');
             recordAppPage('teacherModule');
@@ -2178,7 +2189,6 @@ table { max-width:100%; }
                     </div>
                 </div>`;
             
-            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
             html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
             periods.forEach(p => { 
                 html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
@@ -2211,7 +2221,6 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        /* Incharges & Deans Class Timetable Viewer */
         function updateInchargeClassOptions() {
             const orientationEl = document.getElementById('dTtOrientation');
             if(orientationEl) {
@@ -2250,7 +2259,6 @@ table { max-width:100%; }
                     </div>
                 </div>`;
             
-            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
             html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
             periods.forEach(p => { 
                 html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
@@ -2624,10 +2632,6 @@ table { max-width:100%; }
                 }
             });
             return result;
-        }
-
-        function getLeaveTeachersForDate(dateStr) {
-            return getApprovedLeaveTeachersForDate(dateStr);
         }
 
         function populateAbsentCheckboxes() {
@@ -3010,7 +3014,7 @@ table { max-width:100%; }
             return busy;
         }
 
-        // Check if class has an existing teacher allotted for Invigilation or Revision
+        // Point 4: Skip classes already engaged by Revision or Invigilation Schedule
         function isClassAllottedForExamOrRevision(dateVal, classKey, periodId) {
             const pIndex = periods.findIndex(p => String(p.id) === String(periodId));
             if(pIndex === -1) return false;
@@ -3055,7 +3059,7 @@ table { max-width:100%; }
             const periodsToSub = [];
             const push = (absentTeacher, p, cls, subject, rawSubject, reason) => {
                 if(absentTeacher) {
-                    // Rule 3: Skip period if class is already allotted for revision or invigilation
+                    // Point 4: Skip classes when already engaged by revision schedule or invigilation schedule
                     if(isClassAllottedForExamOrRevision(dateVal, cls, p.id)) {
                         return;
                     }
@@ -3182,7 +3186,7 @@ table { max-width:100%; }
 
             const container = document.getElementById('substitutionMatrixContainer');
             if(!rows.length) {
-                container.innerHTML = `<p style="color:green;font-weight:bold;">No substitution duties required for ${dayName}.</p>`;
+                container.innerHTML = `<p style="color:green;font-weight:bold;">No substitution duties required for ${dayName}. (Classes covered by Revision/Invigilation schedules are automatically skipped).</p>`;
                 return;
             }
 
@@ -3331,7 +3335,6 @@ table { max-width:100%; }
             updateAllSubstitutionDropdownLabels();
         }
 
-        // DEAN & INCHARGE LEAVE APPROVAL PORTAL
         function renderDeanLeaveRequests() {
             const container = document.getElementById('deanLeaveRequestsContainer');
             if(!container) return;
@@ -3390,10 +3393,13 @@ table { max-width:100%; }
             }
         }
 
+        // Point 3: View Teacher Schedule strictly on user-selected date
         function viewTeacherSchedule() {
             if(!currentUser) return;
             const dateVal = document.getElementById('tDate').value;
-            if(!dateVal) return alert("Please select date.");
+            if(!dateVal) {
+                return alert("Please select a date to view your schedule.");
+            }
 
             const dayName = getDayNameFromDate(dateVal);
             const container = document.getElementById('tScheduleDisplay');
@@ -3418,7 +3424,7 @@ table { max-width:100%; }
                 });
             });
 
-            // Check Night Study Hours allocation
+            // Point 2: Synchronize Night Study Hours for the Teacher
             const myNightStudy = [];
             ['STATE', 'CBSE'].forEach(b => {
                 const boardStudy = studyHoursRecords[b] || {};
@@ -3716,7 +3722,6 @@ table { max-width:100%; }
                     </div>
                 </div>`;
             
-            // Standard Horizontal Layout: Width direction = Periods (0 to XIII), Length direction = Days
             html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
             periods.forEach(p => { 
                 html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:9.5px;">${p.time}</small></th>`; 
@@ -3868,10 +3873,7 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        // ============================================================
-        // SUBJECT-WISE TEACHERS TIMETABLE ENGINE
-        // Continuous layout for target board & both board teachers (no gaps for other boards)
-        // ============================================================
+        // Point 1: Increased cell height for 3 teachers per page print output
         function buildSingleTeacherScheduleThirdHTML(teacherObj) {
             const teacherName = teacherObj.name;
             const dealsBoth = normalizeBoard(teacherObj.board) === 'BOTH';
@@ -3959,7 +3961,6 @@ table { max-width:100%; }
             const coreSubjects = ["Telugu", "Hindi", "English", "Math", "Physics", "Chemistry", "Biology", "Social"];
             let matchingStaff = [];
 
-            // Filter ONLY teachers that belong to this board or BOTH boards.
             if(selSub === 'Other') {
                 matchingStaff = staffList.filter(st => {
                     const s = String(st.subject || '').trim();
@@ -3987,7 +3988,6 @@ table { max-width:100%; }
                 </div>
             `;
 
-            // Group into chunks of exactly 3 teachers per printed A4 page continuously without leaving blanks
             const chunkSize = 3;
             for(let i = 0; i < matchingStaff.length; i += chunkSize) {
                 const chunk = matchingStaff.slice(i, i + chunkSize);
@@ -4215,9 +4215,7 @@ table { max-width:100%; }
             return null;
         }
 
-        // ==========================================
         // REVISION SCHEDULE MODULE
-        // ==========================================
         function initRevisionControls() {
             const d = document.getElementById('revisionDate');
             if(d && !d.value) d.value = new Date().toISOString().slice(0,10);
@@ -4627,7 +4625,7 @@ table { max-width:100%; }
             box.innerHTML = html;
         }
 
-        // NIGHT STUDY HOURS MODULE (6:00pm to 8:00pm)
+        // Point 2: Night Study Hours - Save, Edit, Delete with Teacher Module cross-sync
         function onStudyClassOrDayChange() {
             renderStudyHoursTimetable();
             renderStudyHoursSavedList();
@@ -4712,7 +4710,7 @@ table { max-width:100%; }
 
             if(!studyHoursRecords[currentBoard]) studyHoursRecords[currentBoard] = {};
             if(!studyHoursRecords[currentBoard][key]) studyHoursRecords[currentBoard][key] = {};
-            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key] = {};
+            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key][day] = {};
 
             nightStudyPeriods.forEach(p => {
                 const typeVal = document.getElementById(`study_type_${p.id}`)?.value || 'Night Study Hour';
@@ -4725,7 +4723,7 @@ table { max-width:100%; }
             });
 
             await saveMapDoc('studyHoursRecords', currentBoard, studyHoursRecords[currentBoard]);
-            alert(`Night Study Hours Schedule for ${key} on ${day} saved successfully!`);
+            alert(`Night Study Hours Schedule for ${key} on ${day} saved successfully! It will now automatically appear in the respective teacher schedules on ${day}s.`);
             renderStudyHoursSavedList();
         }
 
@@ -4966,11 +4964,8 @@ table { max-width:100%; }
                 if(floor) floor.style.display = 'none';
                 if(leave) leave.style.display = 'none';
                 if(schedule) schedule.style.display = 'block';
-                const tDateInput = document.getElementById('tDate');
-                if(tDateInput && !tDateInput.value) {
-                    tDateInput.value = new Date().toISOString().slice(0,10);
-                }
-                viewTeacherSchedule();
+                // Point 3: Do not automatically display until user explicitly selects a date
+                document.getElementById('tScheduleDisplay').innerHTML = '';
                 schedule?.scrollIntoView({behavior:'smooth'});
             }
         }
