@@ -119,13 +119,6 @@
             margin: 1px 0;
             line-height: 1.15;
         }
-        .teacher-single-header .t-sub-title {
-            color: black;
-            font-size: 11px;
-            font-weight: bold;
-            margin: 1px 0;
-            line-height: 1.15;
-        }
         .teacher-single-header .t-info-line {
             display: flex;
             justify-content: space-between;
@@ -135,19 +128,10 @@
         }
 
         /* Subject-wise teacher print output */
-        .subj-print-table {
-            table-layout: fixed !important;
-            width: 100% !important;
-        }
         .subj-print-table th, .subj-print-table td {
-            padding: 5px 2px !important;
+            padding: 4px 2px !important;
             font-size: 10px !important;
             line-height: 1.2 !important;
-            height: 9.5mm !important;
-            min-height: 9.5mm !important;
-            vertical-align: middle !important;
-            word-wrap: break-word !important;
-            overflow: hidden !important;
         }
         .subj-print-table th small {
             font-size: 8px !important;
@@ -155,20 +139,17 @@
             color: #333;
         }
 
-        /* Proportional width classes: allocated period expands, empty shrinks */
-        .col-allotted {
-            min-width: 58px !important;
-            width: auto !important;
-            background-color: #f7fbff;
-        }
-        .col-empty {
-            width: 28px !important;
-            max-width: 32px !important;
-            color: #bbb !important;
-            background-color: #fff;
+        /* Screen Preview for Subject Wise Timetable Rows */
+        .subj-print-table tbody tr {
+            height: 1cm;
         }
 
-        /* Responsive Flexible Print Settings */
+        /* Screen Preview for Principal Class Timetable Rows */
+        .class-table-print-area tbody tr {
+            height: 2.5cm;
+        }
+
+        /* Print Settings */
         @media print {
             @page {
                 size: auto;
@@ -187,8 +168,17 @@
                 left: 0; 
                 top: 0; 
                 width: 100% !important; 
-                display: block !important;
+                display: block !important; 
             }
+            .printable-area .print-header {
+                display: block !important;
+                text-align: center !important;
+                margin-bottom: 6px !important;
+                padding-bottom: 3px !important;
+            }
+            .printable-area .print-header h2 { font-size: 17px !important; margin: 0; color: red !important; }
+            .printable-area .print-header h3 { font-size: 13px !important; margin: 2px 0; color: blue !important; }
+            .printable-area .print-header h4 { font-size: 12px !important; margin: 2px 0; color: black !important; }
             
             .no-print { display: none !important; }
             .sub-select-dropdown { display: none !important; }
@@ -197,8 +187,8 @@
             /* Three teachers per A4 page */
             .print-three-wrapper {
                 page-break-after: always !important;
-                height: 280mm !important;
-                max-height: 285mm !important;
+                height: 275mm !important;
+                max-height: 280mm !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: space-between !important;
@@ -207,16 +197,13 @@
             }
 
             .single-teacher-third-box {
-                height: 91mm !important;
-                max-height: 93mm !important;
+                height: 88mm !important;
+                max-height: 90mm !important;
                 overflow: hidden !important;
                 border-bottom: 1.5pt dashed #333 !important;
-                margin-bottom: 1.5mm !important;
-                padding-bottom: 1.5mm !important;
+                margin-bottom: 2mm !important;
+                padding-bottom: 2mm !important;
                 box-sizing: border-box !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: flex-start !important;
             }
             .single-teacher-third-box:last-child {
                 border-bottom: none !important;
@@ -225,33 +212,28 @@
 
             .teacher-single-header .t-school-name { font-size: 13.5px !important; }
             .teacher-single-header .t-branch-name { font-size: 11px !important; }
-            .teacher-single-header .t-sub-title { font-size: 10px !important; }
             .teacher-single-header .t-info-line { font-size: 9.5px !important; }
 
-            .subj-print-table {
-                height: 70mm !important;
+            /* 1cm height per row for subject-wise teacher print output */
+            .subj-print-table tbody tr {
+                height: 1cm !important;
+                min-height: 1cm !important;
+                max-height: 1cm !important;
             }
             .subj-print-table th, .subj-print-table td {
-                padding: 3px 1px !important;
-                font-size: 9.5px !important;
+                padding: 2px 1.5px !important;
+                font-size: 9px !important;
                 line-height: 1.15 !important;
-                height: 9.2mm !important;
-                min-height: 9.2mm !important;
+                height: 1cm !important;
+                vertical-align: middle !important;
+            }
+            .subj-print-table thead tr, .subj-print-table thead th {
+                height: auto !important;
+                min-height: 0 !important;
             }
             .subj-print-table th small {
-                font-size: 7.5px !important;
+                font-size: 7px !important;
                 display: block !important;
-                color: #333;
-            }
-
-            .col-allotted {
-                font-weight: bold !important;
-                background-color: #f7fbff !important;
-            }
-            .col-empty {
-                width: 26px !important;
-                max-width: 30px !important;
-                color: #ccc !important;
             }
 
             .signature-section { 
@@ -283,6 +265,7 @@
                 display: table-footer-group; 
             }
 
+            /* Responsive print layout for class master tables (2.5cm height per row) */
             .class-table-print-area {
                 width: 100% !important;
                 box-sizing: border-box !important;
@@ -293,7 +276,7 @@
                 table-layout: fixed !important;
                 border: 1.5pt solid #000 !important;
             }
-            .class-table-print-area tr {
+            .class-table-print-area tbody tr {
                 height: 2.5cm !important;
                 min-height: 2.5cm !important;
                 max-height: 2.5cm !important;
@@ -302,7 +285,6 @@
             .class-table-print-area thead tr {
                 height: auto !important;
                 min-height: 0 !important;
-                max-height: none !important;
             }
             .class-table-print-area th, 
             .class-table-print-area td {
@@ -315,19 +297,19 @@
             .class-table-print-area th {
                 background-color: #f0f0f0 !important;
                 color: #000 !important;
-                font-size: 12.5px !important;
+                font-size: 11.5px !important;
                 font-weight: bold !important;
                 padding: 4px 2px !important;
             }
             .class-table-print-area th small {
-                font-size: 9.5px !important;
+                font-size: 9px !important;
                 line-height: 1.15 !important;
             }
             .class-table-print-area td.day-label-cell {
                 width: 7% !important;
                 background-color: #f8f9fa !important;
                 font-weight: bold !important;
-                font-size: 14.5px !important;
+                font-size: 13px !important;
                 height: 2.5cm !important;
                 min-height: 2.5cm !important;
                 max-height: 2.5cm !important;
@@ -335,7 +317,7 @@
             }
             .class-table-print-area td.period-content-cell {
                 width: 6.64% !important;
-                font-size: 12px !important;
+                font-size: 11px !important;
                 line-height: 1.25 !important;
                 padding: 3px 1px !important;
                 height: 2.5cm !important;
@@ -344,11 +326,11 @@
                 box-sizing: border-box !important;
             }
             .class-table-print-area td.period-content-cell b {
-                font-size: 12.5px !important;
+                font-size: 11.5px !important;
             }
             .class-table-print-area td.period-content-cell small,
             .class-table-print-area td.period-content-cell span {
-                font-size: 11px !important;
+                font-size: 10px !important;
                 line-height: 1.15 !important;
             }
         }
@@ -618,7 +600,7 @@ table { max-width:100%; }
             <div id="pTeachersByDateView"></div>
         </div>
 
-        <!-- Principal Subject-Wise Teachers Timetable View (3 per page on print with school/branch/Time Table header & dynamic column sizing) -->
+        <!-- Principal Subject-Wise Teachers Timetable View -->
         <div id="p-subject-tt" class="tab-content" style="display:none;">
             <h3>Subject-Wise Teachers Timetable (Department Master)</h3>
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:15px; align-items:flex-end;">
@@ -815,7 +797,7 @@ table { max-width:100%; }
                         <input type="date" id="subDate" onchange="populateAbsentCheckboxes()">
                     </div>
                     <div class="form-group" style="flex: 2; min-width: 250px;">
-                        <label>Mark Absent Teachers (Approved Leaves Automatically Selected &amp; Locked):</label>
+                        <label>Mark Absent Teachers (Approved Leaves &amp; Exam/Invigilation/Revision Duty Staff Highlighted):</label>
                         <div class="multi-select-box" id="absentStaffCheckboxes"></div>
                     </div>
                 </div>
@@ -1156,7 +1138,7 @@ table { max-width:100%; }
         <!-- My Schedule View -->
         <div id="teacherScheduleCard" style="display:block;">
             <div class="form-group" style="max-width: 300px;">
-                <label>Select Date to View Timetable:</label>
+                <label>Select Date:</label>
                 <input type="date" id="tDate">
                 <button onclick="viewTeacherSchedule()" style="margin-top: 5px;">Proceed</button>
             </div>
@@ -1206,7 +1188,7 @@ table { max-width:100%; }
 
         const periods = [
             { id: "0", time: "8:10am - 8:50am", session: "morning" }, 
-            { id: "I", time: "8:50am - 9:30am", session: "morning" },
+            { id: "I", time: "8:50am - 9:30am", session: "morning" }, 
             { id: "II", time: "9:30am - 10:10am", session: "morning" }, 
             { id: "III", time: "10:10am - 10:50am", session: "morning" }, 
             { id: "IV", time: "11:00am - 11:40am", session: "morning" }, 
@@ -1242,15 +1224,6 @@ table { max-width:100%; }
             "Room 401", "Room 402", "Room 403", "Room 404", "Room 405", "Room 406",
             "Room 407", "Room 408", "Room 409", "Room 410", "Room 411"
         ];
-
-        function formatClassDisplay(classKey, boardTag = '') {
-            if(!classKey) return '';
-            let cleaned = classKey.replace(/\s*-\s*Sec\s*/i, '-').trim();
-            if(boardTag) {
-                return `${cleaned} (${boardTag})`;
-            }
-            return cleaned;
-        }
 
         function updateWebManifest(iconUrl) {
             let manifestLink = document.getElementById('webManifestLink');
@@ -1574,6 +1547,7 @@ table { max-width:100%; }
             await db.collection(collectionName).doc(docId).set({ value });
         }
 
+        // Unified Flexible Print Trigger
         function printTargetElement(elemId) {
             document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area'));
             const elem = document.getElementById(elemId);
@@ -1800,6 +1774,8 @@ table { max-width:100%; }
             document.getElementById('teacherWelcome').innerText =
                 `Welcome, ${currentUser.name} (Emp ID: ${currentUser.empId || 'N/A'} | ${currentUser.designation} - ${currentUser.subject})`;
             document.getElementById('backToManagerBtn').style.display = 'inline-block';
+            document.getElementById('tDate').value = '';
+            document.getElementById('tScheduleDisplay').innerHTML = '';
             switchView('teacherModule');
             openTeacherDashboardArea('schedule');
             recordAppPage('teacherModule');
@@ -2205,6 +2181,7 @@ table { max-width:100%; }
             renderSingleClassFullDashboard();
         }
 
+        // Full Page Flexible Class Master Viewer Render (Point 6: 2.5cm height in print)
         function renderSingleClassFullDashboard() {
             const fullClassKey = getSelectedClassKey();
             const container = document.getElementById('singleClassDashboardContainer');
@@ -2238,11 +2215,11 @@ table { max-width:100%; }
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9.5px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:10px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
                         html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
@@ -2255,6 +2232,7 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
+        /* Incharges & Deans Class Timetable Viewer */
         function updateInchargeClassOptions() {
             const orientationEl = document.getElementById('dTtOrientation');
             if(orientationEl) {
@@ -2308,11 +2286,11 @@ table { max-width:100%; }
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9.5px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:10px; color:#555;">${tDesc}</span></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
                         html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
@@ -2368,19 +2346,20 @@ table { max-width:100%; }
                         for(let cls in tt) {
                             const cell = tt[cls]?.[day]?.[p.id];
                             if(cell) {
+                                const boardTag = dealsBoth ? ` [${b}]` : '';
                                 if(cell.isDual) {
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
                                         const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
+                                        assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag} - ${note})`;
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
                                         const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
+                                        assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag} - ${note})`;
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject})`;
+                                    assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag})`;
                                     break;
                                 }
                             }
@@ -2501,19 +2480,20 @@ table { max-width:100%; }
                             for(let cls in tt) {
                                 const cell = tt[cls]?.[dayName]?.[p.id];
                                 if(cell) {
+                                    const boardTag = dealsBoth ? ` [${b}]` : '';
                                     if(cell.isDual) {
                                         const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === st.name || cell.teacher === st.name) {
                                             const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag} - ${note})`;
                                             break;
                                         } else if(cell.teacher2 === st.name) {
                                             const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag} - ${note})`;
                                             break;
                                         }
                                     } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
-                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject})`;
+                                        assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag})`;
                                         break;
                                     }
                                 }
@@ -2668,6 +2648,45 @@ table { max-width:100%; }
             return result;
         }
 
+        // Point 2 & 3 Helpers: Find Exam duty teachers and assigned classes for a specific date
+        function getExamDutyTeachersForDate(dateStr) {
+            if(!dateStr) return [];
+            const dutyTeachers = new Set();
+            ['STATE', 'CBSE'].forEach(b => {
+                (revisionScheduleRecords[dateStr]?.[b] || []).forEach(r => { if(r.teacher) dutyTeachers.add(r.teacher); });
+                (invigilationRecords[dateStr]?.[b] || []).forEach(i => { if(i.teacher) dutyTeachers.add(i.teacher); });
+            });
+            return Array.from(dutyTeachers);
+        }
+
+        function isClassUnderExamDuty(dateStr, classKey, periodId) {
+            if(!dateStr || !classKey || !periodId) return false;
+            const pIdx = periods.findIndex(p => String(p.id) === String(periodId));
+            if(pIdx === -1) return false;
+
+            for(const b of ['STATE', 'CBSE']) {
+                const revList = revisionScheduleRecords[dateStr]?.[b] || [];
+                for(const rev of revList) {
+                    if(rev.classKey === classKey) {
+                        const fromIdx = periods.findIndex(p => String(p.id) === String(rev.fromPeriod));
+                        const toIdx = periods.findIndex(p => String(p.id) === String(rev.toPeriod));
+                        if(fromIdx !== -1 && toIdx !== -1 && pIdx >= fromIdx && pIdx <= toIdx) return true;
+                    }
+                }
+
+                const invList = invigilationRecords[dateStr]?.[b] || [];
+                for(const inv of invList) {
+                    if(inv.classKey === classKey) {
+                        const fromIdx = periods.findIndex(p => String(p.id) === String(inv.fromPeriod));
+                        const toIdx = periods.findIndex(p => String(p.id) === String(inv.toPeriod));
+                        if(fromIdx !== -1 && toIdx !== -1 && pIdx >= fromIdx && pIdx <= toIdx) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Point 3: Display exam/duty teachers in the absent checklist without auto-selection tick mark
         function populateAbsentCheckboxes() {
             const container = document.getElementById('absentStaffCheckboxes');
             if(!container) return;
@@ -2675,15 +2694,26 @@ table { max-width:100%; }
             container.innerHTML = '';
             
             const approvedLeaves = getApprovedLeaveTeachersForDate(dateVal);
+            const examDutyTeachers = getExamDutyTeachersForDate(dateVal);
             const names = new Set(approvedLeaves);
 
             staffList.filter(st => staffMatchesBoard(st, currentBoard)).sort((a,b) => a.name.localeCompare(b.name)).forEach(st => {
                 const isApprovedLeave = approvedLeaves.includes(st.name);
-                const checked = isApprovedLeave || names.has(st.name) ? 'checked' : '';
+                const isExamDuty = examDutyTeachers.includes(st.name);
+                const checked = isApprovedLeave ? 'checked' : '';
                 const lockState = isApprovedLeave ? 'disabled' : '';
-                const tag = isApprovedLeave ? ' <b style="color:green;">(Approved Leave - Auto)</b>' : '';
                 
-                container.innerHTML += `<label style="${isApprovedLeave ? 'background:#e8f5e9;' : ''}">
+                let tag = '';
+                let bgStyle = '';
+                if(isApprovedLeave) {
+                    tag = ' <b style="color:green;">(Approved Leave - Auto)</b>';
+                    bgStyle = 'background:#e8f5e9;';
+                } else if(isExamDuty) {
+                    tag = ' <b style="color:#d9534f;">(Exam / Revision / Invigilation Duty)</b>';
+                    bgStyle = 'background:#fff3cd;';
+                }
+                
+                container.innerHTML += `<label style="${bgStyle}">
                     <input type="checkbox" value="${st.name}" class="absent-check" ${checked} ${lockState} data-auto="${isApprovedLeave ? 'true' : 'false'}"> 
                     ${st.name} (${st.subject || 'Staff'})${tag}
                 </label>`;
@@ -2885,6 +2915,13 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
+        async function deleteXSession(date, idx) {
+            if(!confirm('Cancel this X Session allotment?')) return;
+            xSessionRecords[date].splice(idx, 1);
+            await saveMapDoc('xSessionRecords', date, xSessionRecords[date]);
+            renderXSessionScheduleList();
+        }
+
         function getXSessionDutyPeriods(sessionTime) {
             if(sessionTime === 'morning') {
                 return ["0", "I", "II", "III", "IV", "V"];
@@ -3041,37 +3078,7 @@ table { max-width:100%; }
             return busy;
         }
 
-        function isClassAllottedForExamOrRevision(dateVal, classKey, periodId) {
-            const pIndex = periods.findIndex(p => String(p.id) === String(periodId));
-            if(pIndex === -1) return false;
-
-            const boards = ['STATE', 'CBSE'];
-            for(const b of boards) {
-                const invList = invigilationRecords[dateVal]?.[b] || [];
-                for(const inv of invList) {
-                    if(inv.classKey === classKey && inv.teacher) {
-                        const fromIdx = periods.findIndex(p => String(p.id) === String(inv.fromPeriod));
-                        const toIdx = periods.findIndex(p => String(p.id) === String(inv.toPeriod));
-                        if(fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx) {
-                            return true;
-                        }
-                    }
-                }
-
-                const revList = revisionScheduleRecords[dateVal]?.[b] || [];
-                for(const rev of revList) {
-                    if(rev.classKey === classKey && rev.teacher) {
-                        const fromIdx = periods.findIndex(p => String(p.id) === String(rev.fromPeriod));
-                        const toIdx = periods.findIndex(p => String(p.id) === String(rev.toPeriod));
-                        if(fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
+        // Point 2: Skip classes that are assigned for Revision or Invigilation
         function generateSubstitutionMatrix() {
             const dateVal = document.getElementById('subDate')?.value;
             if(!dateVal) return alert('Select a date first.');
@@ -3084,10 +3091,12 @@ table { max-width:100%; }
             const dayName = getDayNameFromDate(dateVal);
             const periodsToSub = [];
             const push = (absentTeacher, p, cls, subject, rawSubject, reason) => {
+                // Point 2: Check if this class is under revision or invigilation during this period
+                if(isClassUnderExamDuty(dateVal, cls, p.id)) {
+                    return; // Skip from substitution
+                }
+
                 if(absentTeacher) {
-                    if(isClassAllottedForExamOrRevision(dateVal, cls, p.id)) {
-                        return;
-                    }
                     periodsToSub.push({
                         absentTeacher,
                         period: p.id,
@@ -3211,7 +3220,7 @@ table { max-width:100%; }
 
             const container = document.getElementById('substitutionMatrixContainer');
             if(!rows.length) {
-                container.innerHTML = `<p style="color:green;font-weight:bold;">No substitution duties required for ${dayName}. (Classes covered by Revision/Invigilation schedules are automatically skipped).</p>`;
+                container.innerHTML = `<p style="color:green;font-weight:bold;">No substitution duties required for ${dayName}.</p>`;
                 return;
             }
 
@@ -3293,7 +3302,7 @@ table { max-width:100%; }
                     <td>${item.time}</td>
                     <td style="color:red;font-weight:bold;">${item.absentTeacher}</td>
                     <td><b>${item.reason}</b></td>
-                    <td><b>${formatClassDisplay(item.class)}</b><br>${item.subject || ''}</td>
+                    <td><b>${item.class}</b><br>${item.subject || ''}</td>
                     <td>
                         <select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-absent="${item.absentTeacher}" onchange="onSubstitutionDropdownChange(this,${index})">
                             ${options}
@@ -3360,6 +3369,7 @@ table { max-width:100%; }
             updateAllSubstitutionDropdownLabels();
         }
 
+        // DEAN & INCHARGE LEAVE APPROVAL PORTAL
         function renderDeanLeaveRequests() {
             const container = document.getElementById('deanLeaveRequestsContainer');
             if(!container) return;
@@ -3418,12 +3428,11 @@ table { max-width:100%; }
             }
         }
 
+        // Point 5: Display teacher's timetable only after date is selected and proceed is clicked
         function viewTeacherSchedule() {
             if(!currentUser) return;
             const dateVal = document.getElementById('tDate').value;
-            if(!dateVal) {
-                return alert("Please select a date to view your schedule.");
-            }
+            if(!dateVal) return alert("Please select date first and click Proceed.");
 
             const dayName = getDayNameFromDate(dateVal);
             const container = document.getElementById('tScheduleDisplay');
@@ -3448,6 +3457,7 @@ table { max-width:100%; }
                 });
             });
 
+            // Point 4: Night Study Hours allocation display in teacher module
             const myNightStudy = [];
             ['STATE', 'CBSE'].forEach(b => {
                 const boardStudy = studyHoursRecords[b] || {};
@@ -3514,19 +3524,19 @@ table { max-width:100%; }
                     const subMatch = mySubstitutions.find(s => String(s.period) === String(p.id));
 
                     if(invMatch) {
-                        status = `Invigilation Duty (${formatClassDisplay(invMatch.classKey, invMatch.boardName)}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
+                        status = `Invigilation Duty (${invMatch.classKey}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
                         type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation</span>`;
                         if(dealsBoth) assignedBoard = invMatch.boardName;
                     } else if(revMatch) {
-                        status = `Revision Schedule Duty (${formatClassDisplay(revMatch.classKey, revMatch.boardName)}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
+                        status = `Revision Schedule Duty (${revMatch.classKey}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
                         type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty</span>`;
                         if(dealsBoth) assignedBoard = revMatch.boardName;
                     } else if(xSessMatch) {
-                        status = `X Session - Session ${xSessMatch.sessionNumber} (${xSessMatch.class} (${xSessMatch.board || currentBoard}), ${xSessMatch.subject})`;
+                        status = `X Session - Session ${xSessMatch.sessionNumber} (Class: ${xSessMatch.class}, ${xSessMatch.subject})`;
                         type = `<span style="color:#0056b3; font-weight:bold;">X-Session Duty</span>`;
                         if(dealsBoth) assignedBoard = xSessMatch.board || currentBoard;
                     } else if(subMatch) {
-                        status = `${formatClassDisplay(subMatch.class, subMatch.board || currentBoard)} (Substitution for ${subMatch.absent})`;
+                        status = `${subMatch.class} (Substitution for ${subMatch.absent})`;
                         type = `<span style="color:red; font-weight:bold;">Substitution</span>`;
                         if(dealsBoth) assignedBoard = subMatch.board || currentBoard;
                     } else {
@@ -3537,23 +3547,24 @@ table { max-width:100%; }
                             for(let cls in tt) {
                                 const cell = tt[cls]?.[dayName]?.[p.id];
                                 if(cell) {
+                                    const boardTag = dealsBoth ? ` [${b}]` : '';
                                     if(cell.isDual) {
                                         const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === currentUser.name || cell.teacher === currentUser.name) {
                                             const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                            status = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject} - ${note})`;
+                                            status = `${cls} (${cell.subject}${boardTag} - ${note})`;
                                             type = "Original Class";
                                             if(dealsBoth) assignedBoard = b;
                                             found = true; break;
                                         } else if(cell.teacher2 === currentUser.name) {
                                             const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                            status = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject} - ${note})`;
+                                            status = `${cls} (${cell.subject}${boardTag} - ${note})`;
                                             type = "Original Class";
                                             if(dealsBoth) assignedBoard = b;
                                             found = true; break;
                                         }
                                     } else if(cell.teacher === currentUser.name || cell.teacher2 === currentUser.name) {
-                                        status = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject})`;
+                                        status = `${cls} (${cell.subject}${boardTag})`;
                                         type = "Original Class";
                                         if(dealsBoth) assignedBoard = b;
                                         found = true; break;
@@ -3567,6 +3578,7 @@ table { max-width:100%; }
                     html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${status}</td>${dealsBoth ? `<td><b>${assignedBoard}</b></td>` : ''}<td>${type}</td></tr>`;
                 });
 
+                // Point 4: Render Night Study Hours Rows if allocated
                 if(myNightStudy.length > 0) {
                     html += `<tr><td colspan="${dealsBoth ? '5' : '4'}" style="background:#e3f2fd; font-weight:bold; color:#0056b3; text-align:left;">Night Study Hours (6:00pm – 8:00pm)</td></tr>`;
                     myNightStudy.forEach(ns => {
@@ -3574,7 +3586,7 @@ table { max-width:100%; }
                         html += `<tr style="background:#f9fbfd;">
                             <td><b>${ns.period}</b></td>
                             <td>${nsP.time}</td>
-                            <td><b>${formatClassDisplay(ns.classKey, dealsBoth ? ns.board : '')}</b> (${ns.type})</td>
+                            <td><b>${ns.classKey}</b> (${ns.type})</td>
                             ${dealsBoth ? `<td><b>${ns.board}</b></td>` : ''}
                             <td><span style="color:#0056b3; font-weight:bold;">Night Study Duty</span></td>
                         </tr>`;
@@ -3723,6 +3735,7 @@ table { max-width:100%; }
             renderPrincipalClassDashboard();
         }
 
+        // Point 6: Class master print dashboard uses 2.5cm height per row (styled via .class-table-print-area)
         function renderPrincipalClassDashboard() {
             const cls = document.getElementById('pTtClass').value;
             const sec = document.getElementById('pTtSection').value;
@@ -3746,7 +3759,7 @@ table { max-width:100%; }
             
             html += `<div style="overflow-x:auto;"><table><thead><tr><th style="width:7%;">Day</th>`;
             periods.forEach(p => { 
-                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:9.5px;">${p.time}</small></th>`; 
+                html += `<th style="width:6.64%;">P-${p.id}<br><small style="font-size:8px;">${p.time}</small></th>`; 
             });
             html += `</tr></thead><tbody>`;
 
@@ -3759,11 +3772,11 @@ table { max-width:100%; }
                             const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                             const tag1 = isWiz ? 'T1' : (cell.lang1 || 'Telugu');
                             const tag2 = isWiz ? 'T2' : (cell.lang2 || 'Hindi');
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:11px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><small style="color:#0056b3; font-size:9px;">${tag1}: ${cell.teacher1 || cell.teacher || '---'}<br>${tag2}: ${cell.teacher2 || '---'}</small></td>`;
                         } else {
                             let tDesc = cell.teacher || '---';
                             if(cell.teacher2) tDesc += ` / ${cell.teacher2}`;
-                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:11px; color:#333;">${tDesc}</span></td>`;
+                            html += `<td class="period-content-cell"><b>${cell.subject}</b><br><span style="font-size:9.5px; color:#555;">${tDesc}</span></td>`;
                         }
                     } else {
                         html += `<td class="period-content-cell" style="color:#aaa;">---</td>`;
@@ -3857,19 +3870,20 @@ table { max-width:100%; }
                         for(const cls in tt) {
                             const cell = tt[cls]?.[day]?.[p.id];
                             if(cell) {
+                                const boardTag = dealsBoth ? ` [${b}]` : '';
                                 if(cell.isDual) {
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
                                         const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                        assigned = { cls: formatClassDisplay(cls, dealsBoth ? b : ''), subject: `${cell.subject} (${note})` };
+                                        assigned = { cls: `${cls}`, subject: `${cell.subject}${boardTag} (${note})` };
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
                                         const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                        assigned = { cls: formatClassDisplay(cls, dealsBoth ? b : ''), subject: `${cell.subject} (${note})` };
+                                        assigned = { cls: `${cls}`, subject: `${cell.subject}${boardTag} (${note})` };
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    assigned = { cls: formatClassDisplay(cls, dealsBoth ? b : ''), subject: cell.subject || '' };
+                                    assigned = { cls: `${cls}`, subject: `${cell.subject}${boardTag}` };
                                     break;
                                 }
                             }
@@ -3895,46 +3909,20 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
+        // Point 1 & Point 7: Single Teacher Block for Department Master
+        // (1cm row height via CSS + mention board after subject for both board dealers)
         function buildSingleTeacherScheduleThirdHTML(teacherObj) {
             const teacherName = teacherObj.name;
             const dealsBoth = normalizeBoard(teacherObj.board) === 'BOTH';
-
-            const periodAllocationMap = {};
-            periods.forEach(p => { periodAllocationMap[p.id] = false; });
-
-            days.forEach(day => {
-                periods.forEach(p => {
-                    const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
-                    for(const b of boardsToSearch) {
-                        const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
-                        for(const cls in tt) {
-                            const cell = tt[cls]?.[day]?.[p.id];
-                            if(cell) {
-                                if(cell.isDual) {
-                                    if(cell.teacher1 === teacherName || cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                        periodAllocationMap[p.id] = true;
-                                        break;
-                                    }
-                                } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    periodAllocationMap[p.id] = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if(periodAllocationMap[p.id]) break;
-                    }
-                });
-            });
 
             let tableHTML = `
                 <div class="single-teacher-third-box">
                     <div class="teacher-single-header">
                         <div class="t-school-name">SRI CHAITANYA SCHOOL</div>
                         <div class="t-branch-name">Branch : Adibatla</div>
-                        <div class="t-sub-title">Time Table</div>
                         <div class="t-info-line">
                             <span><b>Teacher:</b> <span style="color:red; font-size:12px;">${teacherName}</span> (${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
-                            <span style="color:#0056b3;"><b>Emp ID:</b> ${teacherObj.empId || '---'} | <b>Board:</b> ${teacherObj.board || 'CBSE'}</span>
+                            <span style="color:#0056b3;"><b>Emp ID:</b> ${teacherObj.empId || '---'} | <b>Board:</b> ${normalizeBoard(teacherObj.board)}</span>
                         </div>
                     </div>
                     <table class="subj-print-table" style="width:100%; border-collapse:collapse; text-align:center;">
@@ -3943,9 +3931,8 @@ table { max-width:100%; }
                                 <th style="border:1px solid #777; width:45px;">Day</th>`;
 
             periods.forEach(p => {
-                const isAllotted = periodAllocationMap[p.id];
-                tableHTML += `<th class="${isAllotted ? 'col-allotted' : 'col-empty'}" style="border:1px solid #777;">
-                    <b>${p.id}</b>
+                tableHTML += `<th style="border:1px solid #777;">
+                    <b>P-${p.id}</b>
                     <small>${p.time}</small>
                 </th>`;
             });
@@ -3957,27 +3944,27 @@ table { max-width:100%; }
 
                 periods.forEach(p => {
                     let assigned = null;
-                    const isAllottedCol = periodAllocationMap[p.id];
                     const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
-                    
                     for(const b of boardsToSearch) {
                         const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
                         for(const cls in tt) {
                             const cell = tt[cls]?.[day]?.[p.id];
                             if(cell) {
+                                // Point 7: Explicitly mention Board after the subject for both board dealing teachers
+                                const boardTag = dealsBoth ? ` [${b}]` : '';
                                 if(cell.isDual) {
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
                                         const note = isWiz ? 'Wiz' : (cell.lang1 || 'Lang1');
-                                        assigned = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject}-${note})`;
+                                        assigned = `${cls} (${cell.subject}${boardTag}-${note})`;
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
                                         const note = isWiz ? 'Wiz' : (cell.lang2 || 'Lang2');
-                                        assigned = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject}-${note})`;
+                                        assigned = `${cls} (${cell.subject}${boardTag}-${note})`;
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    assigned = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject})`;
+                                    assigned = `${cls} (${cell.subject}${boardTag})`;
                                     break;
                                 }
                             }
@@ -3986,10 +3973,10 @@ table { max-width:100%; }
                     }
 
                     if(assigned) {
-                        tableHTML += `<td class="col-allotted" style="border:1px solid #888; font-weight:bold;">${assigned}</td>`;
+                        tableHTML += `<td style="border:1px solid #888; background:#e8f4fd; font-weight:bold;">${assigned}</td>`;
                     } else {
                         const status = teacherWeeklyStatus[teacherName]?.[day]?.[p.id] || '---';
-                        tableHTML += `<td class="${isAllottedCol ? 'col-allotted' : 'col-empty'}" style="border:1px solid #888;">${status}</td>`;
+                        tableHTML += `<td style="border:1px solid #888; color:#777;">${status}</td>`;
                     }
                 });
 
@@ -4000,6 +3987,8 @@ table { max-width:100%; }
             return tableHTML;
         }
 
+        // Point 1: When selecting STATE board, take STATE and BOTH board dealing staff in continuation print;
+        // when selecting CBSE, take CBSE and BOTH board dealing staff in continuation print
         function renderPrincipalSubjectWiseTimetables() {
             const selSub = document.getElementById('pSubjectDeptSelect')?.value;
             const container = document.getElementById('pSubjectWiseContainer');
@@ -4032,16 +4021,31 @@ table { max-width:100%; }
 
             matchingStaff.sort((a,b) => String(a.name).localeCompare(String(b.name)));
 
-            let html = ``;
+            let html = `
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Department Teachers Timetable: ${selSub.toUpperCase()} [${currentBoard} BOARD]</h4>
+                </div>
+            `;
 
+            // Group into chunks of exactly 3 teachers per printed A4 page
             const chunkSize = 3;
             for(let i = 0; i < matchingStaff.length; i += chunkSize) {
                 const chunk = matchingStaff.slice(i, i + chunkSize);
+                const pageNum = Math.floor(i / chunkSize) + 1;
+                const totalPages = Math.ceil(matchingStaff.length / chunkSize);
 
-                html += `<div class="print-three-wrapper">`;
+                html += `<div class="print-three-wrapper">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid red; margin-bottom:5px; padding-bottom:2px;">
+                        <h4 style="margin:0; color:red; font-size:13px;">DEPARTMENT: ${selSub.toUpperCase()} - TEACHERS TIMETABLE</h4>
+                        <span style="font-size:10px; font-weight:bold; color:#0056b3;">Page ${pageNum} of ${totalPages} [${currentBoard} BOARD]</span>
+                    </div>`;
+
                 chunk.forEach(st => {
                     html += buildSingleTeacherScheduleThirdHTML(st);
                 });
+
                 html += `</div>`;
             }
 
@@ -4088,19 +4092,20 @@ table { max-width:100%; }
                             for(let cls in tt) {
                                 const cell = tt[cls]?.[dayName]?.[p.id];
                                 if(cell) {
+                                    const boardTag = dealsBoth ? ` [${b}]` : '';
                                     if(cell.isDual) {
                                         const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === st.name || cell.teacher === st.name) {
                                             const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag} - ${note})`;
                                             break;
                                         } else if(cell.teacher2 === st.name) {
                                             const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag} - ${note})`;
                                             break;
                                         }
                                     } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
-                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject})`;
+                                        assignedClass = `<b>${cls}</b><br>(${cell.subject}${boardTag})`;
                                         break;
                                     }
                                 }
@@ -4160,7 +4165,7 @@ table { max-width:100%; }
                 html += `<tr>
                     <td>${idx + 1}</td>
                     <td><b>${rec.period}</b><br><small>${(periods.find(p => String(p.id) === String(rec.period)) || {}).time || ''}</small></td>
-                    <td><b>${formatClassDisplay(rec.class)}</b></td>
+                    <td><b>${rec.class}</b></td>
                     <td style="color:red;">${rec.absent}</td>
                     <td style="color:green; font-weight:bold;">${rec.subTeacher}</td>
                     <td style="width:75px;"></td>
@@ -4446,7 +4451,7 @@ table { max-width:100%; }
                     <td><b>${item.fromPeriod}</b></td>
                     <td><b>${item.toPeriod}</b></td>
                     <td>${item.orientation || ''}</td>
-                    <td><b>${formatClassDisplay(item.classKey)}</b></td>
+                    <td><b>${item.classKey}</b></td>
                     <td style="color:#0056b3; font-weight:bold;">${item.teacher}</td>
                     <td>
                         <button type="button" class="edit-btn" onclick="editRevisionEntry(${idx})">Edit</button>
@@ -4649,7 +4654,7 @@ table { max-width:100%; }
                     <td><b>${item.fromPeriod}</b></td>
                     <td><b>${item.toPeriod}</b></td>
                     <td>${item.orientation || ''}</td>
-                    <td><b>${formatClassDisplay(item.classKey)}</b></td>
+                    <td><b>${item.classKey}</b></td>
                     <td style="color:#0056b3; font-weight:bold;">${item.teacher}</td>
                     <td>
                         <button type="button" class="edit-btn" onclick="editInvigilation(${idx})">Edit</button>
@@ -4662,6 +4667,7 @@ table { max-width:100%; }
             box.innerHTML = html;
         }
 
+        // Point 4: Night Study Hours - save & persist across boards
         function onStudyClassOrDayChange() {
             renderStudyHoursTimetable();
             renderStudyHoursSavedList();
@@ -4686,7 +4692,7 @@ table { max-width:100%; }
                 .sort((a, b) => a.name.localeCompare(b.name));
 
             let html = `<div id="studyHoursEditorTable">
-                <h4>Configure Night Study Hours (6:00pm – 8:00pm): <b>${formatClassDisplay(key)}</b> - <span style="color:#0056b3;">${day}</span> [${currentBoard} BOARD]</h4>
+                <h4>Configure Night Study Hours (6:00pm – 8:00pm): <b>${key}</b> - <span style="color:#0056b3;">${day}</span> [${currentBoard} BOARD]</h4>
                 <div style="overflow-x:auto;">
                     <table>
                         <thead>
@@ -4746,7 +4752,7 @@ table { max-width:100%; }
 
             if(!studyHoursRecords[currentBoard]) studyHoursRecords[currentBoard] = {};
             if(!studyHoursRecords[currentBoard][key]) studyHoursRecords[currentBoard][key] = {};
-            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key][day] = {};
+            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key] = {};
 
             nightStudyPeriods.forEach(p => {
                 const typeVal = document.getElementById(`study_type_${p.id}`)?.value || 'Night Study Hour';
@@ -4759,7 +4765,7 @@ table { max-width:100%; }
             });
 
             await saveMapDoc('studyHoursRecords', currentBoard, studyHoursRecords[currentBoard]);
-            alert(`Night Study Hours Schedule for ${key} on ${day} saved successfully! It will now automatically appear in the respective teacher schedules on ${day}s.`);
+            alert(`Night Study Hours Schedule for ${key} on ${day} saved successfully! This will now be reflected in each teacher's personal timetable.`);
             renderStudyHoursSavedList();
         }
 
@@ -4814,7 +4820,7 @@ table { max-width:100%; }
             rows.forEach((r, idx) => {
                 html += `<tr>
                     <td><b>${idx + 1}</b></td>
-                    <td><b>${formatClassDisplay(r.classKey)}</b></td>
+                    <td><b>${r.classKey}</b></td>
                     <td>${r.day}</td>
                     <td><b>${r.period}</b></td>
                     <td>${r.type}</td>
@@ -4866,7 +4872,7 @@ table { max-width:100%; }
         }
 
         function buildClassWeekTable(fullClassKey, title) {
-            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${formatClassDisplay(fullClassKey)}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${fullClassKey}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
             periods.forEach(p => html += `<th>P-${p.id}<br><small>${p.time}</small></th>`);
             html += `</tr></thead><tbody>`;
             days.forEach(day => {
@@ -5000,6 +5006,7 @@ table { max-width:100%; }
                 if(floor) floor.style.display = 'none';
                 if(leave) leave.style.display = 'none';
                 if(schedule) schedule.style.display = 'block';
+                // Point 5: Do not auto-render schedule on clicking My Timetable until date is chosen and Proceed is clicked
                 document.getElementById('tScheduleDisplay').innerHTML = '';
                 schedule?.scrollIntoView({behavior:'smooth'});
             }
@@ -5080,7 +5087,7 @@ table { max-width:100%; }
                 const key=r.classKey;
                 html+=`<div style="border:1px solid #ccc;border-radius:6px;padding:8px;margin:8px 0; background:#fff;">
                     <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-                      <b>${formatClassDisplay(key)} (Floor: ${r.floor})</b>
+                      <b>${key} (Floor: ${r.floor})</b>
                       <div>
                         <button type="button" class="edit-btn no-print" onclick="editFloorClassSelection(${idx})">Edit</button>
                         <button type="button" class="delete-btn no-print" onclick="removeFloorClassSelection(${idx})">Delete</button>
