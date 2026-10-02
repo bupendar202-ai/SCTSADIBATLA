@@ -90,8 +90,8 @@
         .single-teacher-third-box {
             overflow: hidden;
             border-bottom: 1.5pt dashed #444;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
             box-sizing: border-box;
         }
         .single-teacher-third-box:last-child {
@@ -102,7 +102,7 @@
         .teacher-single-header {
             text-align: center;
             border-bottom: 1.5px solid #0056b3;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             padding-bottom: 2px;
         }
         .teacher-single-header .t-school-name {
@@ -111,6 +111,7 @@
             font-weight: bold;
             margin: 0;
             line-height: 1.15;
+            text-transform: uppercase;
         }
         .teacher-single-header .t-branch-name {
             color: blue;
@@ -119,31 +120,35 @@
             margin: 1px 0;
             line-height: 1.15;
         }
-        .teacher-single-header .t-tt-label {
-            color: #000;
+        .teacher-single-header .t-sub-title {
+            color: black;
             font-size: 11.5px;
             font-weight: bold;
             margin: 1px 0 2px 0;
             line-height: 1.15;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .teacher-single-header .t-info-line {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 11px;
+            font-size: 10.5px;
             margin-top: 2px;
         }
 
-        /* Enhanced styles for subject-wise teacher print output - Increased cell height */
+        /* Enhanced styles for subject-wise teacher print output - Dynamic Column Sizing */
+        .subj-print-table {
+            table-layout: fixed !important;
+            width: 100% !important;
+        }
         .subj-print-table th, .subj-print-table td {
             padding: 5px 2px !important;
-            font-size: 10px !important;
-            line-height: 1.25 !important;
-            height: 9.6mm !important;
-            min-height: 9.6mm !important;
+            font-size: 9.5px !important;
+            line-height: 1.2 !important;
+            height: 9.2mm !important;
+            min-height: 9.2mm !important;
             vertical-align: middle !important;
+            word-wrap: break-word !important;
+            overflow: hidden !important;
         }
         .subj-print-table th small {
             font-size: 8px !important;
@@ -154,7 +159,7 @@
         /* Responsive Flexible Print Settings */
         @media print {
             @page {
-                size: A4 portrait;
+                size: auto;
                 margin: 4mm 5mm;
             }
             body { 
@@ -172,22 +177,9 @@
                 width: 100% !important; 
                 display: block !important;
             }
-            
-            /* Hide generic department headers when printing subject-wise */
-            #pSubjectWiseContainer .print-header,
-            #pSubjectWiseContainer .dept-print-strip {
-                display: none !important;
-            }
-
             .printable-area .print-header {
-                display: block !important;
-                text-align: center !important;
-                margin-bottom: 6px !important;
-                padding-bottom: 3px !important;
+                display: none !important; /* Suppressed main & sub headers as requested */
             }
-            .printable-area .print-header h2 { font-size: 17px !important; margin: 0; color: red !important; }
-            .printable-area .print-header h3 { font-size: 13px !important; margin: 2px 0; color: blue !important; }
-            .printable-area .print-header h4 { font-size: 12px !important; margin: 2px 0; color: black !important; }
             
             .no-print { display: none !important; }
             .sub-select-dropdown { display: none !important; }
@@ -196,20 +188,21 @@
             /* Three teachers per A4 page */
             .print-three-wrapper {
                 page-break-after: always !important;
-                height: 282mm !important;
-                max-height: 285mm !important;
+                height: 285mm !important;
+                max-height: 287mm !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: space-between !important;
                 margin-bottom: 0 !important;
+                padding: 0 !important;
                 box-sizing: border-box !important;
             }
 
             .single-teacher-third-box {
-                height: 92mm !important;
-                max-height: 93mm !important;
+                height: 94mm !important;
+                max-height: 94mm !important;
                 overflow: hidden !important;
-                border-bottom: 1.2pt dashed #333 !important;
+                border-bottom: 1.5pt dashed #444 !important;
                 margin-bottom: 1mm !important;
                 padding-bottom: 1mm !important;
                 box-sizing: border-box !important;
@@ -226,21 +219,25 @@
                 margin-bottom: 2px !important;
                 padding-bottom: 1px !important;
             }
-            .teacher-single-header .t-school-name { font-size: 13.5px !important; }
-            .teacher-single-header .t-branch-name { font-size: 11px !important; }
-            .teacher-single-header .t-tt-label { font-size: 10.5px !important; margin: 0 0 1px 0 !important; }
-            .teacher-single-header .t-info-line { font-size: 9.5px !important; margin-top: 1px !important; }
+            .teacher-single-header .t-school-name { font-size: 13.5px !important; margin: 0 !important; color: red !important; }
+            .teacher-single-header .t-branch-name { font-size: 11px !important; margin: 1px 0 !important; color: blue !important; }
+            .teacher-single-header .t-sub-title { font-size: 10.5px !important; margin: 1px 0 !important; color: black !important; }
+            .teacher-single-header .t-info-line { font-size: 9px !important; margin-top: 1px !important; }
 
             .subj-print-table {
-                height: 70mm !important;
-                margin-top: 2px !important;
+                height: 75mm !important;
+                table-layout: fixed !important;
+                width: 100% !important;
             }
             .subj-print-table th, .subj-print-table td {
                 padding: 3px 1.5px !important;
                 font-size: 9px !important;
                 line-height: 1.15 !important;
-                height: 8.8mm !important;
-                min-height: 8.8mm !important;
+                height: 9.8mm !important;
+                min-height: 9.8mm !important;
+                vertical-align: middle !important;
+                word-wrap: break-word !important;
+                overflow: hidden !important;
             }
             .subj-print-table th small {
                 font-size: 7px !important;
@@ -258,7 +255,7 @@
             }
             table { 
                 width: 100% !important; 
-                margin-top: 4px !important; 
+                margin-top: 2px !important; 
                 font-size: 9.5px !important; 
                 page-break-inside: auto; 
                 border-collapse: collapse !important;
@@ -614,7 +611,7 @@ table { max-width:100%; }
             <div id="pTeachersByDateView"></div>
         </div>
 
-        <!-- Principal Subject-Wise Teachers Timetable View (3 per page on print with individual header & maximized cell heights) -->
+        <!-- Principal Subject-Wise Teachers Timetable View -->
         <div id="p-subject-tt" class="tab-content" style="display:none;">
             <h3>Subject-Wise Teachers Timetable (Department Master)</h3>
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:15px; align-items:flex-end;">
@@ -1561,6 +1558,7 @@ table { max-width:100%; }
             await db.collection(collectionName).doc(docId).set({ value });
         }
 
+        // Unified Flexible Print Trigger
         function printTargetElement(elemId) {
             document.querySelectorAll('.printable-area').forEach(el => el.classList.remove('printable-area'));
             const elem = document.getElementById(elemId);
@@ -2192,6 +2190,7 @@ table { max-width:100%; }
             renderSingleClassFullDashboard();
         }
 
+        // Full Page Flexible Class Master Viewer Render
         function renderSingleClassFullDashboard() {
             const fullClassKey = getSelectedClassKey();
             const container = document.getElementById('singleClassDashboardContainer');
@@ -2872,6 +2871,13 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
+        async function deleteXSession(date, idx) {
+            if(!confirm('Cancel this X Session allotment?')) return;
+            xSessionRecords[date].splice(idx, 1);
+            await saveMapDoc('xSessionRecords', date, xSessionRecords[date]);
+            renderXSessionScheduleList();
+        }
+
         function getXSessionDutyPeriods(sessionTime) {
             if(sessionTime === 'morning') {
                 return ["0", "I", "II", "III", "IV", "V"];
@@ -3104,7 +3110,6 @@ table { max-width:100%; }
                 }
             });
 
-            // Invigilation Duty Absences
             ['STATE', 'CBSE'].forEach(board => {
                 const invList = invigilationRecords[dateVal]?.[board] || [];
                 invList.forEach(inv => {
@@ -3131,7 +3136,6 @@ table { max-width:100%; }
                 });
             });
 
-            // Revision Duty Absences
             ['STATE', 'CBSE'].forEach(board => {
                 const revList = revisionScheduleRecords[dateVal]?.[board] || [];
                 revList.forEach(rev => {
@@ -3882,39 +3886,18 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        // Subject-Wise Teachers Timetable (Point 1: 3 per page on print with individual header & maximized cell heights)
+        // Point 1: 3 teachers per page printout, School Name Header, Branch Name Sub-Header, Time Table Sub-Header, dynamic column widths, state/cbse board mention
         function buildSingleTeacherScheduleThirdHTML(teacherObj) {
             const teacherName = teacherObj.name;
             const dealsBoth = normalizeBoard(teacherObj.board) === 'BOTH';
 
-            let tableHTML = `
-                <div class="single-teacher-third-box">
-                    <div class="teacher-single-header">
-                        <div class="t-school-name">SRI CHAITANYA SCHOOL</div>
-                        <div class="t-branch-name">Branch : Adibatla</div>
-                        <div class="t-tt-label">Time Table</div>
-                        <div class="t-info-line">
-                            <span><b>Teacher:</b> <span style="color:red; font-size:11.5px;">${teacherName}</span> (${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
-                            <span style="color:#0056b3;"><b>Emp ID:</b> ${teacherObj.empId || '---'} | <b>Board:</b> ${dealsBoth ? '<b style="color:purple;">CBSE &amp; STATE (BOTH)</b>' : (teacherObj.board || 'CBSE')}</span>
-                        </div>
-                    </div>
-                    <table class="subj-print-table" style="width:100%; border-collapse:collapse; text-align:center;">
-                        <thead>
-                            <tr style="background:#e9ecef;">
-                                <th style="border:1px solid #777; width:45px;">Day</th>`;
+            // Pre-calculate per-period occupancy to dynamically assign wide vs narrow column widths
+            const periodCounts = {};
+            periods.forEach(p => periodCounts[p.id] = 0);
 
-            periods.forEach(p => {
-                tableHTML += `<th style="border:1px solid #777;">
-                    <b>P-${p.id}</b>
-                    <small>${p.time}</small>
-                </th>`;
-            });
-
-            tableHTML += `</tr></thead><tbody>`;
-
+            const gridData = {};
             days.forEach(day => {
-                tableHTML += `<tr><td style="border:1px solid #888; font-weight:bold; background:#fafafa;">${day.substring(0,3)}</td>`;
-
+                gridData[day] = {};
                 periods.forEach(p => {
                     let assigned = null;
                     const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
@@ -3926,31 +3909,74 @@ table { max-width:100%; }
                                 if(cell.isDual) {
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
-                                        const note = isWiz ? 'Wiz' : (cell.lang1 || 'Lang1');
-                                        const bTag = dealsBoth ? ` [${b}]` : '';
-                                        assigned = `<b>${cls}${bTag}</b><br><small>(${cell.subject}-${note})</small>`;
+                                        const note = isWiz ? 'Wiz' : (cell.lang1 || 'L1');
+                                        assigned = dealsBoth ? `${cls} [${b}] (${cell.subject}-${note})` : `${cls} (${cell.subject}-${note})`;
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
-                                        const note = isWiz ? 'Wiz' : (cell.lang2 || 'Lang2');
-                                        const bTag = dealsBoth ? ` [${b}]` : '';
-                                        assigned = `<b>${cls}${bTag}</b><br><small>(${cell.subject}-${note})</small>`;
+                                        const note = isWiz ? 'Wiz' : (cell.lang2 || 'L2');
+                                        assigned = dealsBoth ? `${cls} [${b}] (${cell.subject}-${note})` : `${cls} (${cell.subject}-${note})`;
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    const bTag = dealsBoth ? ` [${b}]` : '';
-                                    assigned = `<b>${cls}${bTag}</b><br><small>(${cell.subject})</small>`;
+                                    assigned = dealsBoth ? `${cls} [${b}] (${cell.subject})` : `${cls} (${cell.subject})`;
                                     break;
                                 }
                             }
                         }
                         if(assigned) break;
                     }
+                    gridData[day][p.id] = assigned;
+                    if(assigned) periodCounts[p.id]++;
+                });
+            });
+
+            // Calculate percentage width: Day gets 5.5%, remaining 94.5% is divided dynamically based on occupied count
+            const dayColPct = 5.5;
+            const availablePct = 94.5;
+            const weights = periods.map(p => (periodCounts[p.id] > 0 ? 1.45 : 0.75));
+            const totalWeight = weights.reduce((acc, w) => acc + w, 0);
+            const periodColWidths = weights.map(w => ((w / totalWeight) * availablePct).toFixed(2));
+
+            let tableHTML = `
+                <div class="single-teacher-third-box">
+                    <div class="teacher-single-header">
+                        <div class="t-school-name">SRI CHAITANYA SCHOOL</div>
+                        <div class="t-branch-name">Branch : Adibatla</div>
+                        <div class="t-sub-title">Time Table</div>
+                        <div class="t-info-line">
+                            <span><b>Teacher:</b> <span style="color:red; font-size:11.5px;">${teacherName}</span> (${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
+                            <span style="color:#0056b3;"><b>Emp ID:</b> ${teacherObj.empId || '---'} | <b>Board:</b> ${teacherObj.board || 'CBSE'}${dealsBoth ? ' (DEALS BOTH CBSE &amp; STATE)' : ''}</span>
+                        </div>
+                    </div>
+                    <table class="subj-print-table" style="width:100%; border-collapse:collapse; text-align:center; table-layout:fixed;">
+                        <colgroup>
+                            <col style="width:${dayColPct}%;">
+                            ${periods.map((p, idx) => `<col style="width:${periodColWidths[idx]}%;">`).join('')}
+                        </colgroup>
+                        <thead>
+                            <tr style="background:#e9ecef;">
+                                <th style="border:1px solid #777;">Day</th>`;
+
+            periods.forEach(p => {
+                tableHTML += `<th style="border:1px solid #777;">
+                    <b>${p.id}</b>
+                    <small>${p.time}</small>
+                </th>`;
+            });
+
+            tableHTML += `</tr></thead><tbody>`;
+
+            days.forEach(day => {
+                tableHTML += `<tr><td style="border:1px solid #888; font-weight:bold; background:#fafafa;">${day.substring(0,3)}</td>`;
+
+                periods.forEach(p => {
+                    const assigned = gridData[day][p.id];
 
                     if(assigned) {
-                        tableHTML += `<td style="border:1px solid #888; background:#e8f4fd;">${assigned}</td>`;
+                        tableHTML += `<td style="border:1px solid #888; background:#e8f4fd; font-weight:bold; word-wrap:break-word;">${assigned}</td>`;
                     } else {
                         const status = teacherWeeklyStatus[teacherName]?.[day]?.[p.id] || '---';
-                        tableHTML += `<td style="border:1px solid #888; color:#777;">${status}</td>`;
+                        tableHTML += `<td style="border:1px solid #888; color:#888;">${status}</td>`;
                     }
                 });
 
@@ -3993,19 +4019,13 @@ table { max-width:100%; }
 
             matchingStaff.sort((a,b) => String(a.name).localeCompare(String(b.name)));
 
-            let html = ``;
+            let html = '';
 
             const chunkSize = 3;
             for(let i = 0; i < matchingStaff.length; i += chunkSize) {
                 const chunk = matchingStaff.slice(i, i + chunkSize);
-                const pageNum = Math.floor(i / chunkSize) + 1;
-                const totalPages = Math.ceil(matchingStaff.length / chunkSize);
 
-                html += `<div class="print-three-wrapper">
-                    <div class="no-print dept-print-strip" style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #0056b3; margin-bottom:8px; padding-bottom:3px;">
-                        <h4 style="margin:0; color:#0056b3; font-size:13px;">Subject: ${selSub.toUpperCase()} - Teachers Timetable</h4>
-                        <span style="font-size:11px; font-weight:bold; color:#555;">Page ${pageNum} of ${totalPages}</span>
-                    </div>`;
+                html += `<div class="print-three-wrapper">`;
 
                 chunk.forEach(st => {
                     html += buildSingleTeacherScheduleThirdHTML(st);
@@ -4222,6 +4242,7 @@ table { max-width:100%; }
             return null;
         }
 
+        // REVISION SCHEDULE MODULE
         function initRevisionControls() {
             const d = document.getElementById('revisionDate');
             if(d && !d.value) d.value = new Date().toISOString().slice(0,10);
