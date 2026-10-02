@@ -119,13 +119,12 @@
             margin: 1px 0;
             line-height: 1.15;
         }
-        .teacher-single-header .t-sub-tt-title {
+        .teacher-single-header .t-sub-title {
             color: black;
             font-size: 11px;
             font-weight: bold;
             margin: 1px 0;
             line-height: 1.15;
-            text-transform: uppercase;
         }
         .teacher-single-header .t-info-line {
             display: flex;
@@ -135,51 +134,45 @@
             margin-top: 2px;
         }
 
-        /* Enhanced styles for subject-wise teacher print output - Maximized cell height */
+        /* Subject-wise teacher print output */
         .subj-print-table {
-            width: 100%;
-            table-layout: fixed;
-            border-collapse: collapse;
+            table-layout: fixed !important;
+            width: 100% !important;
         }
         .subj-print-table th, .subj-print-table td {
-            padding: 4px 2px !important;
-            font-size: 9.5px !important;
-            line-height: 1.15 !important;
-            height: 9.2mm !important;
-            min-height: 9.2mm !important;
+            padding: 5px 2px !important;
+            font-size: 10px !important;
+            line-height: 1.2 !important;
+            height: 9.5mm !important;
+            min-height: 9.5mm !important;
             vertical-align: middle !important;
-            word-wrap: break-word;
-            overflow: hidden;
+            word-wrap: break-word !important;
+            overflow: hidden !important;
         }
         .subj-print-table th small {
-            font-size: 7.5px !important;
+            font-size: 8px !important;
             display: block;
             color: #333;
-            line-height: 1.1;
         }
-        .subj-print-table .day-col {
-            width: 48px !important;
-            max-width: 48px !important;
-            min-width: 48px !important;
+
+        /* Proportional width classes: allocated period expands, empty shrinks */
+        .col-allotted {
+            min-width: 58px !important;
+            width: auto !important;
+            background-color: #f7fbff;
         }
-        .subj-print-table .period-col {
-            width: auto;
-        }
-        .subj-print-table td.cell-busy {
-            background-color: #e8f4fd !important;
-            font-weight: bold;
-            font-size: 9px !important;
-        }
-        .subj-print-table td.cell-free {
-            color: #888;
-            font-size: 8.5px !important;
+        .col-empty {
+            width: 28px !important;
+            max-width: 32px !important;
+            color: #bbb !important;
+            background-color: #fff;
         }
 
         /* Responsive Flexible Print Settings */
         @media print {
             @page {
-                size: A4 portrait;
-                margin: 4mm 5mm;
+                size: auto;
+                margin: 5mm;
             }
             body { 
                 background-color: #fff; 
@@ -196,82 +189,69 @@
                 width: 100% !important; 
                 display: block !important;
             }
-            .printable-area .print-header {
-                display: block !important;
-                text-align: center !important;
-                margin-bottom: 6px !important;
-                padding-bottom: 3px !important;
-            }
-            .printable-area .print-header h2 { font-size: 17px !important; margin: 0; color: red !important; }
-            .printable-area .print-header h3 { font-size: 13px !important; margin: 2px 0; color: blue !important; }
-            .printable-area .print-header h4 { font-size: 12px !important; margin: 2px 0; color: black !important; }
             
             .no-print { display: none !important; }
             .sub-select-dropdown { display: none !important; }
             .print-only-text { display: inline-block !important; font-weight: bold; }
 
-            /* Strictly 3 teachers per page without overflow */
+            /* Three teachers per A4 page */
             .print-three-wrapper {
                 page-break-after: always !important;
-                page-break-inside: avoid !important;
-                height: 284mm !important;
-                max-height: 287mm !important;
+                height: 280mm !important;
+                max-height: 285mm !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: space-between !important;
-                margin: 0 !important;
-                padding: 0 !important;
+                margin-bottom: 0 !important;
                 box-sizing: border-box !important;
             }
 
             .single-teacher-third-box {
-                height: 92mm !important;
+                height: 91mm !important;
                 max-height: 93mm !important;
                 overflow: hidden !important;
-                border-bottom: 1.5pt dashed #444 !important;
+                border-bottom: 1.5pt dashed #333 !important;
                 margin-bottom: 1.5mm !important;
                 padding-bottom: 1.5mm !important;
                 box-sizing: border-box !important;
                 display: flex !important;
                 flex-direction: column !important;
                 justify-content: flex-start !important;
-                page-break-inside: avoid !important;
             }
             .single-teacher-third-box:last-child {
                 border-bottom: none !important;
                 margin-bottom: 0 !important;
             }
 
-            .teacher-single-header {
-                margin-bottom: 2px !important;
-                padding-bottom: 1px !important;
-            }
-            .teacher-single-header .t-school-name { font-size: 13.5px !important; line-height: 1.1 !important; }
-            .teacher-single-header .t-branch-name { font-size: 11px !important; line-height: 1.1 !important; }
-            .teacher-single-header .t-sub-tt-title { font-size: 10px !important; line-height: 1.1 !important; }
-            .teacher-single-header .t-info-line { font-size: 9px !important; line-height: 1.15 !important; }
+            .teacher-single-header .t-school-name { font-size: 13.5px !important; }
+            .teacher-single-header .t-branch-name { font-size: 11px !important; }
+            .teacher-single-header .t-sub-title { font-size: 10px !important; }
+            .teacher-single-header .t-info-line { font-size: 9.5px !important; }
 
             .subj-print-table {
-                height: 72mm !important;
-                table-layout: fixed !important;
+                height: 70mm !important;
             }
             .subj-print-table th, .subj-print-table td {
-                padding: 2.5px 1px !important;
-                font-size: 8.5px !important;
-                line-height: 1.1 !important;
-                height: 9.1mm !important;
-                min-height: 9.1mm !important;
+                padding: 3px 1px !important;
+                font-size: 9.5px !important;
+                line-height: 1.15 !important;
+                height: 9.2mm !important;
+                min-height: 9.2mm !important;
             }
             .subj-print-table th small {
-                font-size: 7px !important;
+                font-size: 7.5px !important;
                 display: block !important;
-                color: #222;
-                line-height: 1.05 !important;
+                color: #333;
             }
-            .subj-print-table .day-col {
-                width: 44px !important;
-                max-width: 44px !important;
-                min-width: 44px !important;
+
+            .col-allotted {
+                font-weight: bold !important;
+                background-color: #f7fbff !important;
+            }
+            .col-empty {
+                width: 26px !important;
+                max-width: 30px !important;
+                color: #ccc !important;
             }
 
             .signature-section { 
@@ -303,7 +283,6 @@
                 display: table-footer-group; 
             }
 
-            /* Responsive print layout for class master tables: 2.5cm height per row */
             .class-table-print-area {
                 width: 100% !important;
                 box-sizing: border-box !important;
@@ -639,7 +618,7 @@ table { max-width:100%; }
             <div id="pTeachersByDateView"></div>
         </div>
 
-        <!-- Principal Subject-Wise Teachers Timetable View (Point 1: 3 per page on print with strictly School Name, Branch, and Time Table headers) -->
+        <!-- Principal Subject-Wise Teachers Timetable View (3 per page on print with school/branch/Time Table header & dynamic column sizing) -->
         <div id="p-subject-tt" class="tab-content" style="display:none;">
             <h3>Subject-Wise Teachers Timetable (Department Master)</h3>
             <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:15px; align-items:flex-end;">
@@ -1263,6 +1242,15 @@ table { max-width:100%; }
             "Room 401", "Room 402", "Room 403", "Room 404", "Room 405", "Room 406",
             "Room 407", "Room 408", "Room 409", "Room 410", "Room 411"
         ];
+
+        function formatClassDisplay(classKey, boardTag = '') {
+            if(!classKey) return '';
+            let cleaned = classKey.replace(/\s*-\s*Sec\s*/i, '-').trim();
+            if(boardTag) {
+                return `${cleaned} (${boardTag})`;
+            }
+            return cleaned;
+        }
 
         function updateWebManifest(iconUrl) {
             let manifestLink = document.getElementById('webManifestLink');
@@ -2384,15 +2372,15 @@ table { max-width:100%; }
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
                                         const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
+                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
                                         const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
+                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject})`;
+                                    assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject})`;
                                     break;
                                 }
                             }
@@ -2517,15 +2505,15 @@ table { max-width:100%; }
                                         const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === st.name || cell.teacher === st.name) {
                                             const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
                                             break;
                                         } else if(cell.teacher2 === st.name) {
                                             const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
                                             break;
                                         }
                                     } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
-                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject})`;
+                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject})`;
                                         break;
                                     }
                                 }
@@ -3305,7 +3293,7 @@ table { max-width:100%; }
                     <td>${item.time}</td>
                     <td style="color:red;font-weight:bold;">${item.absentTeacher}</td>
                     <td><b>${item.reason}</b></td>
-                    <td><b>${item.class}</b><br>${item.subject || ''}</td>
+                    <td><b>${formatClassDisplay(item.class)}</b><br>${item.subject || ''}</td>
                     <td>
                         <select class="sub-select-dropdown" id="sub_assign_${index}" data-index="${index}" data-period="${item.period}" data-class="${item.class}" data-absent="${item.absentTeacher}" onchange="onSubstitutionDropdownChange(this,${index})">
                             ${options}
@@ -3526,19 +3514,19 @@ table { max-width:100%; }
                     const subMatch = mySubstitutions.find(s => String(s.period) === String(p.id));
 
                     if(invMatch) {
-                        status = `Invigilation Duty (${invMatch.classKey}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
+                        status = `Invigilation Duty (${formatClassDisplay(invMatch.classKey, invMatch.boardName)}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
                         type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation</span>`;
                         if(dealsBoth) assignedBoard = invMatch.boardName;
                     } else if(revMatch) {
-                        status = `Revision Schedule Duty (${revMatch.classKey}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
+                        status = `Revision Schedule Duty (${formatClassDisplay(revMatch.classKey, revMatch.boardName)}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
                         type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty</span>`;
                         if(dealsBoth) assignedBoard = revMatch.boardName;
                     } else if(xSessMatch) {
-                        status = `X Session - Session ${xSessMatch.sessionNumber} (Class: ${xSessMatch.class}, ${xSessMatch.subject})`;
+                        status = `X Session - Session ${xSessMatch.sessionNumber} (${xSessMatch.class} (${xSessMatch.board || currentBoard}), ${xSessMatch.subject})`;
                         type = `<span style="color:#0056b3; font-weight:bold;">X-Session Duty</span>`;
                         if(dealsBoth) assignedBoard = xSessMatch.board || currentBoard;
                     } else if(subMatch) {
-                        status = `${subMatch.class} (Substitution for ${subMatch.absent})`;
+                        status = `${formatClassDisplay(subMatch.class, subMatch.board || currentBoard)} (Substitution for ${subMatch.absent})`;
                         type = `<span style="color:red; font-weight:bold;">Substitution</span>`;
                         if(dealsBoth) assignedBoard = subMatch.board || currentBoard;
                     } else {
@@ -3553,19 +3541,19 @@ table { max-width:100%; }
                                         const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === currentUser.name || cell.teacher === currentUser.name) {
                                             const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                            status = `${cls} (${cell.subject} - ${note})`;
+                                            status = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject} - ${note})`;
                                             type = "Original Class";
                                             if(dealsBoth) assignedBoard = b;
                                             found = true; break;
                                         } else if(cell.teacher2 === currentUser.name) {
                                             const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                            status = `${cls} (${cell.subject} - ${note})`;
+                                            status = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject} - ${note})`;
                                             type = "Original Class";
                                             if(dealsBoth) assignedBoard = b;
                                             found = true; break;
                                         }
                                     } else if(cell.teacher === currentUser.name || cell.teacher2 === currentUser.name) {
-                                        status = `${cls} (${cell.subject})`;
+                                        status = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject})`;
                                         type = "Original Class";
                                         if(dealsBoth) assignedBoard = b;
                                         found = true; break;
@@ -3586,7 +3574,7 @@ table { max-width:100%; }
                         html += `<tr style="background:#f9fbfd;">
                             <td><b>${ns.period}</b></td>
                             <td>${nsP.time}</td>
-                            <td><b>${ns.classKey}</b> (${ns.type})</td>
+                            <td><b>${formatClassDisplay(ns.classKey, dealsBoth ? ns.board : '')}</b> (${ns.type})</td>
                             ${dealsBoth ? `<td><b>${ns.board}</b></td>` : ''}
                             <td><span style="color:#0056b3; font-weight:bold;">Night Study Duty</span></td>
                         </tr>`;
@@ -3873,15 +3861,15 @@ table { max-width:100%; }
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
                                         const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                        assigned = { cls: `${cls} [${b}]`, subject: `${cell.subject} (${note})` };
+                                        assigned = { cls: formatClassDisplay(cls, dealsBoth ? b : ''), subject: `${cell.subject} (${note})` };
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
                                         const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                        assigned = { cls: `${cls} [${b}]`, subject: `${cell.subject} (${note})` };
+                                        assigned = { cls: formatClassDisplay(cls, dealsBoth ? b : ''), subject: `${cell.subject} (${note})` };
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    assigned = { cls: `${cls} [${b}]`, subject: cell.subject || '' };
+                                    assigned = { cls: formatClassDisplay(cls, dealsBoth ? b : ''), subject: cell.subject || '' };
                                     break;
                                 }
                             }
@@ -3907,30 +3895,57 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        // Point 1: 3 teachers per page printout, strict headers, maximized height, adaptive cell widths, disambiguated CBSE/STATE classes
         function buildSingleTeacherScheduleThirdHTML(teacherObj) {
             const teacherName = teacherObj.name;
             const dealsBoth = normalizeBoard(teacherObj.board) === 'BOTH';
+
+            const periodAllocationMap = {};
+            periods.forEach(p => { periodAllocationMap[p.id] = false; });
+
+            days.forEach(day => {
+                periods.forEach(p => {
+                    const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
+                    for(const b of boardsToSearch) {
+                        const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
+                        for(const cls in tt) {
+                            const cell = tt[cls]?.[day]?.[p.id];
+                            if(cell) {
+                                if(cell.isDual) {
+                                    if(cell.teacher1 === teacherName || cell.teacher === teacherName || cell.teacher2 === teacherName) {
+                                        periodAllocationMap[p.id] = true;
+                                        break;
+                                    }
+                                } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
+                                    periodAllocationMap[p.id] = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if(periodAllocationMap[p.id]) break;
+                    }
+                });
+            });
 
             let tableHTML = `
                 <div class="single-teacher-third-box">
                     <div class="teacher-single-header">
                         <div class="t-school-name">SRI CHAITANYA SCHOOL</div>
                         <div class="t-branch-name">Branch : Adibatla</div>
-                        <div class="t-sub-tt-title">Time Table</div>
+                        <div class="t-sub-title">Time Table</div>
                         <div class="t-info-line">
-                            <span><b>Teacher:</b> <span style="color:red; font-size:11.5px;">${teacherName}</span> (${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
-                            <span style="color:#0056b3;"><b>Emp ID:</b> ${teacherObj.empId || '---'} | <b>Board:</b> ${dealsBoth ? 'CBSE &amp; STATE' : (teacherObj.board || currentBoard)}</span>
+                            <span><b>Teacher:</b> <span style="color:red; font-size:12px;">${teacherName}</span> (${teacherObj.designation || 'Teacher'} - ${teacherObj.subject || 'Staff'})</span>
+                            <span style="color:#0056b3;"><b>Emp ID:</b> ${teacherObj.empId || '---'} | <b>Board:</b> ${teacherObj.board || 'CBSE'}</span>
                         </div>
                     </div>
-                    <table class="subj-print-table">
+                    <table class="subj-print-table" style="width:100%; border-collapse:collapse; text-align:center;">
                         <thead>
                             <tr style="background:#e9ecef;">
-                                <th class="day-col" style="border:1px solid #777;">Day</th>`;
+                                <th style="border:1px solid #777; width:45px;">Day</th>`;
 
             periods.forEach(p => {
-                tableHTML += `<th class="period-col" style="border:1px solid #777;">
-                    <b>P-${p.id}</b>
+                const isAllotted = periodAllocationMap[p.id];
+                tableHTML += `<th class="${isAllotted ? 'col-allotted' : 'col-empty'}" style="border:1px solid #777;">
+                    <b>${p.id}</b>
                     <small>${p.time}</small>
                 </th>`;
             });
@@ -3938,30 +3953,31 @@ table { max-width:100%; }
             tableHTML += `</tr></thead><tbody>`;
 
             days.forEach(day => {
-                tableHTML += `<tr><td class="day-col" style="border:1px solid #888; font-weight:bold; background:#fafafa;">${day.substring(0,3)}</td>`;
+                tableHTML += `<tr><td style="border:1px solid #888; font-weight:bold; background:#fafafa;">${day.substring(0,3)}</td>`;
 
                 periods.forEach(p => {
                     let assigned = null;
+                    const isAllottedCol = periodAllocationMap[p.id];
                     const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
+                    
                     for(const b of boardsToSearch) {
                         const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
                         for(const cls in tt) {
                             const cell = tt[cls]?.[day]?.[p.id];
                             if(cell) {
-                                const boardTag = dealsBoth ? `[${b}] ` : '';
                                 if(cell.isDual) {
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                     if(cell.teacher1 === teacherName || cell.teacher === teacherName) {
-                                        const note = isWiz ? 'Wiz' : (cell.lang1 || 'L1');
-                                        assigned = `${boardTag}${cls}<br><small style="font-size:7.5px;">${cell.subject}-${note}</small>`;
+                                        const note = isWiz ? 'Wiz' : (cell.lang1 || 'Lang1');
+                                        assigned = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject}-${note})`;
                                         break;
                                     } else if(cell.teacher2 === teacherName) {
-                                        const note = isWiz ? 'Wiz' : (cell.lang2 || 'L2');
-                                        assigned = `${boardTag}${cls}<br><small style="font-size:7.5px;">${cell.subject}-${note}</small>`;
+                                        const note = isWiz ? 'Wiz' : (cell.lang2 || 'Lang2');
+                                        assigned = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject}-${note})`;
                                         break;
                                     }
                                 } else if(cell.teacher === teacherName || cell.teacher2 === teacherName) {
-                                    assigned = `${boardTag}${cls}<br><small style="font-size:7.5px;">${cell.subject}</small>`;
+                                    assigned = `${formatClassDisplay(cls, dealsBoth ? b : '')} (${cell.subject})`;
                                     break;
                                 }
                             }
@@ -3970,10 +3986,10 @@ table { max-width:100%; }
                     }
 
                     if(assigned) {
-                        tableHTML += `<td class="period-col cell-busy" style="border:1px solid #888;">${assigned}</td>`;
+                        tableHTML += `<td class="col-allotted" style="border:1px solid #888; font-weight:bold;">${assigned}</td>`;
                     } else {
                         const status = teacherWeeklyStatus[teacherName]?.[day]?.[p.id] || '---';
-                        tableHTML += `<td class="period-col cell-free" style="border:1px solid #888;">${status}</td>`;
+                        tableHTML += `<td class="${isAllottedCol ? 'col-allotted' : 'col-empty'}" style="border:1px solid #888;">${status}</td>`;
                     }
                 });
 
@@ -4016,7 +4032,8 @@ table { max-width:100%; }
 
             matchingStaff.sort((a,b) => String(a.name).localeCompare(String(b.name)));
 
-            let html = '';
+            let html = ``;
+
             const chunkSize = 3;
             for(let i = 0; i < matchingStaff.length; i += chunkSize) {
                 const chunk = matchingStaff.slice(i, i + chunkSize);
@@ -4075,15 +4092,15 @@ table { max-width:100%; }
                                         const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
                                         if(cell.teacher1 === st.name || cell.teacher === st.name) {
                                             const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
                                             break;
                                         } else if(cell.teacher2 === st.name) {
                                             const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
-                                            assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject} - ${note})`;
+                                            assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject} - ${note})`;
                                             break;
                                         }
                                     } else if(cell.teacher === st.name || cell.teacher2 === st.name) {
-                                        assignedClass = `<b>${cls}</b> [${b}]<br>(${cell.subject})`;
+                                        assignedClass = `<b>${formatClassDisplay(cls, dealsBoth ? b : '')}</b><br>(${cell.subject})`;
                                         break;
                                     }
                                 }
@@ -4143,7 +4160,7 @@ table { max-width:100%; }
                 html += `<tr>
                     <td>${idx + 1}</td>
                     <td><b>${rec.period}</b><br><small>${(periods.find(p => String(p.id) === String(rec.period)) || {}).time || ''}</small></td>
-                    <td><b>${rec.class}</b></td>
+                    <td><b>${formatClassDisplay(rec.class)}</b></td>
                     <td style="color:red;">${rec.absent}</td>
                     <td style="color:green; font-weight:bold;">${rec.subTeacher}</td>
                     <td style="width:75px;"></td>
@@ -4236,7 +4253,6 @@ table { max-width:100%; }
             return null;
         }
 
-        // REVISION SCHEDULE MODULE
         function initRevisionControls() {
             const d = document.getElementById('revisionDate');
             if(d && !d.value) d.value = new Date().toISOString().slice(0,10);
@@ -4430,7 +4446,7 @@ table { max-width:100%; }
                     <td><b>${item.fromPeriod}</b></td>
                     <td><b>${item.toPeriod}</b></td>
                     <td>${item.orientation || ''}</td>
-                    <td><b>${item.classKey}</b></td>
+                    <td><b>${formatClassDisplay(item.classKey)}</b></td>
                     <td style="color:#0056b3; font-weight:bold;">${item.teacher}</td>
                     <td>
                         <button type="button" class="edit-btn" onclick="editRevisionEntry(${idx})">Edit</button>
@@ -4633,7 +4649,7 @@ table { max-width:100%; }
                     <td><b>${item.fromPeriod}</b></td>
                     <td><b>${item.toPeriod}</b></td>
                     <td>${item.orientation || ''}</td>
-                    <td><b>${item.classKey}</b></td>
+                    <td><b>${formatClassDisplay(item.classKey)}</b></td>
                     <td style="color:#0056b3; font-weight:bold;">${item.teacher}</td>
                     <td>
                         <button type="button" class="edit-btn" onclick="editInvigilation(${idx})">Edit</button>
@@ -4670,7 +4686,7 @@ table { max-width:100%; }
                 .sort((a, b) => a.name.localeCompare(b.name));
 
             let html = `<div id="studyHoursEditorTable">
-                <h4>Configure Night Study Hours (6:00pm – 8:00pm): <b>${key}</b> - <span style="color:#0056b3;">${day}</span> [${currentBoard} BOARD]</h4>
+                <h4>Configure Night Study Hours (6:00pm – 8:00pm): <b>${formatClassDisplay(key)}</b> - <span style="color:#0056b3;">${day}</span> [${currentBoard} BOARD]</h4>
                 <div style="overflow-x:auto;">
                     <table>
                         <thead>
@@ -4798,7 +4814,7 @@ table { max-width:100%; }
             rows.forEach((r, idx) => {
                 html += `<tr>
                     <td><b>${idx + 1}</b></td>
-                    <td><b>${r.classKey}</b></td>
+                    <td><b>${formatClassDisplay(r.classKey)}</b></td>
                     <td>${r.day}</td>
                     <td><b>${r.period}</b></td>
                     <td>${r.type}</td>
@@ -4850,7 +4866,7 @@ table { max-width:100%; }
         }
 
         function buildClassWeekTable(fullClassKey, title) {
-            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${fullClassKey}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
+            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${formatClassDisplay(fullClassKey)}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
             periods.forEach(p => html += `<th>P-${p.id}<br><small>${p.time}</small></th>`);
             html += `</tr></thead><tbody>`;
             days.forEach(day => {
@@ -5064,7 +5080,7 @@ table { max-width:100%; }
                 const key=r.classKey;
                 html+=`<div style="border:1px solid #ccc;border-radius:6px;padding:8px;margin:8px 0; background:#fff;">
                     <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;">
-                      <b>${key} (Floor: ${r.floor})</b>
+                      <b>${formatClassDisplay(key)} (Floor: ${r.floor})</b>
                       <div>
                         <button type="button" class="edit-btn no-print" onclick="editFloorClassSelection(${idx})">Edit</button>
                         <button type="button" class="delete-btn no-print" onclick="removeFloorClassSelection(${idx})">Delete</button>
