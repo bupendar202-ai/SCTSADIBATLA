@@ -68,8 +68,9 @@
         .date-picker-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
 
         .board-card-grid { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
-        .board-card { flex: 1; min-width: 180px; padding: 20px; background: #f8f9fa; border: 2px solid #0056b3; border-radius: 8px; cursor: pointer; text-align: center; }
-        .board-card:hover { background: #e3f2fd; }
+        .board-card { flex: 1; min-width: 180px; padding: 20px; background: #f8f9fa; border: 2px solid #0056b3; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; }
+        .board-card:hover { background: #e3f2fd; transform: translateY(-2px); }
+        .board-card.active-card { background: #d0e4ff; border-color: #003e82; }
 
         .dual-lang-row { display: flex; gap: 8px; width: 100%; }
         .dual-lang-box { flex: 1; background: #f0f7ff; border: 1px dashed #0056b3; border-radius: 4px; padding: 5px; text-align: left; }
@@ -1060,20 +1061,20 @@ table { max-width:100%; }
         </button>
         <h3 id="teacherWelcome"></h3>
 
-        <!-- Teacher Dashboard Selection Cards -->
+        <!-- Teacher Dashboard Selection Cards (Point 2: Only these cards are shown initially) -->
         <div id="teacherDashboardCards" class="board-card-grid" style="margin-bottom:20px;">
-            <div class="board-card" onclick="openTeacherDashboardArea('schedule')">
+            <div class="board-card" id="cardTeacherSchedule" onclick="openTeacherDashboardArea('schedule')">
                 <h3>MY TIMETABLE</h3><p>View your daily timetable</p>
             </div>
             <div class="board-card" id="teacherFloorCard" onclick="openTeacherDashboardArea('floor')" style="display:none;">
                 <h3>FLOOR INCHARGE</h3><p>Manage floor classes for the day</p>
             </div>
-            <div class="board-card" onclick="openTeacherDashboardArea('leave')">
+            <div class="board-card" id="cardTeacherLeave" onclick="openTeacherDashboardArea('leave')">
                 <h3>LEAVE</h3><p>Apply for leave</p>
             </div>
         </div>
 
-        <!-- Floor Incharge Panel -->
+        <!-- Floor Incharge Panel (Hidden by default) -->
         <div id="teacherFloorDashboard" class="leave-box" style="display:none;">
             <h4 style="margin-top:0; color:#0056b3;">Floor Incharge Class Timetable Tool</h4>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -1115,7 +1116,7 @@ table { max-width:100%; }
             <div id="floorSelectedClasses" style="margin-top:15px;"></div>
         </div>
 
-        <!-- Apply for Leave Section -->
+        <!-- Apply for Leave Section (Hidden by default) -->
         <div id="teacherLeaveApplicationCard" class="leave-box" style="display:none;">
             <h4 style="margin-top:0; color:#0056b3;">Apply For Leave</h4>
             <div style="display:flex; gap:15px; flex-wrap:wrap; align-items:flex-end;">
@@ -1135,8 +1136,8 @@ table { max-width:100%; }
             <span id="leaveStatusMsg" style="font-weight:bold; margin-left:10px;"></span>
         </div>
 
-        <!-- My Schedule View -->
-        <div id="teacherScheduleCard" style="display:block;">
+        <!-- My Schedule View (Hidden by default on initial card view) -->
+        <div id="teacherScheduleCard" style="display:none;">
             <div class="form-group" style="max-width: 300px;">
                 <label>Select Date:</label>
                 <input type="date" id="tDate">
@@ -1192,13 +1193,13 @@ table { max-width:100%; }
             { id: "II", time: "9:30am - 10:10am", session: "morning" }, 
             { id: "III", time: "10:10am - 10:50am", session: "morning" }, 
             { id: "IV", time: "11:00am - 11:40am", session: "morning" }, 
-            { id: "V", time: "11:40am - 12:20pm", session: "morning" },
+            { id: "V", time: "11:40am - 12:20pm", session: "morning" }, 
             { id: "VI", time: "12:20pm - 1:00pm", session: "lunch" }, 
-            { id: "VII", time: "1:00pm - 1:40pm", session: "afternoon" },
+            { id: "VII", time: "1:00pm - 1:40pm", session: "afternoon" }, 
             { id: "VIII", time: "1:40pm - 2:20pm", session: "afternoon" }, 
-            { id: "IX", time: "2:20pm - 3:00pm", session: "afternoon" },
+            { id: "IX", time: "2:20pm - 3:00pm", session: "afternoon" }, 
             { id: "X", time: "3:10pm - 3:50pm", session: "afternoon" }, 
-            { id: "XI", time: "3:50pm - 4:30pm", session: "afternoon" },
+            { id: "XI", time: "3:50pm - 4:30pm", session: "afternoon" }, 
             { id: "XII", time: "4:30pm - 5:10pm", session: "afternoon" }, 
             { id: "XIII", time: "5:10pm - 5:50pm", session: "afternoon" }
         ];
@@ -1736,8 +1737,8 @@ table { max-width:100%; }
 
                     switchView('teacherModule');
                     recordAppPage('teacherModule');
-                    openTeacherDashboardArea('schedule');
-                    if(isFloorInchargeUser(account)) populateFloorDashboard();
+                    // Point 2: Initially show only cards
+                    resetTeacherModuleCardView();
                 }
             } catch(e) {
                 console.error(e);
@@ -1777,7 +1778,7 @@ table { max-width:100%; }
             document.getElementById('tDate').value = '';
             document.getElementById('tScheduleDisplay').innerHTML = '';
             switchView('teacherModule');
-            openTeacherDashboardArea('schedule');
+            resetTeacherModuleCardView();
             recordAppPage('teacherModule');
         }
 
@@ -2181,7 +2182,6 @@ table { max-width:100%; }
             renderSingleClassFullDashboard();
         }
 
-        // Full Page Flexible Class Master Viewer Render (Point 6: 2.5cm height in print)
         function renderSingleClassFullDashboard() {
             const fullClassKey = getSelectedClassKey();
             const container = document.getElementById('singleClassDashboardContainer');
@@ -2232,7 +2232,6 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        /* Incharges & Deans Class Timetable Viewer */
         function updateInchargeClassOptions() {
             const orientationEl = document.getElementById('dTtOrientation');
             if(orientationEl) {
@@ -2648,7 +2647,6 @@ table { max-width:100%; }
             return result;
         }
 
-        // Point 2 & 3 Helpers: Find Exam duty teachers and assigned classes for a specific date
         function getExamDutyTeachersForDate(dateStr) {
             if(!dateStr) return [];
             const dutyTeachers = new Set();
@@ -2686,7 +2684,6 @@ table { max-width:100%; }
             return false;
         }
 
-        // Point 3: Display exam/duty teachers in the absent checklist without auto-selection tick mark
         function populateAbsentCheckboxes() {
             const container = document.getElementById('absentStaffCheckboxes');
             if(!container) return;
@@ -3078,7 +3075,6 @@ table { max-width:100%; }
             return busy;
         }
 
-        // Point 2: Skip classes that are assigned for Revision or Invigilation
         function generateSubstitutionMatrix() {
             const dateVal = document.getElementById('subDate')?.value;
             if(!dateVal) return alert('Select a date first.');
@@ -3091,9 +3087,8 @@ table { max-width:100%; }
             const dayName = getDayNameFromDate(dateVal);
             const periodsToSub = [];
             const push = (absentTeacher, p, cls, subject, rawSubject, reason) => {
-                // Point 2: Check if this class is under revision or invigilation during this period
                 if(isClassUnderExamDuty(dateVal, cls, p.id)) {
-                    return; // Skip from substitution
+                    return; 
                 }
 
                 if(absentTeacher) {
@@ -3428,7 +3423,8 @@ table { max-width:100%; }
             }
         }
 
-        // Point 5: Display teacher's timetable only after date is selected and proceed is clicked
+        // Point 3: When teachers are allotted other duties like Invigilation or Revision Schedule, 
+        // those periods show as free/vacated in their timetable without displaying their regular timetable.
         function viewTeacherSchedule() {
             if(!currentUser) return;
             const dateVal = document.getElementById('tDate').value;
@@ -3457,7 +3453,7 @@ table { max-width:100%; }
                 });
             });
 
-            // Point 4: Night Study Hours allocation display in teacher module
+            // Night Study Hours allocation display in teacher module (Point 1)
             const myNightStudy = [];
             ['STATE', 'CBSE'].forEach(b => {
                 const boardStudy = studyHoursRecords[b] || {};
@@ -3523,13 +3519,14 @@ table { max-width:100%; }
                     const xSessMatch = myXSessions.find(xs => getXSessionDutyPeriods(xs.sessionTime).includes(p.id));
                     const subMatch = mySubstitutions.find(s => String(s.period) === String(p.id));
 
+                    // Point 3 Rule: If assigned to Invigilation or Revision duty, regular class is NOT displayed and vacated
                     if(invMatch) {
                         status = `Invigilation Duty (${invMatch.classKey}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
-                        type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation</span>`;
+                        type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation (Regular Period Vacated)</span>`;
                         if(dealsBoth) assignedBoard = invMatch.boardName;
                     } else if(revMatch) {
                         status = `Revision Schedule Duty (${revMatch.classKey}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
-                        type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty</span>`;
+                        type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty (Regular Period Vacated)</span>`;
                         if(dealsBoth) assignedBoard = revMatch.boardName;
                     } else if(xSessMatch) {
                         status = `X Session - Session ${xSessMatch.sessionNumber} (Class: ${xSessMatch.class}, ${xSessMatch.subject})`;
@@ -3578,7 +3575,7 @@ table { max-width:100%; }
                     html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${status}</td>${dealsBoth ? `<td><b>${assignedBoard}</b></td>` : ''}<td>${type}</td></tr>`;
                 });
 
-                // Point 4: Render Night Study Hours Rows if allocated
+                // Point 1: Render Night Study Hours Rows if allocated
                 if(myNightStudy.length > 0) {
                     html += `<tr><td colspan="${dealsBoth ? '5' : '4'}" style="background:#e3f2fd; font-weight:bold; color:#0056b3; text-align:left;">Night Study Hours (6:00pm – 8:00pm)</td></tr>`;
                     myNightStudy.forEach(ns => {
@@ -3735,7 +3732,6 @@ table { max-width:100%; }
             renderPrincipalClassDashboard();
         }
 
-        // Point 6: Class master print dashboard uses 2.5cm height per row (styled via .class-table-print-area)
         function renderPrincipalClassDashboard() {
             const cls = document.getElementById('pTtClass').value;
             const sec = document.getElementById('pTtSection').value;
@@ -3909,8 +3905,6 @@ table { max-width:100%; }
             container.innerHTML = html;
         }
 
-        // Point 1 & Point 7: Single Teacher Block for Department Master
-        // (1cm row height via CSS + mention board after subject for both board dealers)
         function buildSingleTeacherScheduleThirdHTML(teacherObj) {
             const teacherName = teacherObj.name;
             const dealsBoth = normalizeBoard(teacherObj.board) === 'BOTH';
@@ -3950,7 +3944,6 @@ table { max-width:100%; }
                         for(const cls in tt) {
                             const cell = tt[cls]?.[day]?.[p.id];
                             if(cell) {
-                                // Point 7: Explicitly mention Board after the subject for both board dealing teachers
                                 const boardTag = dealsBoth ? ` [${b}]` : '';
                                 if(cell.isDual) {
                                     const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
@@ -3987,8 +3980,6 @@ table { max-width:100%; }
             return tableHTML;
         }
 
-        // Point 1: When selecting STATE board, take STATE and BOTH board dealing staff in continuation print;
-        // when selecting CBSE, take CBSE and BOTH board dealing staff in continuation print
         function renderPrincipalSubjectWiseTimetables() {
             const selSub = document.getElementById('pSubjectDeptSelect')?.value;
             const container = document.getElementById('pSubjectWiseContainer');
@@ -4029,7 +4020,6 @@ table { max-width:100%; }
                 </div>
             `;
 
-            // Group into chunks of exactly 3 teachers per printed A4 page
             const chunkSize = 3;
             for(let i = 0; i < matchingStaff.length; i += chunkSize) {
                 const chunk = matchingStaff.slice(i, i + chunkSize);
@@ -4667,7 +4657,7 @@ table { max-width:100%; }
             box.innerHTML = html;
         }
 
-        // Point 4: Night Study Hours - save & persist across boards
+        // Point 1: Night Study Hours - save, edit and cancel options + display in teacher module
         function onStudyClassOrDayChange() {
             renderStudyHoursTimetable();
             renderStudyHoursSavedList();
@@ -4680,7 +4670,7 @@ table { max-width:100%; }
             if(!box) return;
 
             if(!key || !day) {
-                box.innerHTML = '<p style="color:#777;">Please select Orientation, Class, Section, and a Day (Monday to Saturday) to configure Night Study Hours and allot multiple teachers.</p>';
+                box.innerHTML = '<p style="color:#777;">Please select Orientation, Class, Section, and a Day (Monday to Saturday) to configure Night Study Hours.</p>';
                 return;
             }
 
@@ -4701,7 +4691,7 @@ table { max-width:100%; }
                                 <th style="width:80px;">Session</th>
                                 <th style="width:130px;">Time Range</th>
                                 <th style="width:160px;">Night Study Type</th>
-                                <th>Select Multiple Teachers (Allocate 5 to 6+ Staff Simultaneous)</th>
+                                <th>Select Multiple Teachers</th>
                             </tr>
                         </thead>
                         <tbody>`;
@@ -4739,10 +4729,18 @@ table { max-width:100%; }
             html += `</tbody>
                     </table>
                 </div>
-                <button type="button" style="margin-top:12px;" onclick="saveStudyHoursForDay()">Save Night Study Hours Schedule</button>
+                <div style="margin-top:12px; display:flex; gap:10px;">
+                    <button type="button" onclick="saveStudyHoursForDay()">Save Night Study Hours Schedule</button>
+                    <button type="button" style="background:#6c757d;" onclick="cancelStudyHoursEdit()">Cancel / Clear</button>
+                </div>
             </div>`;
 
             box.innerHTML = html;
+        }
+
+        function cancelStudyHoursEdit() {
+            document.getElementById('studyDaySelect').value = '';
+            document.getElementById('studyHoursContainer').innerHTML = '<p style="color:#777;">Edit canceled. Select day to reload configuration.</p>';
         }
 
         async function saveStudyHoursForDay() {
@@ -4752,7 +4750,7 @@ table { max-width:100%; }
 
             if(!studyHoursRecords[currentBoard]) studyHoursRecords[currentBoard] = {};
             if(!studyHoursRecords[currentBoard][key]) studyHoursRecords[currentBoard][key] = {};
-            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key] = {};
+            if(!studyHoursRecords[currentBoard][key][day]) studyHoursRecords[currentBoard][key][day] = {};
 
             nightStudyPeriods.forEach(p => {
                 const typeVal = document.getElementById(`study_type_${p.id}`)?.value || 'Night Study Hour';
@@ -4765,7 +4763,7 @@ table { max-width:100%; }
             });
 
             await saveMapDoc('studyHoursRecords', currentBoard, studyHoursRecords[currentBoard]);
-            alert(`Night Study Hours Schedule for ${key} on ${day} saved successfully! This will now be reflected in each teacher's personal timetable.`);
+            alert(`Night Study Hours Schedule for ${key} on ${day} saved successfully! It will now display in the teacher's module.`);
             renderStudyHoursSavedList();
         }
 
@@ -4871,23 +4869,6 @@ table { max-width:100%; }
             renderStudyHoursSavedList();
         }
 
-        function buildClassWeekTable(fullClassKey, title) {
-            let html = `<div id="${title.replace(/[^A-Za-z0-9]/g,'')}_print"><h3>${title}: ${fullClassKey}</h3><div style="overflow-x:auto;"><table><thead><tr><th>Day</th>`;
-            periods.forEach(p => html += `<th>P-${p.id}<br><small>${p.time}</small></th>`);
-            html += `</tr></thead><tbody>`;
-            days.forEach(day => {
-                html += `<tr><td><b>${day}</b></td>`;
-                periods.forEach(p => {
-                    const cell = masterTimetable[fullClassKey]?.[day]?.[p.id];
-                    let tDesc = cell?.teacher || '---';
-                    if(cell?.teacher2) tDesc += ` / ${cell.teacher2}`;
-                    html += cell && (cell.subject || cell.teacher) ? `<td><b>${cell.subject || '---'}</b><br><span>${tDesc}</span></td>` : '<td style="color:#aaa;">---</td>';
-                });
-                html += '</tr>';
-            });
-            return html + '</tbody></table></div></div>';
-        }
-
         function reapplyPeriodClashes() {
             const allSelects = Array.from(document.querySelectorAll('.sub-select-dropdown'));
             const busyInSub = {};
@@ -4987,26 +4968,44 @@ table { max-width:100%; }
 
         let floorSelectedClassRecords = [];
 
+        // Point 2: Initial clean view for Teacher module (Cards only)
+        function resetTeacherModuleCardView() {
+            const floor = document.getElementById('teacherFloorDashboard');
+            const leave = document.getElementById('teacherLeaveApplicationCard');
+            const schedule = document.getElementById('teacherScheduleCard');
+            if(floor) floor.style.display = 'none';
+            if(leave) leave.style.display = 'none';
+            if(schedule) schedule.style.display = 'none';
+
+            document.querySelectorAll('#teacherDashboardCards .board-card').forEach(c => c.classList.remove('active-card'));
+        }
+
+        // Point 2: Open child area only when card is clicked
         function openTeacherDashboardArea(area) {
             const floor = document.getElementById('teacherFloorDashboard');
             const leave = document.getElementById('teacherLeaveApplicationCard');
             const schedule = document.getElementById('teacherScheduleCard');
 
+            document.querySelectorAll('#teacherDashboardCards .board-card').forEach(c => c.classList.remove('active-card'));
+
             if(area === 'floor' && isFloorInchargeUser()) {
+                document.getElementById('teacherFloorCard')?.classList.add('active-card');
                 if(floor) floor.style.display = 'block';
                 if(leave) leave.style.display = 'none';
                 if(schedule) schedule.style.display = 'none';
                 populateFloorDashboard();
+                floor?.scrollIntoView({behavior:'smooth'});
             } else if(area === 'leave') {
+                document.getElementById('cardTeacherLeave')?.classList.add('active-card');
                 if(floor) floor.style.display = 'none';
                 if(leave) leave.style.display = 'block';
                 if(schedule) schedule.style.display = 'none';
                 leave?.scrollIntoView({behavior:'smooth'});
-            } else {
+            } else if(area === 'schedule') {
+                document.getElementById('cardTeacherSchedule')?.classList.add('active-card');
                 if(floor) floor.style.display = 'none';
                 if(leave) leave.style.display = 'none';
                 if(schedule) schedule.style.display = 'block';
-                // Point 5: Do not auto-render schedule on clicking My Timetable until date is chosen and Proceed is clicked
                 document.getElementById('tScheduleDisplay').innerHTML = '';
                 schedule?.scrollIntoView({behavior:'smooth'});
             }
