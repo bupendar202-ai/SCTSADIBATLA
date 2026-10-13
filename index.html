@@ -1321,66 +1321,6 @@ table { max-width:100%; }
             weeklySnap.forEach(doc => teacherWeeklyStatus[doc.id] = doc.data().value || {});
 
             await loadTimetableForBoard(currentBoard);
-
-            const statusSnap = await db.collection('teacherStatusRecords').get();
-            statusSnap.forEach(doc => teacherStatusRecords[doc.id] = doc.data().value || {});
-
-            const daySnap = await db.collection('dayTypeRecords').get();
-            daySnap.forEach(doc => dayTypeRecords[doc.id] = doc.data().value || 'normal');
-
-            const roomSnap = await db.collection('holidayRoomRecords').get();
-            roomSnap.forEach(doc => holidayRoomRecords[doc.id] = doc.data().value || {});
-
-            const subSnap = await db.collection('substitutionRecords').get();
-            subSnap.forEach(doc => substitutionRecords[doc.id] = doc.data().value || []);
-
-            window.substitutionAbsentSelections = {};
-            const absentSnap = await db.collection('substitutionAbsentSelections').get();
-            absentSnap.forEach(doc => { window.substitutionAbsentSelections[doc.id] = doc.data().value || {}; });
-            
-            const revSnap = await db.collection('revisionScheduleRecords').get(); 
-            revSnap.forEach(doc => {
-                const [date, board] = doc.id.split('__'); 
-                if(!revisionScheduleRecords[date]) revisionScheduleRecords[date] = {}; 
-                revisionScheduleRecords[date][board] = doc.data().value || [];
-            });
-            
-            const invSnap = await db.collection('invigilationRecords').get(); 
-            invSnap.forEach(doc => {
-                const [date, board] = doc.id.split('__'); 
-                if(!invigilationRecords[date]) invigilationRecords[date] = {}; 
-                invigilationRecords[date][board] = doc.data().value || [];
-            });
-            
-            const studySnap = await db.collection('studyHoursRecords').get(); 
-            studySnap.forEach(doc => studyHoursRecords[doc.id] = doc.data().value || {});
-
-            const xsSnap = await db.collection('xSessionRecords').get();
-            xsSnap.forEach(doc => xSessionRecords[doc.id] = doc.data().value || []);
-
-            try {
-                const leaveSnap = await db.collection('teacherLeaveRequests').get();
-                leaveRequestsList = [];
-                leaveSnap.forEach(doc => leaveRequestsList.push({ id: doc.id, ...doc.data() }));
-            } catch(e) {
-                console.warn('Could not load leave records:', e);
-            }
-        }
-
-        function normalizeBoard(board) {
-            const b = String(board || '').trim().toUpperCase();
-            return (b === 'STATE' || b === 'CBSE' || b === 'BOTH') ? b : 'BOTH';
-        }
-
-        function staffMatchesBoard(staff, board = currentBoard) {
-            const b = normalizeBoard(staff && staff.board);
-            return b === 'BOTH' || b === board;
-        }
-
-        function timetableDocId(baseKey, board = currentBoard) {
-            return board === 'CBSE' ? baseKey : `STATE__${baseKey}`;
-        }
-
         async function loadTimetableForBoard(board = currentBoard) {
             currentBoard = board === 'STATE' ? 'STATE' : 'CBSE';
             masterTimetable = {};
@@ -3426,6 +3366,179 @@ table { max-width:100%; }
         // Point 3: When teachers are allotted other duties like Invigilation or Revision Schedule, 
         // those periods show as free/vacated in their timetable without displaying their regular timetable.
         function viewTeacherSchedule() {
+           // 1. Check if teacher has an APPROVED leave for the selected date
+            const isApprovedLeaveForTeacher = (leaveRequestsList || []).some(req => {
+                const isMatch = req && req.teacherName === currentUser.name;
+                const isApproved = String(req.status || '').toLowerCase() === 'approved';
+                const hasDate = Array.isArray(req.dates) && req.dates.includes(dateVal);
+                return isMatch && isApproved && hasDate;
+            });
+
+            let html = `<div id="tPersonalPrintContainer">
+                <div class="print-header">
+                    <h2>SRI CHAITANYA SCHOOL</h2>
+                    <h3>Branch : Adibatla</h3>
+                    <h4>Teacher Personal Schedule: ${currentUser.name} | ${dateVal} (${dayName})</h4>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h4>Personal Schedule: ${currentUser.name} | ${dateVal} (${dayName}) ${dealsBoth ? '<span style="color:#0056b3;">(Deals BOTH CBSE &amp; STATE Boards)</span>' : ''}</h4>
+                </div>`;
+
+            // If teacher leave is approved by Deans/Incharges
+            if (isApprovedLeaveForTeacher) {
+                html += `<div style="background:#fff3cd; border:2px solid #ffeeba; color:#856404; padding:15px; border-radius:6px; margin:15px 0; font-size:16px; font-weight:bold; text-align:center;">
+                    You have no class because you are in leave
+                </div>`;
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Duty Assigned</th>${dealsBoth ? '<th>Board</th>' : ''}<th>Schedule Type</th></tr></thead><tbody>`;
+                periods.forEach(p => {
+                    html += `<tr style="background:#fcf8e3;">
+                        <td><b>${p.id}</b></td>
+                        <td>${p.time}</td>
+                        <td style="color:#856404; font-weight:bold;">You have no class because you are in leave</td>
+                        ${dealsBoth ? '<td>---</td>' : ''}
+                        <td><span style="color:#d39e00; font-weight:bold;">On Leave (Approved)</span></td>
+                    </tr>`;
+                });
+                html += `</tbody></table></div>`;
+                container.innerHTML = html;
+                return;
+            }
+
+            if(isHoliday) {
+                html += `<p style="color: #b78103; font-weight:bold;">NOTE: Today is in Holiday / Special Duty Mode. Assigned room duties:</p>`;
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Assigned Room</th><th>Status</th></tr></thead><tbody>`;
+                periods.forEach(p => {
+                    let roomDuty = holidayRoomRecords[dateVal]?.[currentUser.name]?.[p.id] || "---";
+                    let statusLabel = (roomDuty !== "---") ? `<span style="color:green; font-weight:bold;">Assigned</span>` : `<span style="color:#777;">No Duty</span>`;
+                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td style="background-color:#fff9e6; font-weight:bold;">${roomDuty}</td><td>${statusLabel}</td></tr>`;
+                });
+                html += `</tbody></table></div>`;
+            } else {
+                html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Duty Assigned</th>${dealsBoth ? '<th>Board</th>' : ''}<th>Schedule Type</th></tr></thead><tbody>`;
+
+                periods.forEach(p => {
+                    const pIndex = periods.findIndex(x => x.id === p.id);
+                    let status = teacherStatusRecords[dateVal]?.[currentUser.name]?.[p.id] || teacherWeeklyStatus[currentUser.name]?.[dayName]?.[p.id] || "---";
+                    let type = "Free / Unassigned";
+                    let assignedBoard = dealsBoth ? "---" : "";
+
+                    const invMatch = myInvigilations.find(inv => {
+                        const fromIdx = periods.findIndex(x => String(x.id) === String(inv.fromPeriod));
+                        const toIdx = periods.findIndex(x => String(x.id) === String(inv.toPeriod));
+                        return fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx;
+                    });
+
+                    const revMatch = myRevisions.find(rev => {
+                        const fromIdx = periods.findIndex(x => String(x.id) === String(rev.fromPeriod));
+                        const toIdx = periods.findIndex(x => String(x.id) === String(rev.toPeriod));
+                        return fromIdx !== -1 && toIdx !== -1 && pIndex >= fromIdx && pIndex <= toIdx;
+                    });
+
+                    const xSessMatch = myXSessions.find(xs => getXSessionDutyPeriods(xs.sessionTime).includes(p.id));
+                    const subMatch = mySubstitutions.find(s => String(s.period) === String(p.id));
+
+                    // Rule Check: Did another teacher get assigned to this period/class for Invigilation or Revision?
+                    let dutyAllottedToOtherTeacher = false;
+                    let dutyReason = "";
+                    const boardsToCheck = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
+                    for (const b of boardsToCheck) {
+                        const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
+                        for (let cls in tt) {
+                            const cell = tt[cls]?.[dayName]?.[p.id];
+                            if (cell) {
+                                const isMyClass = cell.isDual
+                                    ? (cell.teacher1 === currentUser.name || cell.teacher2 === currentUser.name || cell.teacher === currentUser.name)
+                                    : (cell.teacher === currentUser.name || cell.teacher2 === currentUser.name);
+
+                                if (isMyClass) {
+                                    // Check if another teacher was assigned Revision in this class & period
+                                    const revOthers = (revisionScheduleRecords[dateVal]?.[b] || []).filter(rev => {
+                                        const fIdx = periods.findIndex(x => String(x.id) === String(rev.fromPeriod));
+                                        const tIdx = periods.findIndex(x => String(x.id) === String(rev.toPeriod));
+                                        return rev.classKey === cls && rev.teacher !== currentUser.name && fIdx !== -1 && tIdx !== -1 && pIndex >= fIdx && pIndex <= tIdx;
+                                    });
+
+                                    // Check if another teacher was assigned Invigilation in this class & period
+                                    const invOthers = (invigilationRecords[dateVal]?.[b] || []).filter(inv => {
+                                        const fIdx = periods.findIndex(x => String(x.id) === String(inv.fromPeriod));
+                                        const tIdx = periods.findIndex(x => String(x.id) === String(inv.toPeriod));
+                                        return inv.classKey === cls && inv.teacher !== currentUser.name && fIdx !== -1 && tIdx !== -1 && pIndex >= fIdx && pIndex <= tIdx;
+                                    });
+
+                                    if (revOthers.length > 0) {
+                                        dutyAllottedToOtherTeacher = true;
+                                        dutyReason = `Revision Allotted to ${revOthers[0].teacher}`;
+                                        break;
+                                    }
+                                    if (invOthers.length > 0) {
+                                        dutyAllottedToOtherTeacher = true;
+                                        dutyReason = `Invigilation Allotted to ${invOthers[0].teacher}`;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (dutyAllottedToOtherTeacher) break;
+                    }
+
+                    if (invMatch) {
+                        status = `Invigilation Duty (${invMatch.classKey}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
+                        type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation (Regular Period Vacated)</span>`;
+                        if(dealsBoth) assignedBoard = invMatch.boardName;
+                    } else if (revMatch) {
+                        status = `Revision Schedule Duty (${revMatch.classKey}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
+                        type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty (Regular Period Vacated)</span>`;
+                        if(dealsBoth) assignedBoard = revMatch.boardName;
+                    } else if (dutyAllottedToOtherTeacher) {
+                        // Display Free when period is allotted to another teacher
+                        status = `<b style="color:green;">Free</b> <small style="color:#555;">(${dutyReason})</small>`;
+                        type = `<span style="color:green; font-weight:bold;">Free</span>`;
+                    } else if (xSessMatch) {
+                        status = `X Session - Session ${xSessMatch.sessionNumber} (Class: ${xSessMatch.class}, ${xSessMatch.subject})`;
+                        type = `<span style="color:#0056b3; font-weight:bold;">X-Session Duty</span>`;
+                        if(dealsBoth) assignedBoard = xSessMatch.board || currentBoard;
+                    } else if (subMatch) {
+                        status = `${subMatch.class} (Substitution for ${subMatch.absent})`;
+                        type = `<span style="color:red; font-weight:bold;">Substitution</span>`;
+                        if(dealsBoth) assignedBoard = subMatch.board || currentBoard;
+                    } else {
+                        const boardsToSearch = dealsBoth ? ['CBSE', 'STATE'] : [currentBoard];
+                        let found = false;
+                        for(const b of boardsToSearch) {
+                            const tt = (dealsBoth ? allTimetablesRaw[b] : masterTimetable) || {};
+                            for(let cls in tt) {
+                                const cell = tt[cls]?.[dayName]?.[p.id];
+                                if(cell) {
+                                    const boardTag = dealsBoth ? ` [${b}]` : '';
+                                    if(cell.isDual) {
+                                        const isWiz = String(cell.subject).toUpperCase() === 'WIZCLUB';
+                                        if(cell.teacher1 === currentUser.name || cell.teacher === currentUser.name) {
+                                            const note = isWiz ? 'Wizclub T1' : (cell.lang1 || 'Telugu');
+                                            status = `${cls} (${cell.subject}${boardTag} - ${note})`;
+                                            type = "Original Class";
+                                            if(dealsBoth) assignedBoard = b;
+                                            found = true; break;
+                                        } else if(cell.teacher2 === currentUser.name) {
+                                            const note = isWiz ? 'Wizclub T2' : (cell.lang2 || 'Hindi');
+                                            status = `${cls} (${cell.subject}${boardTag} - ${note})`;
+                                            type = "Original Class";
+                                            if(dealsBoth) assignedBoard = b;
+                                            found = true; break;
+                                        }
+                                    } else if(cell.teacher === currentUser.name || cell.teacher2 === currentUser.name) {
+                                        status = `${cls} (${cell.subject}${boardTag})`;
+                                        type = "Original Class";
+                                        if(dealsBoth) assignedBoard = b;
+                                        found = true; break;
+                                    }
+                                }
+                            }
+                            if(found) break;
+                        }
+                    }
+
+                    html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${status}</td>${dealsBoth ? `<td><b>${assignedBoard}</b></td>` : ''}<td>${type}</td></tr>`;
+                });
             if(!currentUser) return;
             const dateVal = document.getElementById('tDate').value;
             if(!dateVal) return alert("Please select date first and click Proceed.");
