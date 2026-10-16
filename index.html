@@ -79,18 +79,6 @@
 
         .shortcut-icon-preview { width: 110px; height: 110px; border-radius: 20px; object-fit: cover; border: 2px solid #0056b3; box-shadow: 0 4px 12px rgba(0,0,0,0.18); display: block; }
 
-        .leave-alert-banner {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 2px solid #ffeeba;
-            padding: 16px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
         /* Print Page formatting for 3 teachers per A4 page */
         .print-three-wrapper {
             box-sizing: border-box;
@@ -140,6 +128,7 @@
             margin-top: 2px;
         }
 
+        /* Subject-wise teacher print output */
         .subj-print-table th, .subj-print-table td {
             padding: 4px 2px !important;
             font-size: 10px !important;
@@ -151,14 +140,17 @@
             color: #333;
         }
 
+        /* Screen Preview for Subject Wise Timetable Rows */
         .subj-print-table tbody tr {
             height: 1cm;
         }
 
+        /* Screen Preview for Principal Class Timetable Rows */
         .class-table-print-area tbody tr {
             height: 2.5cm;
         }
 
+        /* Print Settings */
         @media print {
             @page {
                 size: auto;
@@ -193,6 +185,7 @@
             .sub-select-dropdown { display: none !important; }
             .print-only-text { display: inline-block !important; font-weight: bold; }
 
+            /* Three teachers per A4 page */
             .print-three-wrapper {
                 page-break-after: always !important;
                 height: 275mm !important;
@@ -222,6 +215,7 @@
             .teacher-single-header .t-branch-name { font-size: 11px !important; }
             .teacher-single-header .t-info-line { font-size: 9.5px !important; }
 
+            /* 1cm height per row for subject-wise teacher print output */
             .subj-print-table tbody tr {
                 height: 1cm !important;
                 min-height: 1cm !important;
@@ -272,6 +266,7 @@
                 display: table-footer-group; 
             }
 
+            /* Responsive print layout for class master tables (2.5cm height per row) */
             .class-table-print-area {
                 width: 100% !important;
                 box-sizing: border-box !important;
@@ -503,7 +498,7 @@ table { max-width:100%; }
                         <option>Civils Batch Incharge</option>
                         <option>C or M Batch Incharge</option>
                         <option>C Batch Incharge</option>
-                        <option>S Batch Incharge</option>
+                                                <option>S Batch Incharge</option>
                         <option>Floor Incharge</option>
                         <option>Exam Incharge</option>
                         <option>HOD</option>
@@ -1003,7 +998,7 @@ table { max-width:100%; }
                         <div class="form-group" style="flex:1; min-width:200px;">
                             <label>Invigilator Teacher:</label>
                             <select id="invigTeacherSelect">
-                                <option value="">Select Teacher</option>
+                                                                <option value="">Select Teacher</option>
                             </select>
                         </div>
                     </div>
@@ -1066,7 +1061,7 @@ table { max-width:100%; }
         </button>
         <h3 id="teacherWelcome"></h3>
 
-        <!-- Teacher Dashboard Selection Cards -->
+        <!-- Teacher Dashboard Selection Cards (Point 2: Only these cards are shown initially) -->
         <div id="teacherDashboardCards" class="board-card-grid" style="margin-bottom:20px;">
             <div class="board-card" id="cardTeacherSchedule" onclick="openTeacherDashboardArea('schedule')">
                 <h3>MY TIMETABLE</h3><p>View your daily timetable</p>
@@ -1503,7 +1498,7 @@ table { max-width:100%; }
                 if(sd && !sd.value) sd.value = new Date().toISOString().slice(0,10);
                 populateAbsentCheckboxes();
             }
-            if(tabId === 'd-leaves') renderDeanLeaveRequests();
+                        if(tabId === 'd-leaves') renderDeanLeaveRequests();
             if(tabId === 'd-xsession') populateXSessionControls();
             if(tabId === 'd-exam') showExamTab('revision');
             if(['d-exam','d-study'].includes(tabId)) populateXSessionAndExamControls();
@@ -1742,6 +1737,7 @@ table { max-width:100%; }
 
                     switchView('teacherModule');
                     recordAppPage('teacherModule');
+                    // Point 2: Initially show only cards
                     resetTeacherModuleCardView();
                 }
             } catch(e) {
@@ -2001,8 +1997,7 @@ table { max-width:100%; }
             const singleWrap = document.getElementById(`single_teach_wrap_${periodId}`);
             const lbl1 = document.getElementById(`dual_lbl1_${periodId}`);
             const lbl2 = document.getElementById(`dual_lbl2_${periodId}`);
-
-            if (isDualSubject(subVal, currentBoard)) {
+                        if (isDualSubject(subVal, currentBoard)) {
                 const labels = getDualLabels(subVal);
                 if (lbl1) lbl1.innerText = labels.label1;
                 if (lbl2) lbl2.innerText = labels.label2;
@@ -2502,7 +2497,7 @@ table { max-width:100%; }
                                 }
                             }
                             if(assignedClass) break;
-                        }
+                                                    }
 
                         if(assignedClass) {
                             html += `<td style="background-color: #f0f8ff;">${assignedClass}</td>`;
@@ -3002,7 +2997,7 @@ table { max-width:100%; }
                         if(fromIdx !== -1 && toIdx !== -1 && fromIdx <= toIdx) {
                             S += (toIdx - fromIdx + 1);
                         }
-                    }
+                                            }
                 });
             });
 
@@ -3427,7 +3422,8 @@ table { max-width:100%; }
             }
         }
 
-        // VIEW TEACHER SCHEDULE (with Approved Leave & Free Period indicators)
+        // Point 3: When teachers are allotted other duties like Invigilation or Revision Schedule, 
+        // those periods show as free/vacated in their timetable without displaying their regular timetable.
         function viewTeacherSchedule() {
             if(!currentUser) return;
             const dateVal = document.getElementById('tDate').value;
@@ -3439,10 +3435,6 @@ table { max-width:100%; }
 
             const teacherObj = staffList.find(st => st.name === currentUser.name);
             const dealsBoth = teacherObj && normalizeBoard(teacherObj.board) === 'BOTH';
-
-            // Check if teacher is on approved leave today
-            const approvedLeavesForTeacher = getApprovedLeaveTeachersForDate(dateVal);
-            const isCurrentTeacherOnApprovedLeave = approvedLeavesForTeacher.includes(currentUser.name);
 
             const myXSessions = (xSessionRecords[dateVal] || []).filter(x => teacherMatchesXSessionRecord(x, currentUser.name));
 
@@ -3460,7 +3452,7 @@ table { max-width:100%; }
                 });
             });
 
-            // Night Study Hours allocation display in teacher module
+            // Night Study Hours allocation display in teacher module (Point 1)
             const myNightStudy = [];
             ['STATE', 'CBSE'].forEach(b => {
                 const boardStudy = studyHoursRecords[b] || {};
@@ -3483,9 +3475,6 @@ table { max-width:100%; }
 
             const mySubstitutions = (substitutionRecords[dateVal] || []).filter(s => s.subTeacher === currentUser.name);
 
-            // Find all substitution records for this date where current teacher's period was given to someone else
-            const substitutionsForMyClasses = (substitutionRecords[dateVal] || []).filter(s => s.absent === currentUser.name);
-
             let html = `<div id="tPersonalPrintContainer">
                 <div class="print-header">
                     <h2>SRI CHAITANYA SCHOOL</h2>
@@ -3495,13 +3484,6 @@ table { max-width:100%; }
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h4>Personal Schedule: ${currentUser.name} | ${dateVal} (${dayName}) ${dealsBoth ? '<span style="color:#0056b3;">(Deals BOTH CBSE &amp; STATE Boards)</span>' : ''}</h4>
                 </div>`;
-
-            // Requirement 1: If on approved leave, display prominent banner
-            if (isCurrentTeacherOnApprovedLeave) {
-                html += `<div class="leave-alert-banner">
-                    Today you have no class because you are in leave (Approved Leave)
-                </div>`;
-            }
 
             if(isHoliday) {
                 html += `<p style="color: #b78103; font-weight:bold;">NOTE: Today is in Holiday / Special Duty Mode. Assigned room duties:</p>`;
@@ -3514,8 +3496,7 @@ table { max-width:100%; }
                 html += `</tbody></table></div>`;
             } else {
                 html += `<table><thead><tr><th>Period</th><th>Time</th><th>Class / Duty Assigned</th>${dealsBoth ? '<th>Board</th>' : ''}<th>Schedule Type</th></tr></thead><tbody>`;
-
-                periods.forEach(p => {
+                                periods.forEach(p => {
                     const pIndex = periods.findIndex(x => x.id === p.id);
                     let status = teacherStatusRecords[dateVal]?.[currentUser.name]?.[p.id] || teacherWeeklyStatus[currentUser.name]?.[dayName]?.[p.id] || "---";
                     let type = "Free / Unassigned";
@@ -3535,13 +3516,9 @@ table { max-width:100%; }
 
                     const xSessMatch = myXSessions.find(xs => getXSessionDutyPeriods(xs.sessionTime).includes(p.id));
                     const subMatch = mySubstitutions.find(s => String(s.period) === String(p.id));
-                    const vacatedSubMatch = substitutionsForMyClasses.find(s => String(s.period) === String(p.id));
 
-                    // Requirement 2: Check if regular period was allotted to another teacher
-                    if(isCurrentTeacherOnApprovedLeave) {
-                        status = "Today you have no class because you are in leave";
-                        type = `<span style="color:#856404; font-weight:bold;">Approved Leave</span>`;
-                    } else if(invMatch) {
+                    // Point 3 Rule: If assigned to Invigilation or Revision duty, regular class is NOT displayed and vacated
+                    if(invMatch) {
                         status = `Invigilation Duty (${invMatch.classKey}) [Periods ${invMatch.fromPeriod} to ${invMatch.toPeriod}]`;
                         type = `<span style="color:#6f42c1; font-weight:bold;">Invigilation (Regular Period Vacated)</span>`;
                         if(dealsBoth) assignedBoard = invMatch.boardName;
@@ -3549,10 +3526,6 @@ table { max-width:100%; }
                         status = `Revision Schedule Duty (${revMatch.classKey}) [Periods ${revMatch.fromPeriod} to ${revMatch.toPeriod}]`;
                         type = `<span style="color:#fd7e14; font-weight:bold;">Revision Duty (Regular Period Vacated)</span>`;
                         if(dealsBoth) assignedBoard = revMatch.boardName;
-                    } else if(vacatedSubMatch) {
-                        status = `Free (Allotted to Substitute: ${vacatedSubMatch.subTeacher})`;
-                        type = `<span style="color:#28a745; font-weight:bold;">Free</span>`;
-                        if(dealsBoth) assignedBoard = vacatedSubMatch.board || currentBoard;
                     } else if(xSessMatch) {
                         status = `X Session - Session ${xSessMatch.sessionNumber} (Class: ${xSessMatch.class}, ${xSessMatch.subject})`;
                         type = `<span style="color:#0056b3; font-weight:bold;">X-Session Duty</span>`;
@@ -3600,7 +3573,7 @@ table { max-width:100%; }
                     html += `<tr><td><b>${p.id}</b></td><td>${p.time}</td><td>${status}</td>${dealsBoth ? `<td><b>${assignedBoard}</b></td>` : ''}<td>${type}</td></tr>`;
                 });
 
-                // Render Night Study Hours Rows if allocated
+                // Point 1: Render Night Study Hours Rows if allocated
                 if(myNightStudy.length > 0) {
                     html += `<tr><td colspan="${dealsBoth ? '5' : '4'}" style="background:#e3f2fd; font-weight:bold; color:#0056b3; text-align:left;">Night Study Hours (6:00pm – 8:00pm)</td></tr>`;
                     myNightStudy.forEach(ns => {
@@ -4023,7 +3996,7 @@ table { max-width:100%; }
                     const s = String(st.subject || '').trim();
                     return staffMatchesBoard(st, currentBoard) && (!coreSubjects.includes(s) || s === 'Other');
                 });
-            } else {
+                            } else {
                 matchingStaff = staffList.filter(st => {
                     const s = String(st.subject || '').trim().toLowerCase();
                     return staffMatchesBoard(st, currentBoard) && s === selSub.toLowerCase();
@@ -4523,7 +4496,7 @@ table { max-width:100%; }
             if(!sel) return;
             const date = document.getElementById('invigilationDate')?.value;
             const fromP = document.getElementById('invigFromPeriod')?.value;
-            const toP = document.getElementById('invigToPeriod')?.value;
+                    const toP = document.getElementById('invigToPeriod')?.value;
             const leaves = getApprovedLeaveTeachersForDate(date);
             const prev = sel.value;
             sel.innerHTML = '<option value="">Select Teacher</option>';
@@ -4682,6 +4655,7 @@ table { max-width:100%; }
             box.innerHTML = html;
         }
 
+        // Point 1: Night Study Hours - save, edit and cancel options + display in teacher module
         function onStudyClassOrDayChange() {
             renderStudyHoursTimetable();
             renderStudyHoursSavedList();
@@ -4992,6 +4966,7 @@ table { max-width:100%; }
 
         let floorSelectedClassRecords = [];
 
+        // Point 2: Initial clean view for Teacher module (Cards only)
         function resetTeacherModuleCardView() {
             const floor = document.getElementById('teacherFloorDashboard');
             const leave = document.getElementById('teacherLeaveApplicationCard');
@@ -5003,6 +4978,7 @@ table { max-width:100%; }
             document.querySelectorAll('#teacherDashboardCards .board-card').forEach(c => c.classList.remove('active-card'));
         }
 
+        // Point 2: Open child area only when card is clicked
         function openTeacherDashboardArea(area) {
             const floor = document.getElementById('teacherFloorDashboard');
             const leave = document.getElementById('teacherLeaveApplicationCard');
@@ -5020,7 +4996,7 @@ table { max-width:100%; }
             } else if(area === 'leave') {
                 document.getElementById('cardTeacherLeave')?.classList.add('active-card');
                 if(floor) floor.style.display = 'none';
-                if(leave) leave.style.display = 'block';
+                                if(leave) leave.style.display = 'block';
                 if(schedule) schedule.style.display = 'none';
                 leave?.scrollIntoView({behavior:'smooth'});
             } else if(area === 'schedule') {
@@ -5131,5 +5107,174 @@ table { max-width:100%; }
             loadAppIconSetting();
         });
     </script>
+
+<!-- Additive teacher leave and released-period enhancements. Original application above retained. -->
+<script>
+(() => {
+'use strict';
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const own = r => currentUser && (r.empId && currentUser.empId ? String(r.empId) === String(currentUser.empId) : r.teacherName === currentUser.name);
+const datesOf = r => Array.isArray(r.dates) && r.dates.length ? [...r.dates].sort() : [r.fromDate].filter(Boolean);
+const editable = r => own(r) && r.status !== 'cancelled' && datesOf(r).length && datesOf(r)[0] > today();
+let editing = null, busy = false, unsubscribers = [];
+const originalSchedule = viewTeacherSchedule;
+viewTeacherSchedule = function() {
+    if(!currentUser || !document.getElementById('tDate')?.value) return originalSchedule();
+    const date = document.getElementById('tDate').value;
+    const leave = leaveRequestsList.find(r => own(r) && String(r.status).toLowerCase() === 'approved' && datesOf(r).includes(date));
+    if(leave) {
+        document.getElementById('tScheduleDisplay').innerHTML = `<div id="tPersonalPrintContainer"><h4>Personal Schedule: ${esc(currentUser.name)} | ${esc(date)}</h4><p role="status" style="padding:16px;background:#fff3cd;color:#664d03;font-weight:bold;">You have no class because you are on leave.</p><table><thead><tr><th>Period</th><th>Time</th><th>Status</th></tr></thead><tbody>${periods.map(p=>`<tr><td>${esc(p.id)}</td><td>${esc(p.time)}</td><td>Approved leave — No class / duty</td></tr>`).join('')}</tbody></table></div>`;
+        return;
+    }
+    originalSchedule();
+    if(dayTypeRecords[date] === 'holiday') return;
+    const day = getDayNameFromDate(date);
+    const rows = document.querySelectorAll('#tPersonalPrintContainer table tbody > tr');
+    periods.forEach((p,index) => {
+        const row = rows[index];
+        if(!row || row.cells.length < 4 || row.cells[row.cells.length-1].textContent.trim() !== 'Original Class') return;
+        const replacements = [];
+        ['CBSE','STATE'].forEach(board => {
+            const tt = allTimetablesRaw[board] || {};
+            Object.keys(tt).forEach(cls => {
+                const cell = tt[cls]?.[day]?.[p.id];
+                if(!cell || ![cell.teacher,cell.teacher1,cell.teacher2].includes(currentUser.name)) return;
+                [['Invigilation',invigilationRecords],['Revision',revisionScheduleRecords]].forEach(([kind,records]) => {
+                    (records[date]?.[board] || []).forEach(rec => {
+                        const a = periods.findIndex(x=>String(x.id)===String(rec.fromPeriod));
+                        const b = periods.findIndex(x=>String(x.id)===String(rec.toPeriod));
+                        if(rec.classKey === cls && rec.teacher && rec.teacher !== currentUser.name && a >= 0 && b >= a && index >= a && index <= b)
+                            replacements.push(`${kind} — ${rec.teacher} (${cls}, ${board})`);
+                    });
+                });
+            });
+        });
+        if(replacements.length) {
+            row.cells[2].textContent = 'Free — Your period is allotted to ' + [...new Set(replacements)].join('; ');
+            row.cells[row.cells.length-1].textContent = 'Free / Period reassigned';
+            row.style.backgroundColor = '#e8f5e9';
+        }
+    });
+};
+function renderMyLeaves() {
+    const parent = document.getElementById('teacherLeaveApplicationCard');
+    if(!parent || !currentUser) return;
+    let box = document.getElementById('teacherOwnLeaveHistory');
+    if(!box) { box = document.createElement('section'); box.id='teacherOwnLeaveHistory'; parent.appendChild(box); }
+    const list = leaveRequestsList.filter(own).sort((a,b)=>(datesOf(b)[0]||'').localeCompare(datesOf(a)[0]||''));
+    box.innerHTML = '<h4>My Leave Requests</h4><p>Edit or cancel before the first leave date. Edited requests require fresh approval. Existing substitution allotments are not automatically deleted.</p>';
+    if(!list.length) { box.insertAdjacentHTML('beforeend','<p>No leave requests submitted.</p>'); return; }
+    const wrap = document.createElement('div'); wrap.style.overflowX='auto';
+    wrap.innerHTML = `<table><thead><tr><th>Dates</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead><tbody>${list.map((r,i)=>`<tr><td>${esc(datesOf(r).join(', '))}</td><td>${esc(r.reason)}</td><td>${esc(r.status || 'pending')}</td><td>${editable(r)?`<button type="button" data-edit="${i}">Edit</button> <button type="button" data-cancel="${i}" style="background:#dc3545">Cancel leave</button>`:'No changes available'}</td></tr>`).join('')}</tbody></table>`;
+    box.appendChild(wrap);
+    wrap.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>beginEdit(list[Number(b.dataset.edit)]));
+    wrap.querySelectorAll('[data-cancel]').forEach(b=>b.onclick=()=>cancelLeave(list[Number(b.dataset.cancel)]));
+}
+function resetEdit() {
+    editing=null;
+    document.getElementById('leaveDaysCount').value='';
+    document.getElementById('leaveReason').value='';
+    document.getElementById('leaveDatePickersContainer').innerHTML='';
+    document.getElementById('leaveEditNotice')?.remove();
+}
+function beginEdit(r) {
+    if(!editable(r)) return alert('You may edit only your own leave before its first date.');
+    editing=r.id;
+    document.getElementById('leaveDaysCount').value=datesOf(r).length;
+    buildLeaveDatePickers();
+    document.querySelectorAll('.leave-date-input').forEach((el,i)=>{el.value=datesOf(r)[i]; el.min=today();});
+    document.getElementById('leaveReason').value=r.reason || '';
+    document.getElementById('leaveEditNotice')?.remove();
+    const notice=document.createElement('p'); notice.id='leaveEditNotice';
+    notice.textContent='Editing leave request. Submit to save changes and request fresh approval. ';
+    const button=document.createElement('button'); button.type='button'; button.textContent='Discard edit'; button.onclick=resetEdit;
+    notice.appendChild(button); document.getElementById('leaveDatePickersContainer').before(notice);
+}
+async function mutateLeave(id,patch) {
+    const ref=db.collection('teacherLeaveRequests').doc(id);
+    await db.runTransaction(async transaction => {
+        const snap=await transaction.get(ref);
+        if(!snap.exists || !editable(snap.data())) throw new Error('This leave can no longer be changed. Only the owner may change it before the first leave date.');
+        transaction.update(ref,patch);
+    });
+    const r=leaveRequestsList.find(x=>x.id===id); if(r) Object.assign(r,patch);
+    renderMyLeaves(); refreshSchedule();
+}
+async function cancelLeave(r) {
+    if(busy || !editable(r)) return;
+    if(!confirm('Cancel this leave request for '+datesOf(r).join(', ')+'? Existing substitution allotments will remain for the incharge to review.')) return;
+    busy=true;
+    try {
+        await mutateLeave(r.id,{status:'cancelled',cancelledAt:firebase.firestore.FieldValue.serverTimestamp(),cancelledBy:currentUser.empId || currentUser.name});
+        if(editing===r.id) resetEdit();
+        alert('Leave cancelled successfully.');
+    } catch(e) { alert('Unable to cancel leave: '+e.message); }
+    finally {busy=false;}
+}
+const originalSubmit=submitLeaveRequest;
+submitLeaveRequest=async function() {
+    if(busy) return;
+    const dates=Array.from(document.querySelectorAll('.leave-date-input')).map(x=>x.value);
+    const count=Number(document.getElementById('leaveDaysCount').value);
+    const reason=document.getElementById('leaveReason').value.trim();
+    if(!Number.isInteger(count) || count<1 || count>60 || dates.length!==count || dates.some(x=>!x) || !reason) return alert('Enter 1–60 days, all dates, and a reason.');
+    if(new Set(dates).size!==dates.length) return alert('Select distinct leave dates.');
+    if(dates.some(x=>x<today())) return alert('Leave dates cannot be in the past.');
+    if(editing && dates.some(x=>x<=today())) return alert('Edited leave must start after today.');
+    busy=true;
+    try {
+        if(!editing) { await originalSubmit(); renderMyLeaves(); return; }
+        const sorted=[...dates].sort();
+        await mutateLeave(editing,{dates:sorted,daysCount:count,fromDate:sorted[0],toDate:sorted[sorted.length-1],reason,status:'pending',reviewedBy:firebase.firestore.FieldValue.delete(),reviewedAt:firebase.firestore.FieldValue.delete(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        resetEdit(); document.getElementById('leaveStatusMsg').textContent='Leave updated. Pending fresh approval from Dean/Incharge.';
+    } catch(e) {alert('Unable to update leave: '+e.message);}
+    finally {busy=false;}
+};
+const originalOpen=openTeacherDashboardArea;
+openTeacherDashboardArea=function(area) {originalOpen(area); if(area==='leave') renderMyLeaves();};
+function refreshSchedule() {
+    if(currentUser && document.getElementById('tDate')?.value && document.getElementById('tScheduleDisplay')?.innerHTML) viewTeacherSchedule();
+}
+function stopListeners() { unsubscribers.forEach(fn=>fn()); unsubscribers=[]; }
+const originalLoad=loadDataForRole;
+loadDataForRole=async function(role) {
+    stopListeners(); await originalLoad(role);
+    unsubscribers.push(db.collection('teacherLeaveRequests').onSnapshot(snap=>{
+        leaveRequestsList=snap.docs.map(doc=>({id:doc.id,...doc.data()}));
+        renderMyLeaves(); refreshSchedule();
+        if(document.getElementById('deanLeaveRequestsContainer')) renderDeanLeaveRequests();
+    },e=>console.warn('Live leave updates unavailable:',e)));
+    [['revisionScheduleRecords',revisionScheduleRecords],['invigilationRecords',invigilationRecords]].forEach(([collection,target])=>{
+        unsubscribers.push(db.collection(collection).onSnapshot(snap=>{
+            Object.keys(target).forEach(key=>delete target[key]);
+            snap.forEach(doc=>{const [date,board]=doc.id.split('__'); if(!board)return; (target[date] ||= {})[board]=doc.data().value || [];});
+            refreshSchedule();
+        },e=>console.warn('Live duty updates unavailable:',e)));
+    });
+};
+const originalLogout=logout;
+logout=async function(){stopListeners();editing=null;return originalLogout();};
+const originalDean=renderDeanLeaveRequests;
+renderDeanLeaveRequests=function() {
+    originalDean();
+    const filter=document.getElementById('deanLeaveFilterDate')?.value;
+    const list=filter?leaveRequestsList.filter(r=>r.dates?.includes(filter)):leaveRequestsList;
+    document.querySelectorAll('#deanLeaveRequestsContainer tbody tr').forEach((row,i)=>{
+        if(list[i]?.status==='cancelled') { row.cells[row.cells.length-1].textContent='Cancelled by teacher'; }
+    });
+};
+const originalReview=updateLeaveStatus;
+updateLeaveStatus=async function(id,status) {
+    try {
+        const snap=await db.collection('teacherLeaveRequests').doc(id).get();
+        if(!snap.exists || snap.data().status==='cancelled') return alert('This request is cancelled or no longer exists.');
+        await originalReview(id,status); refreshSchedule();
+    } catch(e) {alert('Unable to review leave: '+e.message);}
+};
+})();
+</script>
+
 </body>
 </html>
+                
